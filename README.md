@@ -20,7 +20,7 @@ npm install
 npm start
 ```
 
-Navigate to `chrome://extensions`, enable "Developer mode", select "Load unpacked" and open the `dist/` folder.
+Navigate to `chrome://extensions`, enable "Developer mode", select "Load unpacked" and open the `dist/` folder. See [Chrome's developer instructions](https://developer.chrome.com/docs/extensions/mv3/getstarted/).
 
 ### Test
 
