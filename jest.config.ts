@@ -22,9 +22,6 @@ const config: Config.InitialOptions = {
     '<rootDir>'
   ],
   setupFilesAfterEnv: ["<rootDir>/test/setup.ts"],
-  moduleNameMapper: {
-    '\\.(jpg|png|svg)$': '<rootDir>/test/assets-transformer.ts',
-  },
 }
 
 export default config
