@@ -16,7 +16,15 @@ const config: Config.InitialOptions = {
     "^.+\\.js$": "babel-jest"
   },
   moduleFileExtensions: ["js", "ts", "svelte"],
-  setupFilesAfterEnv: ["<rootDir>/test/setup.ts"]
+  moduleDirectories: [
+    'node_modules',
+    // Allows for absolute imports at `src`
+    '<rootDir>'
+  ],
+  setupFilesAfterEnv: ["<rootDir>/test/setup.ts"],
+  moduleNameMapper: {
+    '\\.(jpg|png|svg)$': '<rootDir>/test/assets-transformer.ts',
+  },
 }
 
 export default config
