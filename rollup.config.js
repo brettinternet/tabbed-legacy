@@ -1,18 +1,8 @@
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import svelte from "rollup-plugin-svelte";
-import zip from "rollup-plugin-zip";
-import postcss from "rollup-plugin-postcss";
-import { terser } from "rollup-plugin-terser";
-import sveltePreprocess from "svelte-preprocess";
-import typescript from "@rollup/plugin-typescript";
-import {
-  chromeExtension,
-  simpleReloader,
-} from "rollup-plugin-chrome-extension";
-import { emptyDir } from "rollup-plugin-empty-dir";
+import replace from '@rollup/plugin-replace'
+const pkg = require('./package.json')
 
-const production = !process.env.ROLLUP_WATCH;
+const production = !process.env.ROLLUP_WATCH
+const environment = production ? 'production' : 'staging'
 
 export default {
   input: "src/manifest.json",
@@ -23,6 +13,15 @@ export default {
   plugins: [
     // always put chromeExtension() before other plugins
     chromeExtension(),
+    replace({
+      preventAssignment: true,
+      values: {
+        'process.env.NODE_ENV': JSON.stringify(environment),
+        'process.env.BUILD_TIME': () => JSON.stringify(new Date().getTime()),
+        'process.env.BUILD_VERSION': JSON.stringify(pkg.version),
+        'process.env.APP_NAME': JSON.stringify(pkg.name),
+      },
+    }),
     simpleReloader(),
     svelte({
       preprocess: sveltePreprocess(),
