@@ -1,4 +1,8 @@
 {
+  "common": {
+    "search_placeholder": "Search",
+    "loading": "Loading…"
+  },
   "popup": {
     "page_title": "Tabbed"
   }
