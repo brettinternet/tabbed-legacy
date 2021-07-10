@@ -1,5 +1,8 @@
 <script lang="ts">
-  export let message: string | null = 'Loading…',
+  import { _ } from 'svelte-i18n'
+  export let message: string = $_('common.loading', {
+      default: 'Loading…',
+    }),
     size: number = 32
 </script>
 
