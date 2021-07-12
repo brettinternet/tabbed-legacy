@@ -1,3 +1,5 @@
-console.log("background script working");
+import { buildVersion, buildTime } from 'src/utils/env'
 
-export {}
+console.info(
+  `loaded: ${new Date().toISOString()}; version: ${buildVersion}; build date: ${buildTime}`
+)
