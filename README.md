@@ -27,3 +27,8 @@ Navigate to `chrome://extensions`, enable "Developer mode", select "Load unpacke
 ```
 npm test
 ```
+
+### Notes
+
+- [Differences between API implementations](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Differences_between_API_implementations)
+- [rollup-plugin-chrome-extension supports Firefox >=v89](https://github.com/extend-chrome/rollup-plugin-chrome-extension#%EF%B8%8F-what-about-firefox-support)
