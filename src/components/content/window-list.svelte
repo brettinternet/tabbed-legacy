@@ -46,11 +46,11 @@
       </div>
       {#each tabs as { id, windowId, title, url, favIconUrl, active }}
         {#if title || url}
-          <div class="flex flex-row mb-1">
+          <div class="flex flex-row">
             {#if favIconUrl}
-              <img src={favIconUrl} alt={title} class="mr-3 h-5 w-5" />
+              <img src={favIconUrl} alt={title} class="mb-1 mr-3 h-5 w-5" />
             {:else}
-              <div class="mr-3 h-5 w-5" />
+              <div class="mb-1 mr-3 h-5 w-5" />
             {/if}
             <div class="leading-5">
               {#if url}
@@ -59,7 +59,7 @@
                   data-window-id={windowId}
                   href={url}
                   on:click={handleTabLinkClick}
-                  class={cn(!(i === 0 && active) && 'hover:underline')}
+                  class={cn(!(i === 0 && active) && 'hover:underline', 'py-2')}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-disabled={i === 0 && active}
