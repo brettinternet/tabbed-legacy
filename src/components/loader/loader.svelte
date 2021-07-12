@@ -1,12 +1,15 @@
 <script lang="ts">
   import { _ } from 'svelte-i18n'
-  export let message: string = $_('common.loading', {
-      default: 'Loading…',
-    }),
-    size: number = 32
+
+  export let label: string = null,
+    hideLabel = false,
+    size = 32
 </script>
 
-<div class="flex justify-center items-center space-x-1 text-sm text-gray-700">
+<div
+  class="flex justify-center items-center space-x-1 text-sm text-gray-700"
+  aria-label={hideLabel && label}
+>
   <svg
     fill="none"
     class="animate-spin text-black"
@@ -23,7 +26,13 @@
       fill-rule="evenodd"
     />
   </svg>
-  {#if message}
-    <p class="m-0">{message}</p>
+  {#if !hideLabel}
+    <p class="m-0">
+      {#if label}
+        {label}
+      {:else}
+        {$_('common.loader_label', { default: 'Loading…' })}
+      {/if}
+    </p>
   {/if}
 </div>

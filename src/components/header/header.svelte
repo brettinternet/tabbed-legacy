@@ -13,9 +13,7 @@
     onClickSettings: () => void = null
 </script>
 
-<header
-  class="container mx-auto justify-around items-center bg-blueGray-500 px-2 py-3 mb-3"
->
+<header class="mx-auto justify-around items-center bg-blueGray-500 px-2 py-3">
   <ul class="w-full p-0 m-0 flex justify-center items-stretch text-gray-800">
     {#if onClickPopout}
       <li>
@@ -37,9 +35,9 @@
         >
       </li>
     {/if}
-    <li class="mx-auto px-4 w-full">
+    <li class="mx-auto px-4 lg:px-0 w-full lg:ml-0 lg:mr-auto">
       <input
-        class="border rounded-sm border-gray-800 w-full px-2 py-1"
+        class="border rounded-sm border-gray-800 w-full px-2 py-1 lg:max-w-xs"
         placeholder={$_('common.search_placeholder', { default: 'Search' })}
       />
     </li>

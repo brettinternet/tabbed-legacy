@@ -1,13 +1,18 @@
-import 'src/i18n'
 import 'src/utils/tailwind.css'
-import { setup } from 'src/utils/document'
+import { setup as setupI18n } from 'src/i18n'
+import { setup as setupDocument } from 'src/utils/document'
+import App from 'src/components/app/app.svelte'
 
-import Popup from './popup.svelte'
+setupI18n()
 
-const app = new Popup({
+const app = new App({
   target: document.body,
+  props: {
+    width: 500,
+    height: 600,
+  },
 })
 
-setup()
+setupDocument()
 
 export default app
