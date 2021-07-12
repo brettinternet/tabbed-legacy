@@ -2,8 +2,9 @@
   import { _, isLoading } from 'svelte-i18n'
   import Layout from 'src/components/layout/layout.svelte'
   import PageLoader from 'src/components/loader/page-loader.svelte'
-  import ListContent from 'src/components/content/list-content.svelte'
+  import Content from 'src/components/content/content.svelte'
   import { url } from 'src/utils/url-store'
+  import { layouts } from 'src/utils/settings'
 
   export let width: number,
     height: number,
@@ -23,12 +24,20 @@
   }
 
   const openTab = async () => {
-    await window.chrome.tabs.create({ url: 'main/index.html' })
+    await window.chrome.tabs.create({ url: 'main/index.html?uimode=settings' })
   }
 
   $: isPopout =
     window.location.search.includes('popout') ||
     $url.searchParams.get('uimode') === 'popout'
+
+  let currentLayout = layouts.LIST
+  const handleListLayout = () => {
+    currentLayout = layouts.LIST
+  }
+  const handleGridLayout = () => {
+    currentLayout = layouts.GRID
+  }
 </script>
 
 {#if $isLoading}
@@ -36,18 +45,24 @@
 {:else if isPopout}
   <Layout
     pageTitle={$_('popup.page_title', { default: 'Options' })}
-    onClickHome={openTab}
+    onClickSettings={openTab}
+    {currentLayout}
+    onClickListLayout={handleListLayout}
+    onClickGridLayout={handleGridLayout}
   >
-    <ListContent />
+    <Content {currentLayout} />
   </Layout>
 {:else}
   <div {style} class="mx-auto">
     <Layout
       pageTitle={$_('popup.page_title', { default: 'Options' })}
+      onClickHome={openTab}
       onClickPopout={!hideNav && openPopout}
-      onClickHome={!hideNav && openTab}
+      {currentLayout}
+      onClickListLayout={handleListLayout}
+      onClickGridLayout={handleGridLayout}
     >
-      <ListContent />
+      <Content {currentLayout} />
     </Layout>
   </div>
 {/if}

@@ -27,11 +27,11 @@
     <div class={cn(i !== 0 && 'mt-4')}>
       <div
         class={cn(
-          'flex flex-row items-center justify-between',
+          'flex flex-row items-center justify-between xl:justify-start',
           currentWindowId === id && 'text-blue-700'
         )}
       >
-        <div class="flex flex-row items-center py-3 leading-5">
+        <div class="flex flex-row items-center py-3 mr-3 leading-5">
           <div class="flex justify-center w-5 mr-3"><Window /></div>
           <h2 class="font-semibold">
             {#if currentWindowId === id}

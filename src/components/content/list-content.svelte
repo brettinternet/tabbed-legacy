@@ -21,8 +21,6 @@
 
   const fetch = async () => {
     const windows = await getAllWindows({ populate: true }, true)
-    console.log('windows: ', windows)
-
     currentSession = {
       id: sampleId,
       lastModified: new Date().getTime(),
@@ -111,7 +109,7 @@
     {/if}
   </menu>
   {#if selectedSessionId && selectedSession}
-    <article class="hidden lg:block lg:col-span-9 2xl:col-span-10">
+    <article class="hidden md:block lg:col-span-9 2xl:col-span-10 pb-10">
       <WindowList
         windows={selectedSession.windows}
         ariaLabelledby={selectedSessionId}
