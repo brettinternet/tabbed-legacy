@@ -12,6 +12,8 @@
   import WindowList from './window-list.svelte'
   import type { Session } from './session'
 
+  export let selectedSessionId: string = null
+
   const sampleId = '1'
 
   let currentSession: Session
@@ -27,11 +29,13 @@
       windows,
       current: true,
     }
+
+    if (!selectedSessionId) {
+      selectedSessionId = currentSession.id
+    }
   }
 
-  fetch()
-
-  let selectedSessionId: string = null
+  void fetch()
 
   const handleClickAccordionItem = (ev: MouseEvent) => {
     selectedSessionId = selectedSessionId ? null : (ev.currentTarget as HTMLButtonElement).id

@@ -4,11 +4,12 @@
   import Grid from './grid-content.svelte'
   import type {Layout} from 'src/utils/settings'
 
-  export let currentLayout: Layout
+  export let currentLayout: Layout,
+    selectedSessionId: string = null
 </script>
 
 {#if currentLayout === layouts.GRID}
-  <Grid />
+  <Grid {selectedSessionId} />
 {:else}
-  <List />
+  <List {selectedSessionId} />
 {/if}
