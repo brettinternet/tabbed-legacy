@@ -35,11 +35,11 @@ describe('components/header/header.svelte', () => {
     })
 
     const listButton = screen.getByLabelText('Show list layout')
-    listButton.click()
+    await fireEvent.click(listButton)
     expect(mockHandleList).toHaveBeenCalledTimes(1)
 
     const gridButton = screen.getByLabelText('Show grid layout')
-    gridButton.click()
+    await fireEvent.click(gridButton)
     expect(mockHandleGrid).toHaveBeenCalledTimes(1)
   })
 
@@ -53,7 +53,7 @@ describe('components/header/header.svelte', () => {
     })
 
     const settingsButton = screen.getByLabelText('Settings')
-    settingsButton.click()
+    await fireEvent.click(settingsButton)
     expect(mockHandleSettings).toHaveBeenCalledTimes(1)
   })
 })
