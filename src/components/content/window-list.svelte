@@ -7,15 +7,15 @@
   export let windows: browser.windows.Window[], ariaLabelledby: string
 
   const handleTabLinkClick = async (ev: MouseEvent) => {
-    const tabId: number | undefined = parseInt(
-      (ev.currentTarget as HTMLAnchorElement).dataset.id
-    )
-    const windowId: number | undefined = parseInt(
-      (ev.currentTarget as HTMLAnchorElement).dataset.windowId
-    )
+    const anchor = ev.currentTarget as HTMLAnchorElement
+    const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
+    const tabId: number | undefined = parseInt(anchor.dataset.id)
+    const windowId: number | undefined = parseInt(anchor.dataset.windowId)
     if (tabId && windowId) {
       ev.preventDefault()
-      await focusWindowTab(windowId, tabId)
+      if (!ariaDisabled) {
+        await focusWindowTab(windowId, tabId)
+      }
     }
   }
 
@@ -44,35 +44,41 @@
           {tabs.length} tabs
         </div>
       </div>
-      {#each tabs as { id, windowId, title, url, favIconUrl }}
+      {#each tabs as { id, windowId, title, url, favIconUrl, active }}
         {#if title || url}
-          <div class="flex flex-row leading-5 mb-1">
+          <div class="flex flex-row mb-1">
             {#if favIconUrl}
               <img src={favIconUrl} alt={title} class="mr-3 h-5 w-5" />
             {:else}
               <div class="mr-3 h-5 w-5" />
             {/if}
-            {#if url}
-              <a
-                data-id={id}
-                data-window-id={windowId}
-                href={url}
-                on:click={handleTabLinkClick}
-                class="hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {#if title}
+            <div class="leading-5">
+              {#if url}
+                <a
+                  data-id={id}
+                  data-window-id={windowId}
+                  href={url}
+                  on:click={handleTabLinkClick}
+                  class={cn(!(i === 0 && active) && 'hover:underline')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-disabled={i === 0 && active}
+                >
+                  {#if title}
+                    {title}
+                  {:else}
+                    {url}
+                  {/if}
+                </a>
+              {:else}
+                <span>
                   {title}
-                {:else}
-                  {url}
-                {/if}
-              </a>
-            {:else}
-              <span>
-                {title}
-              </span>
-            {/if}
+                </span>
+              {/if}
+              {#if i === 0 && active}
+                <span class="font-bold"> (current)</span>
+              {/if}
+            </div>
           </div>
         {/if}
       {/each}
