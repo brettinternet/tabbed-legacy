@@ -3,12 +3,12 @@
    * @source https://teenyicons.com/
    * @note this icon is custom edited from the "table" icon
    */
-  export let size: number = 15
+  export let size = 15
 </script>
 
 <svg
   aria-hidden="true"
-  viewBox="0 0 {size} {size}"
+  viewBox="0 0 15 15"
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   width={size}
