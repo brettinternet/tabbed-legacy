@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.2.1",
+    "date-fns": "^2.22.1",
     "postcss": "^8.2.4",
     "svelte": "^3.31.2",
     "svelte-i18n": "^3.3.9",
