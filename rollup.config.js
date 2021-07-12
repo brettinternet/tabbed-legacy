@@ -1,14 +1,27 @@
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
+import svelte from 'rollup-plugin-svelte'
+import zip from 'rollup-plugin-zip'
+import postcss from 'rollup-plugin-postcss'
+import { terser } from 'rollup-plugin-terser'
+import sveltePreprocess from 'svelte-preprocess'
+import typescript from '@rollup/plugin-typescript'
+import { chromeExtension, simpleReloader } from 'rollup-plugin-chrome-extension'
+import { emptyDir } from 'rollup-plugin-empty-dir'
+import json from '@rollup/plugin-json'
 import replace from '@rollup/plugin-replace'
+import alias from '@rollup/plugin-alias'
+import image from '@rollup/plugin-image'
 const pkg = require('./package.json')
 
 const production = !process.env.ROLLUP_WATCH
 const environment = production ? 'production' : 'staging'
 
 export default {
-  input: "src/manifest.json",
+  input: 'src/manifest.json',
   output: {
-    dir: "dist",
-    format: "esm",
+    dir: 'dist',
+    format: 'esm',
   },
   plugins: [
     // always put chromeExtension() before other plugins
@@ -22,27 +35,33 @@ export default {
         'process.env.APP_NAME': JSON.stringify(pkg.name),
       },
     }),
+    alias({
+      entries: [
+        {
+          find: 'src',
+          replacement: 'src',
+        },
+      ],
+    }),
+    resolve({
+      dedupe: ['svelte'],
+    }),
     simpleReloader(),
     svelte({
       preprocess: sveltePreprocess(),
       compilerOptions: {
-        // enable run-time checks when not in production
         dev: !production,
       },
     }),
     postcss({ minimize: production }),
-    // the plugins below are optional
-    resolve({
-      dedupe: ["svelte"],
-    }),
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
     commonjs(),
     typescript({ sourceMap: false }),
     // Empties the output dir before a new build
     emptyDir(),
-    // If we're building for production, minify
+    json(),
+    image(),
     production && terser(),
-    // Outputs a zip file in ./releases
-    production && zip({ dir: "releases" }),
+    production && zip({ dir: 'releases' }),
   ],
-};
+}
