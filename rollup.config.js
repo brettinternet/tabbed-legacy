@@ -20,12 +20,14 @@ const environment = production ? 'production' : 'staging'
 export default {
   input: 'src/manifest.json',
   output: {
+    // TODO: add banner license
+    // banner: '/*  */',
     dir: 'dist',
     format: 'esm',
   },
   plugins: [
     // always put chromeExtension() before other plugins
-    chromeExtension(),
+    chromeExtension({ browserPolyfill: true }),
     replace({
       preventAssignment: true,
       values: {

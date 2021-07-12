@@ -65,6 +65,14 @@ export const getAllWindows = async (
 export const getCurrentWindow = (options?: browser.windows.GetInfo) =>
   browser.windows.getCurrent(options)
 
+export const getTab = (tabId: number) => browser.tabs.get(tabId)
+
+export const closeTab = (tabIds: number | number[]) =>
+  browser.tabs.remove(tabIds)
+
+export const closeWindow = (windowId: number) =>
+  browser.windows.remove(windowId)
+
 const focusWindow = async (windowId: number) => {
   await browser.windows.update(windowId, {
     focused: true,
@@ -77,26 +85,10 @@ const activateTab = async (tabId: number) => {
   })
 }
 
-export const focusWindowTab = async (
-  windowId: number | undefined,
-  tabId: number | undefined
-) => {
+export const focusWindowTab = async (windowId: number, tabId: number) => {
   await focusWindow(windowId)
   await activateTab(tabId)
 }
-
-export const getTab = (tabId: number) => browser.tabs.get(tabId)
-
-export const closeTab = (tabIds: number | number[]) =>
-  browser.tabs.remove(tabIds)
-
-export const closeWindow = (windowId: number) =>
-  browser.windows.remove(windowId)
-
-export const getURL = (path: string) => browser.extension.getURL(path)
-
-export const getViews = (options: browser.extension._GetViewsFetchProperties) =>
-  browser.extension.getViews(options)
 
 export const openTab = async (tab: browser.tabs.Tab) => {
   const allowed = await browser.extension.isAllowedIncognitoAccess()
@@ -109,9 +101,7 @@ export const openTab = async (tab: browser.tabs.Tab) => {
   }
 
   if (tab.id) {
-    if (tab.windowId) {
-      await focusWindow(tab.windowId)
-    }
+    await focusWindowTab(tab.windowId, tab.id)
     return await activateTab(tab.id)
   } else if (!tab.incognito && browser.extension.inIncognitoContext) {
     return await browser.windows.create(tab)
