@@ -1,7 +1,7 @@
 {
   "common": {
     "search_placeholder": "Search",
-    "loading": "Loading…"
+    "loader_label": "Loading…"
   },
   "popup": {
     "page_title": "Tabbed"
