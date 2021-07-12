@@ -50,10 +50,6 @@
 <section class="w-full lg:grid lg:gap-6 lg:grid-cols-12 lg:px-4">
   <menu class="p-0 m-0 lg:col-span-3 2xl:col-span-2">
     {#if currentSession}
-      <h2 class=" px-10 py-6">
-        Current<span class="hidden md:inline">{' '}Session</span>
-      </h2>
-
       <button
         id={currentSession.id}
         aria-expanded={selectedSessionId &&
