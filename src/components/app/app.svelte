@@ -1,5 +1,6 @@
 <script lang="ts">
   import { _, isLoading } from 'svelte-i18n'
+  import './app'
   import Layout from 'src/components/layout/layout.svelte'
   import PageLoader from 'src/components/loader/page-loader.svelte'
   import Content from 'src/components/content/content.svelte'
