@@ -8,7 +8,7 @@ export const isAuxiliaryTab = (tab: browser.tabs.Tab) =>
     isBookmarkManagerTab(tab))
 
 export const isNewTab = (tab: browser.tabs.Tab) =>
-  /^chrome\:\/\/newtab\/?$/.test(tab.url)
+  /^chrome:\/\/newtab\/?$/.test(tab.url)
 
 /**
  * Tab.id is an optional field, so compare other fields for a better estimation
@@ -52,7 +52,7 @@ export const getAllWindows = async (
   options?: browser.windows._GetAllGetInfo,
   sorted?: boolean
 ) => {
-  let windows = await browser.windows.getAll(options)
+  const windows = await browser.windows.getAll(options)
   if (sorted) {
     const currentWindow = await getCurrentWindow(options)
     const index = windows.findIndex(w => isSameWindow(currentWindow, w))

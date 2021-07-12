@@ -3,7 +3,7 @@
 
   export let style: string = null,
     label: string = null,
-    hideLabel: boolean = false
+    hideLabel = false
 </script>
 
 <main {style} class="container flex items-center justify-center w-full h-full">

@@ -52,8 +52,9 @@ describe('components/header/header.svelte', () => {
       },
     })
 
-    const settingsButton = screen.getByLabelText('Settings')
-    await fireEvent.click(settingsButton)
+    // multiple buttons due to responsive design
+    const settingsButton = screen.getAllByLabelText('Settings')
+    await fireEvent.click(settingsButton[0])
     expect(mockHandleSettings).toHaveBeenCalledTimes(1)
   })
 })

@@ -5,6 +5,10 @@ module.exports = {
     es6: true,
     jest: true,
   },
+  globals: {
+    // see `types/global.d.ts`
+    browser: true,
+  },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     tsconfigRootDir: __dirname,
@@ -24,6 +28,9 @@ module.exports = {
     'prettier',
     'plugin:jest/recommended',
   ],
+  rules: {
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+  },
   overrides: [
     {
       files: ['*.svelte'],
@@ -31,6 +38,7 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-unsafe-call': 'off',
         '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
       },
     },
     {
@@ -39,6 +47,7 @@ module.exports = {
         node: true,
       },
       rules: {
+        '@typescript-eslint/no-unsafe-call': 'off',
         '@typescript-eslint/no-var-requires': 'off',
         '@typescript-eslint/no-unsafe-assignment': 'off',
       },
