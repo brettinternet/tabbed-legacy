@@ -86,7 +86,10 @@ const activateTab = async (tabId: number) => {
 }
 
 export const focusWindowTab = async (windowId: number, tabId: number) => {
-  await focusWindow(windowId)
+  const currentWindow = await getCurrentWindow()
+  if (windowId !== currentWindow.id) {
+    await focusWindow(windowId)
+  }
   await activateTab(tabId)
 }
 
