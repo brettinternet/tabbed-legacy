@@ -27,9 +27,16 @@
     await window.chrome.tabs.create({ url: 'main/index.html?uimode=settings' })
   }
 
+  const openSettings = () => {
+    console.log('open settings...')
+  }
+
   $: isPopout =
     window.location.search.includes('popout') ||
     $url.searchParams.get('uimode') === 'popout'
+  $: isTab =
+    window.location.href.includes('main/index.html') ||
+    $url.href.includes('main/index.html')
 
   let currentLayout = layouts.LIST
   const handleListLayout = () => {
@@ -42,10 +49,10 @@
 
 {#if $isLoading}
   <PageLoader {style} hideLabel />
-{:else if isPopout}
+{:else if isPopout || isTab}
   <Layout
     pageTitle={$_('popup.page_title', { default: 'Options' })}
-    onClickSettings={openTab}
+    onClickSettings={openSettings}
     {currentLayout}
     onClickListLayout={handleListLayout}
     onClickGridLayout={handleGridLayout}
