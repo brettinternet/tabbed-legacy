@@ -35,7 +35,17 @@ export const isSameWindow = (
   window1.focused === window2.focused &&
   window1.incognito === window2.incognito
 
-export const getWindow = (windowId: number) => browser.windows.get(windowId)
+export const getWindow = (windowId: number, options: browser.windows.GetInfo) =>
+  browser.windows.get(windowId, options)
+
+export const getActiveTabId = async (
+  windowId: number
+): Promise<number | undefined> => {
+  if (windowId > 0) {
+    const tabs = await browser.tabs.query({ active: true, windowId })
+    return tabs.find(({ active }) => active)?.id
+  }
+}
 
 /**
  * @docs https://developer.chrome.com/docs/extensions/reference/i18n/#overview-predefined
