@@ -3,6 +3,7 @@
 
   import { focusWindowTab } from 'src/utils/browser/query'
   import Window from 'src/components/icons/window.svelte'
+  import { replaceImageError } from 'src/components/content/dom'
 
   export let windows: browser.windows.Window[],
     ariaLabelledby: string,
@@ -47,47 +48,49 @@
           {tabs.length} tabs
         </div>
       </div>
-      {#each tabs as { id, windowId, title, url, favIconUrl }}
-        {#if title || url}
-          <div class="flex flex-row">
-            {#if favIconUrl}
-              <img src={favIconUrl} alt={title} class="mb-1 mr-3 h-5 w-5" />
-            {:else}
-              <div class="mb-1 mr-3 h-5 w-5" />
-            {/if}
-            <div class="leading-5">
-              {#if url}
-                <a
-                  data-id={id}
-                  data-window-id={windowId}
-                  href={url}
-                  on:click={handleTabLinkClick}
-                  class={cn(
-                    !(id === currentTabId) && 'hover:underline',
-                    'py-2'
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-disabled={id === currentTabId}
-                >
-                  {#if title}
+      <ul>
+        {#each tabs as { id, windowId, title, url, favIconUrl }}
+          {#if title || url}
+            <li class="flex flex-row">
+              <div class="flex justify-center h-5 w-5 mb-1 mr-3 ">
+                {#if favIconUrl}
+                  <img use:replaceImageError src={favIconUrl} alt={title} />
+                {/if}
+              </div>
+              <div class="leading-5">
+                {#if url}
+                  <a
+                    data-id={id}
+                    data-window-id={windowId}
+                    href={url}
+                    on:click={handleTabLinkClick}
+                    class={cn(
+                      !(id === currentTabId) && 'hover:underline',
+                      'py-2'
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-disabled={id === currentTabId}
+                  >
+                    {#if title}
+                      {title}
+                    {:else}
+                      {url}
+                    {/if}
+                  </a>
+                {:else}
+                  <span>
                     {title}
-                  {:else}
-                    {url}
-                  {/if}
-                </a>
-              {:else}
-                <span>
-                  {title}
-                </span>
-              {/if}
-              {#if id === currentTabId}
-                <span class="font-bold"> (current)</span>
-              {/if}
-            </div>
-          </div>
-        {/if}
-      {/each}
+                  </span>
+                {/if}
+                {#if id === currentTabId}
+                  <span class="font-bold"> (current)</span>
+                {/if}
+              </div>
+            </li>
+          {/if}
+        {/each}
+      </ul>
     </div>
   {/each}
 </div>
