@@ -4,6 +4,7 @@
   import { focusWindowTab } from 'src/utils/browser/query'
   import Window from 'src/components/icons/window.svelte'
   import { replaceImageError } from 'src/components/content/dom'
+  import Focused from 'src/components/icons/eye.svelte'
 
   export let windows: browser.windows.Window[],
     ariaLabelledby: string,
@@ -37,18 +38,21 @@
       >
         <div class="flex flex-row items-center py-3 mr-3 leading-5">
           <div class="flex justify-center w-5 mr-3"><Window /></div>
-          <h2 class="font-semibold">
+          <h2 class="font-semibold flex items-center">
             {#if currentWindowId === id}
               Current
             {/if}
             Window
+            {#if currentWindowId === id}
+              <span class="text-blue-700 ml-2"><Focused /></span>
+            {/if}
           </h2>
         </div>
         <div class="text-gray-500 font-extralight">
           {tabs.length} tabs
         </div>
       </div>
-      <ul>
+      <ul class="overflow-hidden">
         {#each tabs as { id, windowId, title, url, favIconUrl }}
           {#if title || url}
             <li class="flex flex-row">
@@ -57,7 +61,7 @@
                   <img use:replaceImageError src={favIconUrl} alt={title} />
                 {/if}
               </div>
-              <div class="leading-5">
+              <div class="leading-5 inline-flex items-center">
                 {#if url}
                   <a
                     data-id={id}
@@ -66,7 +70,8 @@
                     on:click={handleTabLinkClick}
                     class={cn(
                       !(id === currentTabId) && 'hover:underline',
-                      'py-2'
+                      'py-1'
+                      // 'overflow-ellipsis overflow-hidden whitespace-pre'
                     )}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -84,7 +89,7 @@
                   </span>
                 {/if}
                 {#if id === currentTabId}
-                  <span class="font-bold"> (current)</span>
+                  <span class="text-blue-700 ml-2"><Focused /></span>
                 {/if}
               </div>
             </li>
