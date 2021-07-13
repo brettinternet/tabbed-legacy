@@ -4,10 +4,10 @@
   import { focusWindowTab } from 'src/utils/browser/query'
   import Window from 'src/components/icons/window.svelte'
 
-  export let windows: browser.windows.Window[], ariaLabelledby: string
-
-  let currentWindowId = windows[0].id
-  let currentTabId = windows[0].tabs.find(({ active }) => active)?.id
+  export let windows: browser.windows.Window[],
+    ariaLabelledby: string,
+    currentWindowId: number = null,
+    currentTabId: number = null
 
   const handleTabLinkClick = async (ev: MouseEvent) => {
     const anchor = ev.currentTarget as HTMLAnchorElement

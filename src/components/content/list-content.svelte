@@ -6,8 +6,9 @@
   import { locale } from 'svelte-i18n'
   import cn from 'classnames'
   import { formatDistanceToNow } from 'date-fns'
+  import { onDestroy } from 'svelte'
 
-  import { getAllWindows } from 'src/utils/browser/query'
+  import { getAllWindows, getWindow } from 'src/utils/browser/query'
   import {getDateLocale} from 'src/i18n'
   import WindowList from './window-list.svelte'
   import type { Session } from './session'
@@ -45,6 +46,23 @@
     ...([currentSession] || []),
     ...(previousSessions || []),
   ].find(session => session && session.id === selectedSessionId)
+
+  $: currentWindowId = currentSession?.windows[0].id
+  $: currentTabId = currentSession?.windows[0]?.tabs.find(({ active }) => active)?.id
+
+  const handleFocusChange = (info: browser.tabs._OnActivatedActiveInfo) => {
+    currentWindowId = info.windowId
+    currentTabId = info.tabId
+  }
+
+  browser.tabs.onActivated.addListener(handleFocusChange)
+
+  onDestroy(() => {
+    browser.tabs.onActivated.removeListener(handleFocusChange)
+  })
+
+  // TODO: update list when tabs/windows change
+  // TODO: move events to new file
 </script>
 
 <section class="w-full lg:grid lg:gap-6 lg:grid-cols-12 lg:px-4">
@@ -92,6 +110,8 @@
         <WindowList
           windows={selectedSession.windows}
           ariaLabelledby={selectedSessionId}
+          {currentWindowId}
+          {currentTabId}
         />
       </div>
     {/if}
@@ -113,6 +133,8 @@
       <WindowList
         windows={selectedSession.windows}
         ariaLabelledby={selectedSessionId}
+        {currentWindowId}
+        {currentTabId}
       />
     </article>
   {/if}

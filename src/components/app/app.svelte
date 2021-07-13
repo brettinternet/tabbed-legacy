@@ -7,8 +7,8 @@
   import { url } from 'src/utils/url-store'
   import { layouts } from 'src/utils/settings'
 
-  export let width: number,
-    height: number,
+  export let width: number = null,
+    height: number = null,
     hideNav = false
 
   const style =
