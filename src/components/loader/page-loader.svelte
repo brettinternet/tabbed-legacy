@@ -6,6 +6,9 @@
     hideLabel = false
 </script>
 
-<main {style} class="container flex items-center justify-center w-full h-full">
-  <Loader {label} {hideLabel} />
+<main
+  {style}
+  class="container flex items-center justify-center w-full h-screen"
+>
+  <Loader {label} {hideLabel} classNames="-translate-y-full" />
 </main>

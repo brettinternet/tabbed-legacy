@@ -1,13 +1,18 @@
 <script lang="ts">
   import { _ } from 'svelte-i18n'
+  import cn, { Argument as ClassnamesArgument } from 'classnames'
 
   export let label: string = null,
     hideLabel = false,
-    size = 32
+    size = 32,
+    classNames: ClassnamesArgument = null
 </script>
 
 <div
-  class="flex justify-center items-center space-x-1 text-sm text-gray-700"
+  class={cn(
+    'flex justify-center items-center space-x-1 text-sm text-gray-700',
+    classNames
+  )}
   aria-label={hideLabel && label}
 >
   <svg

@@ -11,8 +11,10 @@
     height: number = null,
     hideNav = false
 
-  const style =
-    width && height ? `height:${height}px;width:${width}px` : undefined
+  if (width && height) {
+    document.body.style.minWidth = `${width}px`
+    document.body.style.minHeight = `${height}px`
+  }
 
   const openPopout = async () => {
     await window.chrome.windows.create({
@@ -49,7 +51,7 @@
 </script>
 
 {#if $isLoading}
-  <PageLoader {style} hideLabel />
+  <PageLoader hideLabel />
 {:else if isPopout || isTab}
   <Layout
     pageTitle={$_('popup.page_title', { default: 'Options' })}
@@ -61,16 +63,14 @@
     <Content {currentLayout} />
   </Layout>
 {:else}
-  <div {style} class="mx-auto">
-    <Layout
-      pageTitle={$_('popup.page_title', { default: 'Options' })}
-      onClickHome={openTab}
-      onClickPopout={!hideNav && openPopout}
-      {currentLayout}
-      onClickListLayout={handleListLayout}
-      onClickGridLayout={handleGridLayout}
-    >
-      <Content {currentLayout} />
-    </Layout>
-  </div>
+  <Layout
+    pageTitle={$_('popup.page_title', { default: 'Options' })}
+    onClickHome={openTab}
+    onClickPopout={!hideNav && openPopout}
+    {currentLayout}
+    onClickListLayout={handleListLayout}
+    onClickGridLayout={handleGridLayout}
+  >
+    <Content {currentLayout} />
+  </Layout>
 {/if}
