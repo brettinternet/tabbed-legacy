@@ -48,20 +48,20 @@
 </script>
 
 <section class="w-full lg:grid lg:gap-6 lg:grid-cols-12 lg:px-4">
-  <menu class="p-0 m-0 lg:col-span-3 2xl:col-span-2">
+  <menu
+    id="menu"
+    class="relative p-0 m-0 lg:col-span-3 2xl:col-span-2 z-menu-accordion"
+  >
     {#if currentSession}
       <button
         id={currentSession.id}
-        aria-expanded={selectedSessionId &&
-        selectedSessionId === currentSession.id
-          ? 'true'
-          : 'false'}
+        aria-expanded={(selectedSessionId &&
+          selectedSessionId === currentSession.id) ||
+          'false'}
         on:click={handleClickAccordionItem}
         class={cn(
           'bg-gray-100 px-10 py-6 flex flex-row items-center w-full lg:rounded-sm',
-          {
-            ['bg-blue-600 text-white']: selectedSessionId === sampleId,
-          }
+          selectedSessionId === sampleId && 'bg-blue-600 text-white'
         )}
       >
         {#if currentSession.title}

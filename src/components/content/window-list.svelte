@@ -6,6 +6,9 @@
 
   export let windows: browser.windows.Window[], ariaLabelledby: string
 
+  let currentWindowId = windows[0].id
+  let currentTabId = windows[0].tabs.find(({ active }) => active)?.id
+
   const handleTabLinkClick = async (ev: MouseEvent) => {
     const anchor = ev.currentTarget as HTMLAnchorElement
     const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
@@ -15,11 +18,11 @@
       ev.preventDefault()
       if (!ariaDisabled) {
         await focusWindowTab(windowId, tabId)
+        currentWindowId = windowId
+        currentTabId = tabId
       }
     }
   }
-
-  let currentWindowId = windows[0].id
 </script>
 
 <div role="region" aria-labelledby={ariaLabelledby}>
@@ -44,7 +47,7 @@
           {tabs.length} tabs
         </div>
       </div>
-      {#each tabs as { id, windowId, title, url, favIconUrl, active }}
+      {#each tabs as { id, windowId, title, url, favIconUrl }}
         {#if title || url}
           <div class="flex flex-row">
             {#if favIconUrl}
@@ -59,10 +62,13 @@
                   data-window-id={windowId}
                   href={url}
                   on:click={handleTabLinkClick}
-                  class={cn(!(i === 0 && active) && 'hover:underline', 'py-2')}
+                  class={cn(
+                    !(id === currentTabId) && 'hover:underline',
+                    'py-2'
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-disabled={i === 0 && active}
+                  aria-disabled={id === currentTabId}
                 >
                   {#if title}
                     {title}
@@ -75,7 +81,7 @@
                   {title}
                 </span>
               {/if}
-              {#if i === 0 && active}
+              {#if id === currentTabId}
                 <span class="font-bold"> (current)</span>
               {/if}
             </div>

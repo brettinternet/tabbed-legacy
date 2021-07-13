@@ -17,12 +17,14 @@
     onClickSettings: () => void = null
 </script>
 
-<header class="mx-auto justify-around items-center bg-blueGray-500 px-2 py-3">
+<header
+  class="mx-auto justify-around items-center bg-blueGray-500 px-2 py-3 sticky top-0 bg-white border-b border-gray-300 z-header lg:static lg:border-none"
+>
   <ul class="w-full p-0 m-0 flex justify-center items-stretch text-gray-800">
     {#if onClickPopout}
       <li>
         <button
-          class="px-4 py-1 h-full"
+          class="px-4 py-1 h-full rounded-sm"
           on:click={onClickPopout}
           aria-label="Pop out to a new window"
           title="Pop out to a new window"><Popout /></button
@@ -32,7 +34,7 @@
     {#if onClickHome}
       <li>
         <button
-          class="px-4 py-1 h-full"
+          class="px-4 py-1 h-full rounded-sm"
           on:click={onClickHome}
           aria-label="Open in a new tab"
           title="Open in a new tab"><TabView /></button
@@ -42,7 +44,7 @@
     {#if onClickSettings}
       <li class="lg:hidden">
         <button
-          class="px-4 py-1 h-full"
+          class="px-4 py-1 h-full rounded-sm"
           on:click={onClickSettings}
           aria-label="Settings"
           title="Settings"><Cog /></button
@@ -59,7 +61,7 @@
       <li>
         <button
           class={cn(
-            'px-4 py-1 h-full',
+            'px-4 py-1 h-full rounded-sm',
             currentLayout === layouts.GRID && 'bg-gray-200'
           )}
           on:click={onClickGridLayout}
@@ -72,7 +74,7 @@
       <li>
         <button
           class={cn(
-            'px-4 py-1 h-full',
+            'px-4 py-1 h-full rounded-sm',
             currentLayout === layouts.LIST && 'bg-gray-200'
           )}
           on:click={onClickListLayout}
@@ -84,7 +86,7 @@
     {#if onClickSettings}
       <li class="hidden lg:block">
         <button
-          class="px-4 py-1 h-full"
+          class="px-4 py-1 h-full rounded-sm"
           on:click={onClickSettings}
           aria-label="Settings"
           title="Settings"><Cog /></button
