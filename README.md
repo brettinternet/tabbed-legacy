@@ -32,3 +32,49 @@ npm test
 
 - [Differences between API implementations](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Differences_between_API_implementations)
 - [rollup-plugin-chrome-extension supports Firefox >=v89](https://github.com/extend-chrome/rollup-plugin-chrome-extension#%EF%B8%8F-what-about-firefox-support)
+
+### Todo
+
+#### Windows & tabs
+
+- [ ] Window titles based on predominant hostnames and language like "& 4 more"
+- [ ] Window actions: focus/minimize, close - focused/minimized indicators
+- [ ] Tab actions: close, pin, deactivate?, middle click create new tab - pinned/active indicators
+- [ ] multi-select tabs and windows, shift click
+- [ ] Add focus/active listeners to background, refresh window/tab list on window/tab changes
+- [ ] select box (left), context menu for tab actions
+
+#### Sessions
+
+- [ ] Save session (window or entire group of windows), restore sessions (with incognito state intact)
+- [ ] Automatically save sessions (triggered before windows close or before Chrome exits?)
+
+#### Layouts
+
+- [ ] Grid layout ([1](https://github.com/isaacHagoel/svelte-dnd-action), [2](https://github.com/vaheqelyan/svelte-grid))
+- [ ] resize boxes
+- [ ] reformat drag/drop
+- [ ] zones to move window groups to? current/minimized/saved
+
+#### Search
+
+- [ ] Start searching on type or shortcut to focus search `/`
+- [ ] Search tab titles, urls
+
+#### Accessibility
+
+- [ ] tab-able elements, tab groups that can change focus with arrows
+
+#### App
+
+- [ ] Settings page ([1](https://github.com/rob-balfre/svelte-select))
+  - [ ] font size
+  - [ ]
+- [ ] Badge with total number of tabs open
+- [ ] Shortcuts - `?` help/shortcut list, `/` search
+- [ ] highlight duplicate tabs
+
+## Alternatives
+
+- [Tree Style Tab](https://github.com/piroor/treestyletab) - Firefox only
+- [Tab Manager Plus](https://github.com/stefanXO/Tab-Manager-Plus) - Firefox/Chromium
