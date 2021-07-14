@@ -83,7 +83,7 @@ export const closeTab = (tabIds: number | number[]) =>
 export const closeWindow = (windowId: number) =>
   browser.windows.remove(windowId)
 
-const focusWindow = async (windowId: number) => {
+export const focusWindow = async (windowId: number) => {
   await browser.windows.update(windowId, {
     focused: true,
   })
@@ -103,9 +103,18 @@ export const focusWindowTab = async (windowId: number, tabId: number) => {
   await activateTab(tabId)
 }
 
-export const openTab = async (tab: browser.tabs.Tab) => {
+export const openTab = async (
+  query: browser.tabs._QueryQueryInfo,
+  incognito = false
+) => {
+  let tab: browser.tabs.Tab
+  const matches = await browser.tabs.query(query)
+  if (matches.length === 1) {
+    tab = matches[0]
+  }
+
   const allowed = await browser.extension.isAllowedIncognitoAccess()
-  if (tab.incognito && !allowed) {
+  if (incognito && !allowed) {
     /**
      * Guide user to enable it:
      * https://stackoverflow.com/questions/17438354/how-can-i-enable-my-chrome-extension-in-incognito-mode/17443982#17443982
@@ -113,12 +122,14 @@ export const openTab = async (tab: browser.tabs.Tab) => {
     throw Error('No incognito access allowed')
   }
 
-  if (tab.id) {
+  if (tab.id && tab.windowId) {
     await focusWindowTab(tab.windowId, tab.id)
-    return await activateTab(tab.id)
-  } else if (!tab.incognito && browser.extension.inIncognitoContext) {
-    return await browser.windows.create(tab)
+  } else if (
+    (!incognito && browser.extension.inIncognitoContext) ||
+    (incognito && !browser.extension.inIncognitoContext)
+  ) {
+    await browser.windows.create({ ...tab, incognito })
   } else {
-    return await browser.tabs.create(tab)
+    await browser.tabs.create(tab)
   }
 }
