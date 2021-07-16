@@ -1,29 +1,28 @@
 <!-- https://tailwindcomponents.com/component/toggle-switch -->
+<script lang="ts">
+  import cn from 'classnames'
+
+  import './toggle.css'
+
+  export let label: string,
+    id: string,
+    labelClassNames: string = null,
+    onChange: svelte.JSX.FormEventHandler<HTMLInputElement>
+</script>
 
 <div
   class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in"
 >
   <input
     type="checkbox"
-    name="toggle"
-    id="toggle"
-    class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"
+    {id}
+    class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-gray-300 appearance-none cursor-pointer"
+    on:change={onChange}
+    {...$$restProps}
   />
   <label
-    for="toggle"
+    for={id}
     class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"
   />
 </div>
-<label for="toggle" class="text-xs text-gray-700">Toggle me.</label>
-
-<style>
-  .toggle-checkbox:checked {
-    @apply right-0 border-green-400;
-    right: 0;
-    border-color: #68d391;
-  }
-  .toggle-checkbox:checked + .toggle-label {
-    @apply bg-green-400;
-    background-color: #68d391;
-  }
-</style>
+<label for={id} class={cn('text-xs', labelClassNames)}>{label}</label>
