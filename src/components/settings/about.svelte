@@ -13,7 +13,7 @@
 
   const thStyle = 'min-width:80px;'
   const thClassName =
-    'text-gray-500 font-light text-left min-w-min pr-1 align-top'
+    'text-gray-500 font-light text-left min-w-min pr-1 align-top dark:text-gray-300'
 </script>
 
 <h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">

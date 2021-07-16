@@ -13,9 +13,9 @@
 </script>
 
 <header
-  class="mx-auto justify-around items-center p-4 sticky top-0 bg-white border-b border-gray-300 z-header lg:static lg:border-none dark:bg-gray-900 dark:text-white dark:border-gray-500"
+  class="mx-auto justify-around items-center p-4 sticky top-0 bg-white border-b border-gray-300 z-header lg:static lg:border-none text-gray-800 dark:bg-gray-900 dark:text-white dark:border-gray-500"
 >
-  <ul class="w-full p-0 m-0 flex justify-center items-stretch text-gray-800">
+  <ul class="w-full p-0 m-0 flex justify-center items-stretch">
     <li
       class={cn(
         'w-full mr-3',

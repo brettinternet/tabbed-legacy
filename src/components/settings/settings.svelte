@@ -31,7 +31,7 @@
           }}
           class={cn(
             'mr-3 capitalize p-2 rounded-sm border-b-2',
-            selectedTab.name === name && 'border-blue-700'
+            selectedTab.name === name && 'border-blue-700 dark:border-blue-400'
           )}>{name}</button
         >
       {/each}

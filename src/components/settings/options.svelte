@@ -66,7 +66,7 @@
     <div class="mb-6">
       <fieldset class="mb-3 space-y-2" aria-describedby="layout-description">
         <legend>Layout</legend>
-        <div class="flex flex-row items-center space-x-4">
+        <div class="flex flex-row items-center space-x-6">
           <Radio
             id="list-layout-radio"
             label="List"
@@ -130,7 +130,7 @@
     <div class="mb-6">
       <fieldset class="mb-3 space-y-2" aria-describedby="theme-description">
         <legend>Theme</legend>
-        <div class="flex flex-row items-center space-x-4">
+        <div class="flex flex-row items-center space-x-6">
           <Radio
             id="light-theme-radio"
             label="Light"

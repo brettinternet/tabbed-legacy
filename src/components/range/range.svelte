@@ -10,7 +10,7 @@
 <div class="flex items-center">
   <input
     {id}
-    class="rounded-lg appearance-none bg-gray-300 h-2 mr-2"
+    class="rounded-lg appearance-none bg-gray-300 h-2 mr-2 dark:bg-gray-500"
     type="range"
     {value}
     on:change={onChange}

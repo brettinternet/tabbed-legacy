@@ -8,7 +8,7 @@
   const headerId = 'shortcuts-h1'
   const headerHeight = 76
   const th = 'pr-5 py-3 align-top text-right'
-  const td = 'text-gray-600'
+  const td = 'text-gray-600 dark:text-gray-300'
 </script>
 
 <Modal id="shortcuts-modal" {close} ariaLabelledby={headerId}>
