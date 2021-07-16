@@ -7,6 +7,13 @@
     "default_popup": "main/index.html"
   },
   "permissions": ["tabs", "contextMenus", "storage"],
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S"
+      }
+    }
+  },
   "browser_specific_settings": {
     "gecko": {
       "id": "{6c352909-bfa6-4143-98d2-8bf9441dc7da}"

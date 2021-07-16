@@ -7,7 +7,7 @@
 
   const headerId = 'shortcuts-h1'
   const headerHeight = 76
-  const th = 'pr-5 py-3 align-top'
+  const th = 'pr-5 py-3 align-top text-right'
   const td = 'text-gray-600'
 </script>
 
@@ -29,11 +29,15 @@
     </button>
   </header>
   <div
-    class="p-7 overflow-y-auto scroll"
+    class="px-7 pb-7 overflow-y-auto scroll"
     style={`height:calc(100% - ${headerHeight}px);`}
   >
-    <table>
+    <table class="mx-auto">
       <tbody>
+        <tr>
+          <th class={th}><Kbd>Ctrl</Kbd> + <Kbd>Shift</Kbd> + <Kbd>S</Kbd></th>
+          <td class={td}>Opens browser extension</td>
+        </tr>
         <tr>
           <th class={th}><Kbd>?</Kbd></th>
           <td class={td}>Toggle shortcuts display</td>

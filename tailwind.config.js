@@ -15,6 +15,9 @@ module.exports = {
       height: {
         modal: '30rem',
       },
+      fontSize: {
+        xxs: '.6rem',
+      },
     },
   },
   variants: {
