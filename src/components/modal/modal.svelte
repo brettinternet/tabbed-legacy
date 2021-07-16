@@ -5,6 +5,7 @@
   import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock'
   import { onMount, onDestroy } from 'svelte'
 
+  import { isPopup } from 'src/components/app/store'
   import { clickAway } from 'src/components/modal/click-away'
 
   export let id = "modal",
@@ -12,16 +13,19 @@
     ariaLabelledby: string
 
   let trap: FocusTrap, modal: HTMLElement, main: HTMLElement
+
   onMount(() => {
-    modal = document.getElementById(id)
     main = document.getElementById('main')
+    if (isPopup) {
+      // Hack: `overflow: hidden` on the body isn't enough for the 'popup' to disable body scroll
+      main.style.display = 'none'
+    }
+    modal = document.getElementById(id)
     disableBodyScroll(modal)
     trap = createFocusTrap(modal, {
       clickOutsideDeactivates: true
     })
     trap.activate()
-    // Hack: `overflow: hidden` on the body isn't enough for the 'popup' to disable body scroll
-    main.style.display = 'none'
   })
 
   onDestroy(() => {
@@ -29,7 +33,9 @@
     trap.deactivate({
       returnFocus: true,
     })
-    main.style.display = ''
+    if (isPopup) {
+      main.style.display = ''
+    }
   })
 </script>
 
