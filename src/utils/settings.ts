@@ -1,3 +1,5 @@
+import { isProd } from 'src/utils/env'
+
 export type Layout = 'list' | 'grid'
 export const layouts: { [key: string]: Layout } = {
   LIST: 'list',
@@ -35,6 +37,7 @@ export type Settings = {
     height: number
   }
   theme: Theme
+  debugMode: boolean
 }
 
 export const defaultSettings: Settings = {
@@ -48,4 +51,5 @@ export const defaultSettings: Settings = {
     height: 600,
   },
   theme: themes.LIGHT,
+  debugMode: !isProd,
 }

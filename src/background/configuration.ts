@@ -6,12 +6,17 @@ import {
 } from 'src/utils/browser/actions'
 import { popupUrl, panelUrl } from 'src/utils/env'
 import { Settings, extensionClickActions } from 'src/utils/settings'
+import { log } from 'src/utils/logger'
+
+const logContext = 'background/configuration'
 
 const enablePopup = async () => {
+  log.debug(logContext, 'enablePopup')
   await browser.browserAction.setPopup({ popup: popupUrl })
 }
 
 const disablePopup = async () => {
+  log.debug(logContext, 'disablePopup')
   await browser.browserAction.setPopup({ popup: '' })
 }
 
@@ -19,6 +24,7 @@ const disablePopup = async () => {
  * Setup browser toolbar context menus
  */
 const setupMenus = (prefersTab?: boolean) => {
+  log.debug(logContext, 'setupMenus')
   if (browser.browserAction.openPopup) {
     browser.contextMenus.create({
       title: 'Open popup',
@@ -62,6 +68,7 @@ const setupMenus = (prefersTab?: boolean) => {
 export const setupActions = async (
   extensionClickAction: Settings['extensionClickAction']
 ) => {
+  log.debug(logContext, 'setupActions')
   const prefersTab = extensionClickAction === extensionClickActions.TAB
 
   if (prefersTab) {

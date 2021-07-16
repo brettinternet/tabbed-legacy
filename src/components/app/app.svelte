@@ -8,11 +8,14 @@
     isPopup,
   } from 'src/components/app/store'
   import { settings } from 'src/components/settings/store'
+  import { log } from 'src/utils/logger'
   import AppLayout from 'src/components/layout/layout.svelte'
   import PageLoader from 'src/components/loader/page-loader.svelte'
   import SessionLayouts from 'src/components/sessions/layouts.svelte'
   import SettingsModal from 'src/components/settings/settings.svelte'
   import ShortcutsModal from 'src/components/shortcuts/shortcuts.svelte'
+
+  const logContext = 'components/app/app.svelte'
 
   const openSettings = () => {
     showSettings.set(true)
@@ -28,7 +31,7 @@
     console.log(ev.currentTarget.value)
   }
 
-  $: console.log('settings', $settings)
+  $: log.debug(logContext, $settings)
 </script>
 
 {#if $isLoading}

@@ -10,3 +10,4 @@ export const privacyPolicyUrl = `${repoUrl}/blob/main/PRIVACYPOLICY.md`
 export const buildTime = process.env.BUILD_TIME
 export const buildVersion = process.env.BUILD_VERSION
 export const appName = process.env.APP_NAME
+export const isProd = process.env.NODE_ENV === 'production'

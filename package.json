@@ -26,6 +26,7 @@
     "focus-trap": "^6.6.0",
     "hotkeys-js": "^3.8.7",
     "lodash": "^4.17.21",
+    "loglevel": "^1.7.1",
     "postcss": "^8.2.4",
     "svelte": "^3.31.2",
     "svelte-i18n": "^3.3.9",

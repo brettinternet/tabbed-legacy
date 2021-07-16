@@ -57,6 +57,12 @@
       theme: ev.currentTarget.value as Theme,
     })
   }
+
+  const handleChangeDebugMode: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
+    await updateSettings({
+      debugMode: ev.currentTarget.checked,
+    })
+  }
 </script>
 
 <h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">Options</h1>
@@ -209,6 +215,20 @@
       <p id="popup-dimension-description" class="text-gray-600">
         Changes popup dimensions. Browsers limit the permissable dimensions of
         popups.
+      </p>
+    </div>
+    <div class="mb-6">
+      <div class="mb-3">
+        <Toggle
+          id="debug-mode-toggle"
+          label="Debug mode"
+          onChange={handleChangeDebugMode}
+          checked={$settings.debugMode}
+          aria-describedby="debug-mode-description"
+        />
+      </div>
+      <p id="debug-mode-description" class="text-gray-600">
+        Enables verbose debugging in the console.
       </p>
     </div>
   </div>

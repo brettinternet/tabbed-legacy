@@ -1,16 +1,18 @@
 import { tick } from 'svelte'
-import { writable, get, Subscriber } from 'svelte/store'
+import { writable, get } from 'svelte/store'
 import hotkeys from 'hotkeys-js'
 
 import { defaultSettings, Settings, themes } from 'src/utils/settings'
 import type { Theme } from 'src/utils/settings'
-import type { ReloadActionsMessage, ReloadTabListeners } from 'src/utils/messages'
-import { readSettings, writeSetting } from 'src/utils/browser/storage'
-import { isPopup, showSettings, showShortcuts } from 'src/components/app/store'
+import type { ReloadActionsMessage, ReloadTabListeners, UpdateLogLevel } from 'src/utils/messages'
 import {
   MESSAGE_TYPE_RELOAD_ACTIONS,
   MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
+  MESSAGE_TYPE_UPDATE_LOG_LEVEL
 } from 'src/utils/messages'
+import { readSettings, writeSetting } from 'src/utils/browser/storage'
+import { isPopup, showSettings, showShortcuts } from 'src/components/app/store'
+import { updateLogLevel } from 'src/utils/logger'
 
 const shortcutScopes = {
   ENABLED: 'enabled',
@@ -105,6 +107,13 @@ const handleSettingsSideEffects = async (
       break
     case 'theme':
       setTheme(value as Theme)
+      break
+    case 'debugMode':
+      updateLogLevel(value as boolean)
+      if (updateBackgroundTasks) {
+        const message: UpdateLogLevel = { type: MESSAGE_TYPE_UPDATE_LOG_LEVEL, value: value as boolean }
+        await browser.runtime.sendMessage(message)
+      }
       break
   }
 }

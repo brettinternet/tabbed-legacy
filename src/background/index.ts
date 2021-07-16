@@ -1,14 +1,18 @@
 import { readSettings } from 'src/utils/browser/storage'
 import { buildVersion, buildTime } from 'src/utils/env'
+import { log } from 'src/utils/logger'
 
 import { setupActions } from './configuration'
 import { setupListeners } from './listeners'
 
-const setup = async () => {
+const logContext = 'background/index'
+
+const main = async () => {
+  log.debug(logContext, 'main')
   const settings = await readSettings()
 
-  setupActions(settings.extensionClickAction)
   setupListeners(settings)
+  setupActions(settings.extensionClickAction)
 
   const bytesUsed = await browser.storage.sync.getBytesInUse()
   console.info(
@@ -18,4 +22,4 @@ const setup = async () => {
   )
 }
 
-setup()
+main()

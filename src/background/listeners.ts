@@ -2,21 +2,29 @@ import { debounce } from 'lodash'
 import {
   MESSAGE_TYPE_RELOAD_ACTIONS,
   MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
+  MESSAGE_TYPE_UPDATE_LOG_LEVEL
 } from 'src/utils/messages'
-import type { ReloadActionsMessage, ReloadTabListeners } from 'src/utils/messages'
+import type { ReloadActionsMessage, ReloadTabListeners, UpdateLogLevel } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
+import { updateLogLevel, log } from 'src/utils/logger'
 import { setupActions } from './configuration'
 
+const logContext = 'background/listeners'
 const BADGE_BACKGROUND_COLOR = '#3b82f6'
 
 const updateTabCountBadge = async () => {
-  let count: number
-  const tabs = await browser.tabs.query({})
-  count = tabs.length
-  await browser.browserAction.setBadgeBackgroundColor({
-    color: BADGE_BACKGROUND_COLOR,
-  })
-  await browser.browserAction.setBadgeText({ text: count ? `${count}` : '' })
+  try {
+    log.debug(logContext, 'updateTabCountBadge')
+    let count: number
+    const tabs = await browser.tabs.query({})
+    count = tabs.length
+    await browser.browserAction.setBadgeBackgroundColor({
+      color: BADGE_BACKGROUND_COLOR,
+    })
+    await browser.browserAction.setBadgeText({ text: count ? `${count}` : '' })
+  } catch (err) {
+    log.error(err)
+  }
 }
 
 const clearTabCountBadge = async () => {
@@ -26,6 +34,7 @@ const clearTabCountBadge = async () => {
 const updateTabCountDebounce = debounce(updateTabCountBadge, 250)
 
 const setupTabListeners = async (showTabCountBadge: boolean) => {
+  log.debug(logContext, 'setupTabListeners')
   if (showTabCountBadge) {
     updateTabCountDebounce()
     browser.tabs.onUpdated.addListener(updateTabCountDebounce)
@@ -46,12 +55,9 @@ const setupTabListeners = async (showTabCountBadge: boolean) => {
 }
 
 export const setupListeners = async (settings: Settings) => {
+  updateLogLevel(settings.debugMode)
+  log.debug(logContext, 'setupListeners')
   setupTabListeners(settings.showTabCountBadge)
-
-  // browser.tabs.onActivated.addListener(handleActiveTabChange)
-  // browser.windows.onFocusChanged.addListener(handleFocusWindowChange)
-  // browser.windows.onCreated.addListener(fetch)
-  // browser.windows.onRemoved.addListener(fetch)
 
   browser.runtime.onMessage.addListener((message: ReloadActionsMessage, _sender, _sendResponse) => {
     if (message.type === MESSAGE_TYPE_RELOAD_ACTIONS) {
@@ -65,6 +71,16 @@ export const setupListeners = async (settings: Settings) => {
     (message: ReloadTabListeners, _sender, _sendResponse) => {
       if (message.type === MESSAGE_TYPE_RELOAD_TAB_LISTENERS) {
         setupTabListeners(message.value)
+      }
+
+      return false
+    }
+  )
+
+  browser.runtime.onMessage.addListener(
+    (message: UpdateLogLevel, _sender, _sendResponse) => {
+      if (message.type === MESSAGE_TYPE_UPDATE_LOG_LEVEL) {
+        updateLogLevel(message.value)
       }
 
       return false
