@@ -70,7 +70,8 @@ const setTheme = (theme: Theme) => {
 
 const handleSettingsSideEffects = async (
   key: string,
-  value: unknown
+  value: unknown,
+  updateBackgroundTasks?: boolean,
 ) => {
   switch (key as keyof Settings) {
     case 'fontSize':
@@ -80,7 +81,7 @@ const handleSettingsSideEffects = async (
       setupShortcuts(value as boolean) // TODO: fix this fn's types
       break
     case 'showTabCountBadge':
-      {
+      if (updateBackgroundTasks) {
         const message: ReloadTabListeners = {
           type: MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
           value: value as boolean
@@ -89,7 +90,7 @@ const handleSettingsSideEffects = async (
         break
       }
     case 'extensionClickAction':
-      {
+      if (updateBackgroundTasks) {
         const message: ReloadActionsMessage = { type: MESSAGE_TYPE_RELOAD_ACTIONS, value: value as Settings['extensionClickAction'] }
         await browser.runtime.sendMessage(message)
         break
@@ -111,7 +112,7 @@ const handleSettingsSideEffects = async (
 const getInitialSettings = async () => {
   const settings = await readSettings()
   for (let key in defaultSettings) {
-    await handleSettingsSideEffects(key, settings[key])
+    await handleSettingsSideEffects(key, settings[key], false)
   }
   return settings
 }
@@ -130,6 +131,6 @@ export const updateSettings = async (values: Partial<Settings>) => {
     return ({ ...current, ...values })
   })
   for (let key in values) {
-    handleSettingsSideEffects(key, values[key])
+    handleSettingsSideEffects(key, values[key], true)
   }
 }

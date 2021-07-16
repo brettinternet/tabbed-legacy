@@ -15,7 +15,7 @@
   } from 'src/utils/browser/actions'
   import AppLayout from 'src/components/layout/layout.svelte'
   import PageLoader from 'src/components/loader/page-loader.svelte'
-  import Content from 'src/components/content/content.svelte'
+  import SessionLayouts from 'src/components/sessions/layouts.svelte'
   import SettingsModal from 'src/components/settings/settings.svelte'
   import ShortcutsModal from 'src/components/shortcuts/shortcuts.svelte'
   import { layouts } from 'src/utils/settings'
@@ -59,7 +59,7 @@
     onClickListLayout={handleListLayout}
     onClickGridLayout={handleGridLayout}
   >
-    <Content currentLayout={$settings.layout} />
+    <SessionLayouts currentLayout={$settings.layout} />
   </AppLayout>
   {#if $showSettings}
     <SettingsModal close={closeSettings} />

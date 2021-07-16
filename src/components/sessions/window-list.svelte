@@ -3,7 +3,7 @@
 
   import { focusWindowTab, focusWindow } from 'src/utils/browser/query'
   import Window from 'src/components/icons/window.svelte'
-  import { replaceImageError } from 'src/components/content/dom'
+  import { replaceImageError } from 'src/components/sessions/dom'
   import Focused from 'src/components/icons/eye.svelte'
 
   export let windows: browser.windows.Window[],
