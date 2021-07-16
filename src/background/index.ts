@@ -1,7 +1,7 @@
 import { readSettings } from 'src/utils/browser/storage'
 import { buildVersion, buildTime } from 'src/utils/env'
 
-import { setupMenus, setupActions } from './configuration'
+import { setupActions } from './configuration'
 import { setupListeners } from './listeners'
 
 const setup = async () => {
@@ -9,7 +9,6 @@ const setup = async () => {
 
   setupActions(settings.extensionClickAction)
   setupListeners(settings)
-  setupMenus()
 
   const bytesUsed = await browser.storage.sync.getBytesInUse()
   console.info(

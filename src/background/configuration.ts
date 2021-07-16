@@ -7,15 +7,31 @@ import {
 import { popupUrl, panelUrl } from 'src/utils/env'
 import { Settings, extensionClickActions } from 'src/utils/settings'
 
+const enablePopup = async () => {
+  await browser.browserAction.setPopup({ popup: popupUrl })
+}
+
+const disablePopup = async () => {
+  await browser.browserAction.setPopup({ popup: '' })
+}
+
 /**
  * Setup browser toolbar context menus
  */
-export const setupMenus = () => {
+const setupMenus = (prefersTab?: boolean) => {
   if (browser.browserAction.openPopup) {
     browser.contextMenus.create({
       title: 'Open popup',
       contexts: ['browser_action'],
-      onclick: openExtensionPopup,
+      onclick: async () => {
+        if (prefersTab) {
+          await enablePopup()
+          await openExtensionPopup()
+          disablePopup()
+        } else {
+          openExtensionPopup()
+        }
+      },
     })
   }
 
@@ -46,14 +62,16 @@ export const setupMenus = () => {
 export const setupActions = async (
   extensionClickAction: Settings['extensionClickAction']
 ) => {
-  // TODO: check settings for preferred default action
-  if (extensionClickAction === extensionClickActions.TAB) {
-    await browser.browserAction.setPopup({ popup: '' }) // remove popup
+  const prefersTab = extensionClickAction === extensionClickActions.TAB
+  if (prefersTab) {
+    await disablePopup()
     browser.browserAction.onClicked.addListener(openExtensionTab)
   } else {
     browser.browserAction.onClicked.removeListener(openExtensionTab)
-    await browser.browserAction.setPopup({ popup: popupUrl })
+    await enablePopup()
   }
+
+  setupMenus(prefersTab)
 
   if (browser.sidebarAction) {
     browser.sidebarAction.setPanel({
