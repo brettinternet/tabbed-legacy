@@ -7,9 +7,6 @@ setupI18n()
 
 const app = new App({
   target: document.body,
-  props: {
-    hideNav: true,
-  },
 })
 
 setupDocument()

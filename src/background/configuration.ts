@@ -2,8 +2,11 @@ import {
   openExtensionPopup,
   openExtensionSidebar,
   openExtensionTab,
+  openExtensionPopout,
 } from 'src/utils/browser/actions'
-import { popupUrl } from 'src/utils/env'
+import { popupUrl, panelUrl } from 'src/utils/env'
+import { readSettings } from 'src/utils/browser/storage'
+import { extensionClickActions } from 'src/utils/settings'
 
 /**
  * Setup browser toolbar context menus
@@ -30,6 +33,12 @@ export const setupMenus = () => {
     contexts: ['browser_action'],
     onclick: openExtensionTab,
   })
+
+  browser.contextMenus.create({
+    title: 'Open in popout window',
+    contexts: ['browser_action'],
+    onclick: openExtensionPopout,
+  })
 }
 
 /**
@@ -37,18 +46,18 @@ export const setupMenus = () => {
  */
 export const setupActions = async () => {
   // TODO: check settings for preferred default action
-  const openAsPopup = true
-  if (openAsPopup) {
-    browser.browserAction.onClicked.removeListener(openExtensionTab)
-    await browser.browserAction.setPopup({ popup: popupUrl })
-  } else {
+  const settings = await readSettings()
+  if (settings?.extensionClickAction === extensionClickActions.TAB) {
     await browser.browserAction.setPopup({ popup: '' }) // remove popup
     browser.browserAction.onClicked.addListener(openExtensionTab)
+  } else {
+    browser.browserAction.onClicked.removeListener(openExtensionTab)
+    await browser.browserAction.setPopup({ popup: popupUrl })
   }
 
   if (browser.sidebarAction) {
     browser.sidebarAction.setPanel({
-      panel: popupUrl,
+      panel: panelUrl,
     })
   }
 }

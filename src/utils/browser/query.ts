@@ -122,7 +122,7 @@ export const openTab = async (
     throw Error('No incognito access allowed')
   }
 
-  if (tab.id && tab.windowId) {
+  if (tab?.id && tab?.windowId) {
     await focusWindowTab(tab.windowId, tab.id)
   } else if (
     (!incognito && browser.extension.inIncognitoContext) ||
@@ -130,6 +130,7 @@ export const openTab = async (
   ) {
     await browser.windows.create({ ...tab, incognito })
   } else {
-    await browser.tabs.create(tab)
+    const url = Array.isArray(query.url) ? query.url[0] : query.url
+    await browser.tabs.create(tab || { url })
   }
 }
