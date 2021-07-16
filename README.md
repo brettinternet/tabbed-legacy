@@ -79,3 +79,4 @@ npm test
 
 - [Tree Style Tab](https://github.com/piroor/treestyletab) - Firefox only
 - [Tab Manager Plus](https://github.com/stefanXO/Tab-Manager-Plus) - Firefox/Chromium
+- [Tab Session Manager](https://github.com/sienori/Tab-Session-Manager) - Firefox/Chromium
