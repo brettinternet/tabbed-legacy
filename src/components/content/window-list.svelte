@@ -1,7 +1,7 @@
 <script lang="ts">
   import cn from 'classnames'
 
-  import { focusWindowTab } from 'src/utils/browser/query'
+  import { focusWindowTab, focusWindow } from 'src/utils/browser/query'
   import Window from 'src/components/icons/window.svelte'
   import { replaceImageError } from 'src/components/content/dom'
   import Focused from 'src/components/icons/eye.svelte'
@@ -11,13 +11,21 @@
     currentWindowId: number = null,
     currentTabId: number = null
 
+  const handleWindowClick = async (ev: MouseEvent) => {
+    const button = ev.currentTarget as HTMLAnchorElement
+    const windowId: number | undefined = parseInt(button.dataset.windowId)
+    if (windowId) {
+      await focusWindow(windowId)
+    }
+  }
+
   const handleTabLinkClick = async (ev: MouseEvent) => {
     const anchor = ev.currentTarget as HTMLAnchorElement
-    const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
-    const tabId: number | undefined = parseInt(anchor.dataset.id)
+    const tabId: number | undefined = parseInt(anchor.dataset.tabId)
     const windowId: number | undefined = parseInt(anchor.dataset.windowId)
     if (tabId && windowId) {
       ev.preventDefault()
+      const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
       if (!ariaDisabled) {
         await focusWindowTab(windowId, tabId)
         currentWindowId = windowId
@@ -39,10 +47,12 @@
         <div class="flex flex-row items-center py-3 mr-3 leading-5">
           <div class="flex justify-center w-5 mr-3"><Window /></div>
           <h2 class="font-semibold flex items-center">
-            {#if currentWindowId === id}
-              Current
-            {/if}
-            Window
+            <button data-window-id={id} on:click={handleWindowClick}>
+              {#if currentWindowId === id}
+                Current
+              {/if}
+              Window
+            </button>
             {#if currentWindowId === id}
               <span class="text-blue-700 ml-2"><Focused /></span>
             {/if}
@@ -64,7 +74,7 @@
               <div class="leading-5 inline-flex items-center">
                 {#if url}
                   <a
-                    data-id={id}
+                    data-tab-id={id}
                     data-window-id={windowId}
                     href={url}
                     on:click={handleTabLinkClick}

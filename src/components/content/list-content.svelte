@@ -78,17 +78,11 @@
     ...(previousSessions || []),
   ].find(session => session && session.id === $selectedSessionId)
 
-  $: console.log(
-    'selectedSession: ',
-    selectedSession,
-    $currentWindowId,
-    $currentTabId
-  )
-
   browser.tabs.onActivated.addListener(handleActiveTabChange)
   browser.windows.onFocusChanged.addListener(handleFocusWindowChange)
   browser.windows.onCreated.addListener(fetch)
   browser.windows.onRemoved.addListener(fetch)
+
   onDestroy(() => {
     browser.tabs.onActivated.removeListener(handleActiveTabChange)
     browser.windows.onFocusChanged.removeListener(handleFocusWindowChange)
@@ -141,8 +135,8 @@
       </button>
     {/if}
 
-    {#if selectedSessionId && selectedSession}
-      <div class="md:hidden px-10 py-4">
+    {#if $selectedSessionId && selectedSession}
+      <div class="md:hidden px-4 xs:px-10 py-4">
         <WindowList
           windows={selectedSession.windows}
           ariaLabelledby={$selectedSessionId}
@@ -164,7 +158,7 @@
       </h2>
     {/if}
   </menu>
-  {#if selectedSessionId && selectedSession}
+  {#if $selectedSessionId && selectedSession}
     <article class="hidden md:block md:col-span-9 2xl:col-span-10 pb-10">
       <WindowList
         windows={selectedSession.windows}

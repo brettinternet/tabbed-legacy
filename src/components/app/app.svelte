@@ -1,76 +1,74 @@
 <script lang="ts">
   import { _, isLoading } from 'svelte-i18n'
-  import './app'
-  import Layout from 'src/components/layout/layout.svelte'
+
+  import './scrollbar.css'
+  import {
+    isPopout,
+    isTab,
+    showSettings,
+    showShortcuts,
+  } from 'src/components/app/store'
+  import { settings, updateSettings } from 'src/components/settings/store'
+  import {
+    openExtensionTab,
+    openExtensionPopout,
+  } from 'src/utils/browser/actions'
+  import AppLayout from 'src/components/layout/layout.svelte'
   import PageLoader from 'src/components/loader/page-loader.svelte'
   import Content from 'src/components/content/content.svelte'
-  import { url } from 'src/utils/url-store'
+  import SettingsModal from 'src/components/settings/settings.svelte'
+  import ShortcutsModal from 'src/components/shortcuts/shortcuts.svelte'
   import { layouts } from 'src/utils/settings'
 
-  export let width: number = null,
-    height: number = null,
-    hideNav = false
-
-  if (width && height) {
-    document.body.style.minWidth = `${width}px`
-    document.body.style.minHeight = `${height}px`
-  }
-
   const openPopout = async () => {
-    await window.chrome.windows.create({
-      type: 'popup',
-      focused: true,
-      url: 'popup/index.html?uimode=popout',
-      height,
-      width,
-    })
+    await openExtensionPopout()
   }
-
   const openTab = async () => {
-    await window.chrome.tabs.create({ url: 'main/index.html?uimode=settings' })
+    await openExtensionTab()
   }
 
   const openSettings = () => {
-    console.log('open settings...')
+    showSettings.set(true)
+  }
+  const closeSettings = () => {
+    showSettings.set(false)
+  }
+  const closeShortcuts = () => {
+    showShortcuts.set(false)
   }
 
-  $: isPopout =
-    window.location.search.includes('popout') ||
-    $url.searchParams.get('uimode') === 'popout'
-  $: isTab =
-    window.location.href.includes('main/index.html') ||
-    $url.href.includes('main/index.html')
-
-  let currentLayout = layouts.LIST
   const handleListLayout = () => {
-    currentLayout = layouts.LIST
+    updateSettings({ layout: layouts.LIST })
   }
   const handleGridLayout = () => {
-    currentLayout = layouts.GRID
+    updateSettings({ layout: layouts.GRID })
   }
+
+  $: console.log('settings', $settings)
 </script>
 
 {#if $isLoading}
   <PageLoader hideLabel />
-{:else if isPopout || isTab}
-  <Layout
+{:else if $settings}
+  <AppLayout
     pageTitle={$_('popup.page_title', { default: 'Options' })}
     onClickSettings={openSettings}
-    {currentLayout}
+    onClickHome={isPopout && !isTab && openTab}
+    onClickPopout={!isPopout && !isTab && openPopout}
+    currentLayout={$settings.layout}
     onClickListLayout={handleListLayout}
     onClickGridLayout={handleGridLayout}
   >
-    <Content {currentLayout} />
-  </Layout>
-{:else}
-  <Layout
-    pageTitle={$_('popup.page_title', { default: 'Options' })}
-    onClickHome={openTab}
-    onClickPopout={!hideNav && openPopout}
-    {currentLayout}
-    onClickListLayout={handleListLayout}
-    onClickGridLayout={handleGridLayout}
+    <Content currentLayout={$settings.layout} />
+  </AppLayout>
+  {#if $showSettings}
+    <SettingsModal close={closeSettings} />
+  {/if}
+  {#if $showShortcuts}
+    <ShortcutsModal close={closeShortcuts} />
+  {/if}
+  <!-- <div
+    style={`width:${$settings.popupDimensions.width}px;height:${$settings.popupDimensions.height}px`}
   >
-    <Content {currentLayout} />
-  </Layout>
+  </div> -->
 {/if}

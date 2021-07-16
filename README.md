@@ -67,11 +67,6 @@ npm test
 
 #### App
 
-- [ ] Settings page ([1](https://github.com/rob-balfre/svelte-select))
-  - [ ] font size
-  - [ ]
-- [ ] Badge with total number of tabs open
-- [ ] Shortcuts - `?` help/shortcut list, `/` search
 - [ ] highlight duplicate tabs
 
 ## Alternatives
