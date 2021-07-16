@@ -6,5 +6,10 @@
   "browser_action": {
     "default_popup": "main/index.html"
   },
-  "permissions": ["tabs", "contextMenus", "storage"]
+  "permissions": ["tabs", "contextMenus", "storage"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{6c352909-bfa6-4143-98d2-8bf9441dc7da}"
+    }
+  }
 }
