@@ -42,23 +42,22 @@ npm test
 - [ ] Tab actions: close, pin, deactivate?, middle click create new tab - pinned/active indicators
 - [ ] multi-select tabs and windows, shift click
 - [ ] Add focus/active listeners to background, refresh window/tab list on window/tab changes
+- [ ] save tab groups
 - [ ] select box (left), context menu for tab actions
 
 #### Sessions
 
 - [ ] Save session (window or entire group of windows), restore sessions (with incognito state intact)
-- [ ] Automatically save sessions (triggered before windows close or before Chrome exits?)
+- [ ] Automatically save sessions (on window close, regular save)
 
 #### Layouts
 
 - [ ] Grid layout ([1](https://github.com/isaacHagoel/svelte-dnd-action), [2](https://github.com/vaheqelyan/svelte-grid))
 - [ ] resize boxes
-- [ ] reformat drag/drop
 - [ ] zones to move window groups to? current/minimized/saved
 
 #### Search
 
-- [ ] Start searching on type or shortcut to focus search `/`
 - [ ] Search tab titles, urls
 
 #### Accessibility
@@ -68,6 +67,13 @@ npm test
 #### App
 
 - [ ] highlight duplicate tabs
+- [ ] save last selected session
+- [ ] allow to optionally save private windows
+
+#### Related issues
+
+- [Popup window doesn't respect media queries with a dynamically set width](https://bugs.chromium.org/p/chromium/issues/detail?id=1230120)
+  - The workaround for this Chrome issue has been to make the popup utilize the smallest width's media query. This is a very minor issue.
 
 ## Alternatives
 
