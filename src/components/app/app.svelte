@@ -2,7 +2,11 @@
   import { _, isLoading } from 'svelte-i18n'
 
   import './scrollbar.css'
-  import { showSettings, showShortcuts } from 'src/components/app/store'
+  import {
+    showSettings,
+    showShortcuts,
+    isPopup,
+  } from 'src/components/app/store'
   import { settings } from 'src/components/settings/store'
   import AppLayout from 'src/components/layout/layout.svelte'
   import PageLoader from 'src/components/loader/page-loader.svelte'
@@ -35,6 +39,7 @@
     onClickSettings={openSettings}
     currentLayout={$settings.layout}
     onChangeSearch={handleChangeSearch}
+    height={isPopup && $settings.popupDimensions?.height}
   >
     <SessionLayouts currentLayout={$settings.layout} />
   </AppLayout>

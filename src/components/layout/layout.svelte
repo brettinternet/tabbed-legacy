@@ -6,14 +6,24 @@
   export let pageTitle: string = null,
     currentLayout: Layout = null,
     onClickSettings: () => void = null,
-    onChangeSearch: svelte.JSX.ChangeEventHandler<HTMLInputElement>
+    onChangeSearch: svelte.JSX.ChangeEventHandler<HTMLInputElement>,
+    height: number = null
 </script>
 
 <svelte:head>
   <title>{pageTitle ? `${pageTitle} - ${appName}` : appName}</title>
 </svelte:head>
 
-<Header {currentLayout} {onClickSettings} {onChangeSearch} />
-<main id="main" class="dark:bg-gray-900 dark:text-white">
-  <slot />
-</main>
+{#if height}
+  <div id="popup" style={`height:${height}px;`} class="scroll overflow-y-auto">
+    <Header {currentLayout} {onClickSettings} {onChangeSearch} />
+    <main id="main" class="dark:bg-gray-900 dark:text-white">
+      <slot />
+    </main>
+  </div>
+{:else}
+  <Header {currentLayout} {onClickSettings} {onChangeSearch} />
+  <main id="main" class="dark:bg-gray-900 dark:text-white">
+    <slot />
+  </main>
+{/if}

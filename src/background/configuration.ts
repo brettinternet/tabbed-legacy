@@ -63,6 +63,7 @@ export const setupActions = async (
   extensionClickAction: Settings['extensionClickAction']
 ) => {
   const prefersTab = extensionClickAction === extensionClickActions.TAB
+
   if (prefersTab) {
     await disablePopup()
     browser.browserAction.onClicked.addListener(openExtensionTab)
