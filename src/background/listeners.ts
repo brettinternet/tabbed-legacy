@@ -1,9 +1,10 @@
 import { debounce } from 'lodash'
-import { readSettings } from 'src/utils/browser/storage'
 import {
   MESSAGE_TYPE_RELOAD_ACTIONS,
   MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
 } from 'src/utils/messages'
+import type { ReloadActionsMessage, ReloadTabListeners } from 'src/utils/messages'
+import type { Settings } from 'src/utils/settings'
 import { setupActions } from './configuration'
 
 const BADGE_BACKGROUND_COLOR = '#3b82f6'
@@ -24,9 +25,8 @@ const clearTabCountBadge = async () => {
 
 const updateTabCountDebounce = debounce(updateTabCountBadge, 250)
 
-const setupTabListeners = async () => {
-  const settings = await readSettings()
-  if (settings.showTabCountBadge) {
+const setupTabListeners = async (showTabCountBadge: boolean) => {
+  if (showTabCountBadge) {
     updateTabCountDebounce()
     browser.tabs.onUpdated.addListener(updateTabCountDebounce)
     browser.tabs.onRemoved.addListener(updateTabCountDebounce)
@@ -45,31 +45,29 @@ const setupTabListeners = async () => {
   }
 }
 
-export const setupListeners = () => {
-  setupTabListeners()
+export const setupListeners = async (settings: Settings) => {
+  setupTabListeners(settings.showTabCountBadge)
 
   // browser.tabs.onActivated.addListener(handleActiveTabChange)
   // browser.windows.onFocusChanged.addListener(handleFocusWindowChange)
   // browser.windows.onCreated.addListener(fetch)
   // browser.windows.onRemoved.addListener(fetch)
 
-  browser.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+  browser.runtime.onMessage.addListener((message: ReloadActionsMessage, _sender, _sendResponse) => {
     if (message.type === MESSAGE_TYPE_RELOAD_ACTIONS) {
-      return new Promise(resolve => {
-        setupActions().then(resolve)
-      })
+      setupActions(message.value)
     }
 
     return false
   })
 
-  browser.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
-    if (message.type === MESSAGE_TYPE_RELOAD_TAB_LISTENERS) {
-      return new Promise(resolve => {
-        setupTabListeners().then(resolve)
-      })
-    }
+  browser.runtime.onMessage.addListener(
+    (message: ReloadTabListeners, _sender, _sendResponse) => {
+      if (message.type === MESSAGE_TYPE_RELOAD_TAB_LISTENERS) {
+        setupTabListeners(message.value)
+      }
 
-    return false
-  })
+      return false
+    }
+  )
 }

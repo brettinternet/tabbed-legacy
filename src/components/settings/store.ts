@@ -4,6 +4,7 @@ import hotkeys from 'hotkeys-js'
 
 import { defaultSettings, Settings, themes } from 'src/utils/settings'
 import type { Theme } from 'src/utils/settings'
+import type { ReloadActionsMessage, ReloadTabListeners } from 'src/utils/messages'
 import { readSettings, writeSetting } from 'src/utils/browser/storage'
 import { isPopup, showSettings, showShortcuts } from 'src/components/app/store'
 import {
@@ -79,28 +80,36 @@ const handleSettingsSideEffects = async (
       setupShortcuts(value as boolean) // TODO: fix this fn's types
       break
     case 'showTabCountBadge':
-      await browser.runtime.sendMessage({
-        type: MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
-      })
-      break
+      {
+        const message: ReloadTabListeners = {
+          type: MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
+          value: value as boolean
+        }
+        await browser.runtime.sendMessage(message)
+        break
+      }
     case 'extensionClickAction':
-      await browser.runtime.sendMessage({ type: MESSAGE_TYPE_RELOAD_ACTIONS })
-      break
+      {
+        const message: ReloadActionsMessage = { type: MESSAGE_TYPE_RELOAD_ACTIONS, value: value as Settings['extensionClickAction'] }
+        await browser.runtime.sendMessage(message)
+        break
+      }
     case 'popupDimensions':
       const width = (value as Record<string, number>)?.width // TODO: fix typing
       const height = (value as Record<string, number>)?.height
       if (isPopup && width && height) {
-        document.documentElement.style.width = `${width}px`
-        document.documentElement.style.height = `${height}px`
+        document.body.style.width = `${width}px`
+        document.body.style.height = `${height}px`
       }
       break
     case 'theme':
       setTheme(value as Theme)
+      break
   }
 }
 
 const getInitialSettings = async () => {
-  let settings = await readSettings()
+  const settings = await readSettings()
   for (let key in defaultSettings) {
     await handleSettingsSideEffects(key, settings[key])
   }
@@ -108,16 +117,18 @@ const getInitialSettings = async () => {
 }
 
 export const settings = writable<Settings>(null, set => {
-  const setup = async () => {
+  const read = async () => {
     set(await getInitialSettings())
   }
 
-  setup()
+  read()
 })
 
 export const updateSettings = async (values: Partial<Settings>) => {
   writeSetting(values)
-  settings.update(current => ({ ...current, ...values }))
+  settings.update(current => {
+    return ({ ...current, ...values })
+  })
   for (let key in values) {
     handleSettingsSideEffects(key, values[key])
   }

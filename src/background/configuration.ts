@@ -5,8 +5,7 @@ import {
   openExtensionPopout,
 } from 'src/utils/browser/actions'
 import { popupUrl, panelUrl } from 'src/utils/env'
-import { readSettings } from 'src/utils/browser/storage'
-import { extensionClickActions } from 'src/utils/settings'
+import { Settings, extensionClickActions } from 'src/utils/settings'
 
 /**
  * Setup browser toolbar context menus
@@ -44,10 +43,11 @@ export const setupMenus = () => {
 /**
  * Setup certain browser actions related to the browser toolbar
  */
-export const setupActions = async () => {
+export const setupActions = async (
+  extensionClickAction: Settings['extensionClickAction']
+) => {
   // TODO: check settings for preferred default action
-  const settings = await readSettings()
-  if (settings?.extensionClickAction === extensionClickActions.TAB) {
+  if (extensionClickAction === extensionClickActions.TAB) {
     await browser.browserAction.setPopup({ popup: '' }) // remove popup
     browser.browserAction.onClicked.addListener(openExtensionTab)
   } else {
