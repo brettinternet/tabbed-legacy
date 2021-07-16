@@ -4,7 +4,8 @@
   import Toggle from 'src/components/toggle/toggle.svelte'
   import Input from 'src/components/input/input.svelte'
   import Radio from 'src/components/radio/radio.svelte'
-  import { extensionClickActions, layouts, themes } from 'src/utils/settings'
+  import Button from 'src/components/button/button.svelte';
+  import { extensionClickActions, layouts, themes, defaultSettings } from 'src/utils/settings'
   import type { Theme } from 'src/utils/settings'
   import { updateSettings, settings } from 'src/components/settings/store'
 
@@ -63,12 +64,20 @@
       debugMode: ev.currentTarget.checked,
     })
   }
+
+  const handleClickReset: svelte.JSX.MouseEventHandler<HTMLButtonElement> = async _ev => {
+    await updateSettings(defaultSettings)
+  }
 </script>
 
 <h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">Options</h1>
 
 {#if $settings}
   <div class="mb-10">
+    <hr class="my-6" />
+
+    <h2 class="text-md font-semibold mb-6 capitalize">App</h2>
+
     <div class="mb-6">
       <fieldset class="mb-3 space-y-2" aria-describedby="layout-description">
         <legend>Layout</legend>
@@ -90,48 +99,6 @@
         </div>
       </fieldset>
       <p id="layout-description" class="text-gray-600">Choose a layout.</p>
-    </div>
-    <div class="mb-6">
-      <div class="mb-3">
-        <Toggle
-          id="browser-action-toggle"
-          label="Open in tab"
-          onChange={handleChangeExtensionClickAction}
-          checked={$settings.extensionClickAction === extensionClickActions.TAB}
-          aria-describedby="browser-action-description"
-        />
-      </div>
-      <p id="browser-action-description" class="text-gray-600">
-        Opens the extension in a tab instead of a popup.
-      </p>
-    </div>
-    <div class="mb-6">
-      <div class="mb-3">
-        <Toggle
-          id="tab-count-badge-toggle"
-          label="Show tab count badge"
-          onChange={handleChangeTabCountBadge}
-          checked={$settings.showTabCountBadge}
-          aria-describedby="tab-count-badge-description"
-        />
-      </div>
-      <p id="tab-count-badge-description" class="text-gray-600">
-        Shows a badge count of the total number of tabs.
-      </p>
-    </div>
-    <div class="mb-6">
-      <div class="mb-3">
-        <Toggle
-          id="shortcuts-toggle"
-          label="Shortcuts"
-          onChange={handleChangeShortcuts}
-          checked={$settings.shortcuts}
-          aria-describedby="shortcuts-description"
-        />
-      </div>
-      <p id="shortcuts-description" class="text-gray-600">
-        Enables extension shortcuts. Use <Kbd>?</Kbd> when enabled to view shortcuts.
-      </p>
     </div>
     <div class="mb-6">
       <fieldset class="mb-3 space-y-2" aria-describedby="theme-description">
@@ -181,6 +148,58 @@
         Changes base font size.
       </p>
     </div>
+
+    <hr class="my-6" />
+
+    <h2 class="text-md font-semibold mb-6 capitalize">Actions</h2>
+
+    <div class="mb-6">
+      <div class="mb-3">
+        <Toggle
+          id="browser-action-toggle"
+          label="Open in tab"
+          onChange={handleChangeExtensionClickAction}
+          checked={$settings.extensionClickAction === extensionClickActions.TAB}
+          aria-describedby="browser-action-description"
+        />
+      </div>
+      <p id="browser-action-description" class="text-gray-600">
+        Opens the extension in a tab instead of a popup.
+      </p>
+    </div>
+    <div class="mb-6">
+      <div class="mb-3">
+        <Toggle
+          id="tab-count-badge-toggle"
+          label="Show tab count badge"
+          onChange={handleChangeTabCountBadge}
+          checked={$settings.showTabCountBadge}
+          aria-describedby="tab-count-badge-description"
+        />
+      </div>
+      <p id="tab-count-badge-description" class="text-gray-600">
+        Shows a badge count of the total number of tabs.
+      </p>
+    </div>
+    <div class="mb-6">
+      <div class="mb-3">
+        <Toggle
+          id="shortcuts-toggle"
+          label="Shortcuts"
+          onChange={handleChangeShortcuts}
+          checked={$settings.shortcuts}
+          aria-describedby="shortcuts-description"
+        />
+      </div>
+      <p id="shortcuts-description" class="text-gray-600">
+        Enables extension shortcuts. Use <Kbd>?</Kbd> when enabled to view shortcuts.
+      </p>
+    </div>
+
+    <hr class="my-6" />
+
+    <h2 class="text-md font-semibold mb-6 capitalize">Popup</h2>
+
     <div class="mb-6">
       <div class="flex flex-row mb-3 space-x-6">
         <div>
@@ -217,6 +236,11 @@
         popups.
       </p>
     </div>
+
+    <hr class="my-6" />
+
+    <h2 class="text-md font-semibold mb-6 capitalize">Other</h2>
+
     <div class="mb-6">
       <div class="mb-3">
         <Toggle
@@ -229,6 +253,14 @@
       </div>
       <p id="debug-mode-description" class="text-gray-600">
         Enables verbose debugging in the console.
+      </p>
+    </div>
+    <div class="mb-6">
+      <div class="mb-3">
+        <Button onClick={handleClickReset}>Reset settings</Button>
+      </div>
+      <p id="debug-mode-description" class="text-gray-600">
+        Restores all settings to default values.
       </p>
     </div>
   </div>
