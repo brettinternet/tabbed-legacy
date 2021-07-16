@@ -177,30 +177,34 @@
     </div>
     <div class="mb-6">
       <div class="flex flex-row mb-3 space-x-6">
-        <Input
-          id="popup-width-input"
-          label="Popup width"
-          name="width"
-          type="number"
-          onChange={handleChangePopupDimension}
-          value={$settings.popupDimensions.width}
-          aria-describedby="popup-dimension-description"
-          min="300"
-          max="800"
-          step="25"
-        />
-        <Input
-          id="popup-height-input"
-          label="Popup height"
-          name="height"
-          type="number"
-          onChange={handleChangePopupDimension}
-          value={$settings.popupDimensions.height}
-          aria-describedby="popup-dimension-description"
-          min="300"
-          max="600"
-          step="25"
-        />
+        <div>
+          <Input
+            id="popup-width-input"
+            label="Popup width"
+            name="width"
+            type="number"
+            onChange={handleChangePopupDimension}
+            value={$settings.popupDimensions.width}
+            aria-describedby="popup-dimension-description"
+            min="300"
+            max="800"
+            step="25"
+          />
+        </div>
+        <div>
+          <Input
+            id="popup-height-input"
+            label="Popup height"
+            name="height"
+            type="number"
+            onChange={handleChangePopupDimension}
+            value={$settings.popupDimensions.height}
+            aria-describedby="popup-dimension-description"
+            min="300"
+            max="600"
+            step="25"
+          />
+        </div>
       </div>
       <p id="popup-dimension-description" class="text-gray-600">
         Changes popup dimensions. Browsers limit the permissable dimensions of
