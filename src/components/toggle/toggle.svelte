@@ -1,12 +1,9 @@
 <!-- https://tailwindcomponents.com/component/toggle-switch -->
 <script lang="ts">
-  import cn from 'classnames'
-
   import './toggle.css'
 
   export let label: string,
     id: string,
-    labelClassNames: string = null,
     onChange: svelte.JSX.FormEventHandler<HTMLInputElement>
 </script>
 
@@ -25,4 +22,4 @@
     class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer dark:bg-gray-500"
   />
 </div>
-<label for={id} class={cn('text-xs', labelClassNames)}>{label}</label>
+<label for={id}>{label}</label>
