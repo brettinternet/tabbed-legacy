@@ -4,7 +4,7 @@ import {
   openExtensionTab,
   openExtensionPopout,
 } from 'src/utils/browser/actions'
-import { popupUrl, panelUrl } from 'src/utils/env'
+import { popupUrl, sidebarUrl } from 'src/utils/env'
 import { Settings, extensionClickActions } from 'src/utils/settings'
 import { log } from 'src/utils/logger'
 
@@ -23,14 +23,14 @@ const disablePopup = async () => {
 /**
  * Setup browser toolbar context menus
  */
-const setupMenus = (prefersTab?: boolean) => {
+const setupMenus = (popupDisabled?: boolean) => {
   log.debug(logContext, 'setupMenus')
   if (browser.browserAction.openPopup) {
     browser.contextMenus.create({
       title: 'Open popup',
       contexts: ['browser_action'],
       onclick: async () => {
-        if (prefersTab) {
+        if (popupDisabled) {
           await enablePopup()
           await openExtensionPopup()
           disablePopup()
@@ -69,21 +69,26 @@ export const setupActions = async (
   extensionClickAction: Settings['extensionClickAction']
 ) => {
   log.debug(logContext, 'setupActions')
-  const prefersTab = extensionClickAction === extensionClickActions.TAB
 
-  if (prefersTab) {
+  if (extensionClickAction === extensionClickActions.TAB) {
     await disablePopup()
+    browser.browserAction.onClicked.removeListener(openExtensionSidebar)
     browser.browserAction.onClicked.addListener(openExtensionTab)
+  } else if (
+    extensionClickAction === extensionClickActions.SIDEBAR &&
+    !!browser.sidebarAction
+  ) {
+    await disablePopup()
+    browser.browserAction.onClicked.removeListener(openExtensionTab)
+    browser.sidebarAction.setPanel({
+      panel: sidebarUrl,
+    })
+    browser.browserAction.onClicked.addListener(openExtensionSidebar)
   } else {
+    browser.browserAction.onClicked.removeListener(openExtensionSidebar)
     browser.browserAction.onClicked.removeListener(openExtensionTab)
     await enablePopup()
   }
 
-  setupMenus(prefersTab)
-
-  if (browser.sidebarAction) {
-    browser.sidebarAction.setPanel({
-      panel: panelUrl,
-    })
-  }
+  setupMenus(extensionClickAction !== extensionClickActions.POPUP)
 }

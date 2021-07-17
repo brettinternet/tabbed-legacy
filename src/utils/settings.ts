@@ -6,10 +6,11 @@ export const layouts: { [key: string]: Layout } = {
   GRID: 'grid',
 }
 
-export type ExtensionClickAction = 'tab' | 'popup'
+export type ExtensionClickAction = 'tab' | 'popup' | 'sidebar'
 export const extensionClickActions: { [key: string]: ExtensionClickAction } = {
   TAB: 'tab',
   POPUP: 'popup',
+  SIDEBAR: 'sidebar',
 }
 
 export type Theme = 'dark' | 'light' | 'system'

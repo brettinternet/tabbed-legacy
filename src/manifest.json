@@ -6,6 +6,9 @@
   "browser_action": {
     "default_popup": "main/index.html"
   },
+  "sidebar_action": {
+    "default_panel": "main/index.html"
+  },
   "permissions": ["tabs", "contextMenus", "storage"],
   "commands": {
     "_execute_browser_action": {

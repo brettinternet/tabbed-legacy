@@ -6,8 +6,9 @@
   import Radio from 'src/components/radio/radio.svelte'
   import Button from 'src/components/button/button.svelte';
   import { extensionClickActions, layouts, themes, defaultSettings } from 'src/utils/settings'
-  import type { Theme } from 'src/utils/settings'
+  import type { Theme, ExtensionClickAction } from 'src/utils/settings'
   import { updateSettings, settings } from 'src/components/settings/store'
+  import { isSidebarSupported } from 'src/components/app/store'
 
   export let headerId: string
 
@@ -19,10 +20,16 @@
     await updateSettings({ layout: layouts.GRID })
   }
 
-  const handleChangeExtensionClickAction: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
+  const handleChangeToggleExtensionClickAction: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
     const checked = ev.currentTarget.checked
     await updateSettings({
       extensionClickAction: extensionClickActions[checked ? 'TAB' : 'POPUP'],
+    })
+  }
+
+  const handleChangeRadioExtensionClickAction: svelte.JSX.MouseEventHandler<HTMLInputElement> = async ev => {
+    await updateSettings({
+      extensionClickAction: ev.currentTarget.value as ExtensionClickAction,
     })
   }
 
@@ -155,13 +162,46 @@
 
     <div class="mb-6">
       <div class="mb-3">
-        <Toggle
-          id="browser-action-toggle"
-          label="Open in tab"
-          onChange={handleChangeExtensionClickAction}
-          checked={$settings.extensionClickAction === extensionClickActions.TAB}
-          aria-describedby="browser-action-description"
-        />
+        {#if isSidebarSupported}
+          <fieldset class="mb-3 space-y-2" aria-describedby="theme-description">
+            <legend>Theme</legend>
+            <div class="flex flex-row items-center space-x-6">
+              <Radio
+                id="popup-radio"
+                label="Popup"
+                onChange={handleChangeRadioExtensionClickAction}
+                value={extensionClickActions.POPUP}
+                checked={$settings.extensionClickAction ===
+                  extensionClickActions.POPUP}
+              />
+              <Radio
+                id="tab-radio"
+                label="Tab"
+                onChange={handleChangeRadioExtensionClickAction}
+                value={extensionClickActions.TAB}
+                checked={$settings.extensionClickAction ===
+                  extensionClickActions.TAB}
+              />
+              <Radio
+                id="sidebar-radio"
+                label="Sidebar"
+                onChange={handleChangeRadioExtensionClickAction}
+                value={extensionClickActions.SIDEBAR}
+                checked={$settings.extensionClickAction ===
+                  extensionClickActions.SIDEBAR}
+              />
+            </div>
+          </fieldset>
+        {:else}
+          <Toggle
+            id="browser-action-toggle"
+            label="Open in tab"
+            onChange={handleChangeToggleExtensionClickAction}
+            checked={$settings.extensionClickAction ===
+              extensionClickActions.TAB}
+            aria-describedby="browser-action-description"
+          />
+        {/if}
       </div>
       <p id="browser-action-description" class="text-gray-600">
         Opens the extension in a tab instead of a popup.
