@@ -24,7 +24,7 @@ const disablePopup = async () => {
  * Setup browser toolbar context menus
  */
 const setupMenus = (popupDisabled?: boolean) => {
-  log.debug(logContext, 'setupMenus')
+  log.debug(logContext, 'setupMenus', popupDisabled)
   if (browser.browserAction.openPopup) {
     browser.contextMenus.create({
       title: 'Open popup',
@@ -68,7 +68,7 @@ const setupMenus = (popupDisabled?: boolean) => {
 export const setupActions = async (
   extensionClickAction: Settings['extensionClickAction']
 ) => {
-  log.debug(logContext, 'setupActions')
+  log.debug(logContext, 'setupActions', extensionClickAction)
 
   if (extensionClickAction === extensionClickActions.TAB) {
     await disablePopup()

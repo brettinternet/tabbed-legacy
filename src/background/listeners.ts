@@ -34,7 +34,7 @@ const clearTabCountBadge = async () => {
 const updateTabCountDebounce = debounce(updateTabCountBadge, 250)
 
 const setupTabListeners = async (showTabCountBadge: boolean) => {
-  log.debug(logContext, 'setupTabListeners')
+  log.debug(logContext, 'setupTabListeners', showTabCountBadge)
   if (showTabCountBadge) {
     updateTabCountDebounce()
     browser.tabs.onUpdated.addListener(updateTabCountDebounce)
@@ -56,7 +56,7 @@ const setupTabListeners = async (showTabCountBadge: boolean) => {
 
 export const setupListeners = async (settings: Settings) => {
   updateLogLevel(settings.debugMode)
-  log.debug(logContext, 'setupListeners')
+  log.debug(logContext, 'setupListeners', settings)
   setupTabListeners(settings.showTabCountBadge)
 
   browser.runtime.onMessage.addListener((message: ReloadActionsMessage, _sender, _sendResponse) => {
