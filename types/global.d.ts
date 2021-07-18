@@ -2,6 +2,11 @@ import browser from '@types/firefox-webext-browser'
 
 declare global {
   interface Window {
+    /**
+     * `rollup-plugin-chrome-extension` provides polyfill
+     * for promisifying WebExtension APIs
+     * https://github.com/mozilla/webextension-polyfill
+     */
     browser: browser
   }
 

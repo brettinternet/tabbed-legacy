@@ -4,6 +4,10 @@ import type { Config } from '@jest/types'
  * @docs https://jestjs.io/docs/configuration
  */
 const config: Config.InitialOptions = {
+  globals: {
+    // See global.d.ts
+    browser: true
+  },
   transform: {
     "^.+\\.svelte$": [
       "svelte-jester",
