@@ -2,7 +2,7 @@ import Modal from './modal.svelte'
 import { render } from '@testing-library/svelte'
 
 describe('components/modal/modal.svelte', () => {
-  it('invokes a close fn when an element outside the root is clicked', async () => {
+  it('invokes a close fn when an element outside the root is clicked', () => {
     const mockCloseHandler = jest.fn()
 
     const screen = render(Modal, {

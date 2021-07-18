@@ -3,7 +3,7 @@ import Slot from 'test/slot.svelte'
 import { render } from '@testing-library/svelte'
 
 describe('components/anchor/anchor.svelte', () => {
-  it('can open links in a new tab', async () => {
+  it('can open links in a new tab', () => {
     const screen = render(Slot, {
       props: {
         component: Anchor,
