@@ -3,7 +3,7 @@
 
   export let label: string,
     id: string,
-    value: number,
+    value: OptionalProp<number> = undefined,
     onChange: svelte.JSX.FormEventHandler<HTMLInputElement>
 </script>
 
@@ -16,6 +16,8 @@
     on:change={onChange}
     {...$$restProps}
   />
-  <span aria-hidden="true" class="mr-2">{value}</span>
+  {#if value}
+    <span aria-hidden="true" class="mr-2">{value}</span>
+  {/if}
   <label for={id}>{label}</label>
 </div>

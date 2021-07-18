@@ -1,17 +1,18 @@
 import Button from './button.svelte'
+import Slot from 'test/slot.svelte'
 import { render, fireEvent } from '@testing-library/svelte'
 
-/**
- * @issue https://github.com/sveltejs/svelte/pull/4296
- */
 describe('components/button/button.svelte', () => {
   it('has a label text', async () => {
     const mockClickHandler = jest.fn()
 
-    const screen = render(Button, {
+    const screen = render(Slot, {
       props: {
-        onClick: mockClickHandler,
-        label: 'click me',
+        component: Button,
+        text: 'click me',
+        props: {
+          onClick: mockClickHandler,
+        },
       },
     })
 

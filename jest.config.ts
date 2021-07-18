@@ -22,6 +22,9 @@ const config: Config.InitialOptions = {
     '<rootDir>'
   ],
   setupFilesAfterEnv: ["<rootDir>/test/setup.ts"],
+  moduleNameMapper: {
+    '^.+\\.css$': '<rootDir>/test/css-stub.ts'
+  }
 }
 
 export default config

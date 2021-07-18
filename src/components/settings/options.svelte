@@ -6,18 +6,14 @@
   import Radio from 'src/components/radio/radio.svelte'
   import Button from 'src/components/button/button.svelte';
   import { extensionClickActions, layouts, themes, defaultSettings } from 'src/utils/settings'
-  import type { Theme, ExtensionClickAction } from 'src/utils/settings'
+  import type { Theme, ExtensionClickAction, Layout } from 'src/utils/settings'
   import { updateSettings, settings } from 'src/components/settings/store'
   import { isSidebarSupported } from 'src/components/app/store'
 
   export let headerId: string
 
-  const handleListLayout = async () => {
-    await updateSettings({ layout: layouts.LIST })
-  }
-
-  const handleGridLayout = async () => {
-    await updateSettings({ layout: layouts.GRID })
+  const handleChangeLayout: svelte.JSX.FormEventHandler<HTMLInputElement> = async (ev) => {
+    await updateSettings({ layout: ev.currentTarget.value as Layout })
   }
 
   const handleChangeToggleExtensionClickAction: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
@@ -92,14 +88,14 @@
           <Radio
             id="list-layout-radio"
             label="List"
-            onChange={handleListLayout}
+            onChange={handleChangeLayout}
             value={layouts.LIST}
             checked={$settings.layout === layouts.LIST}
           />
           <Radio
             id="grid-layout-radio"
             label="Grid"
-            onChange={handleGridLayout}
+            onChange={handleChangeLayout}
             value={layouts.GRID}
             checked={$settings.layout === layouts.GRID}
           />
