@@ -14,7 +14,9 @@ import {
 } from 'src/utils/messages'
 import { readSettings, writeSetting } from 'src/utils/browser/storage'
 import { isPopup, showSettings, showShortcuts } from 'src/components/app/store'
-import { updateLogLevel } from 'src/utils/logger'
+import { updateLogLevel, log } from 'src/utils/logger'
+
+const logContext = 'components/settings/store'
 
 const shortcutScopes = {
   ENABLED: 'enabled',
@@ -158,7 +160,12 @@ const getInitialSettings = async () => {
 
 export const settings = writable<Settings>(undefined, set => {
   const read = async () => {
-    set(await getInitialSettings())
+    try {
+      const settings = await getInitialSettings()
+      set(settings)
+    } catch (err) {
+      log.error(logContext, err)
+    }
   }
 
   void read()
