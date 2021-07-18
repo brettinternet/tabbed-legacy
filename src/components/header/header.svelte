@@ -1,4 +1,7 @@
 <script lang="ts">
+  /**
+   * @accessibility https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Search_role
+   */
   import { _ } from 'svelte-i18n'
   import cn from 'classnames'
 
@@ -7,9 +10,9 @@
   import { layouts } from 'src/utils/settings'
   import type { Layout } from 'src/utils/settings'
 
-  export let onClickSettings: () => void = null,
-    currentLayout: Layout = null,
-    onChangeSearch: svelte.JSX.ChangeEventHandler<HTMLInputElement>
+  export let onClickSettings: OptionalProp<() => void> = null,
+    currentLayout: OptionalProp<Layout> = null,
+    onSubmitSearch: svelte.JSX.FormEventHandler<HTMLFormElement>
 </script>
 
 <header
@@ -24,13 +27,18 @@
           : 'md:ml-auto md:mr-0 md:max-w-xs'
       )}
     >
-      <Input
-        id="search"
-        classNames="w-full"
-        type="text"
-        placeholder={$_('common.search_placeholder', { default: 'Search' })}
-        onChange={onChangeSearch}
-      />
+      <form
+        role="search"
+        on:submit={onSubmitSearch}
+        aria-label="Windows and tabs"
+      >
+        <Input
+          id="search"
+          classNames="w-full"
+          type="text"
+          placeholder={$_('common.search_placeholder', { default: 'Search' })}
+        />
+      </form>
     </li>
     {#if onClickSettings}
       <li>

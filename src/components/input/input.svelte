@@ -1,10 +1,10 @@
 <script lang="ts">
   import cn from 'classnames'
 
-  export let label: string = null,
-    id: string = null,
-    classNames: string = null,
-    onChange: svelte.JSX.FormEventHandler<HTMLInputElement>
+  export let label: OptionalProp<string> = null,
+    id: OptionalProp<string> = null,
+    classNames: OptionalProp<string> = null,
+    onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLInputElement>> = null
 
   /**
    * Filter escape key to prevent closing popup, and blur the input instead
