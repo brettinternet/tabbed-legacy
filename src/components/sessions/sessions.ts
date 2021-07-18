@@ -10,7 +10,7 @@ export type Session = {
   current?: boolean
 }
 
-export const currentWindowId = writable<number>()
-export const currentTabId = writable<number>()
+export const currentWindowId = writable<number | undefined>()
+export const currentTabId = writable<number | undefined>()
 export const currentSession = writable<Session>()
-export const selectedSessionId = writable<string>()
+export const selectedSessionId = writable<string | undefined>()

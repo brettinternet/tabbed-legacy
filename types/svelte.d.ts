@@ -1,5 +1,5 @@
 declare namespace svelte.JSX {
-  interface HTMLAttributes<T> {
+  interface HTMLAttributes {
     onclickAway?: (ev: MouseEvent) => void
   }
 }

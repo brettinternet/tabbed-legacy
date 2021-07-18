@@ -39,19 +39,25 @@
       $selectedSessionId = $currentSession.id
     }
 
-    $currentWindowId = $currentSession?.windows[0].id
-    $currentTabId = $currentSession?.windows[0]?.tabs.find(
-      ({ active }) => active
-    )?.id
+    const windowId = $currentSession?.windows[0].id
+    const tabs = $currentSession?.windows[0]?.tabs
+    if (windowId && tabs) {
+      const tabId = tabs.find(
+        ({ active }) => active
+      )?.id
+      $currentWindowId = windowId
+      if (tabId) {
+        $currentTabId = tabId
+      }
+    }
   }
 
   void fetch()
 
-  const handleClickAccordionItem = (ev: MouseEvent) => {
-    console.log('ev: ', ev);
+  const handleClickAccordionItem: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (ev) => {
     $selectedSessionId = $selectedSessionId
-      ? null
-      : (ev.currentTarget as HTMLButtonElement).id
+      ? undefined
+      : ev.currentTarget.id
   }
 
   const handleActiveTabChange = (info: browser.tabs._OnActivatedActiveInfo) => {
@@ -68,8 +74,8 @@
       $currentTabId = tabId
       // reorder windows
     } else {
-      $currentWindowId = null
-      $currentTabId = null
+      $currentWindowId = undefined
+      $currentTabId = undefined
     }
   }
 

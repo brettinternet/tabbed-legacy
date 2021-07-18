@@ -25,21 +25,20 @@ const disablePopup = async () => {
  */
 const setupMenus = (popupDisabled?: boolean) => {
   log.debug(logContext, 'setupMenus', popupDisabled)
-  if (browser.browserAction.openPopup) {
-    browser.contextMenus.create({
-      title: 'Open popup',
-      contexts: ['browser_action'],
-      onclick: async () => {
-        if (popupDisabled) {
-          await enablePopup()
-          await openExtensionPopup()
-          disablePopup()
-        } else {
-          openExtensionPopup()
-        }
-      },
-    })
-  }
+
+  browser.contextMenus.create({
+    title: 'Open popup',
+    contexts: ['browser_action'],
+    onclick: async () => {
+      if (popupDisabled) {
+        await enablePopup()
+        await openExtensionPopup()
+        await disablePopup()
+      } else {
+        await openExtensionPopup()
+      }
+    },
+  })
 
   if (browser.sidebarAction) {
     browser.contextMenus.create({
@@ -80,7 +79,7 @@ export const setupActions = async (
   ) {
     await disablePopup()
     browser.browserAction.onClicked.removeListener(openExtensionTab)
-    browser.sidebarAction.setPanel({
+    await browser.sidebarAction.setPanel({
       panel: sidebarUrl,
     })
     browser.browserAction.onClicked.addListener(openExtensionSidebar)

@@ -27,7 +27,7 @@
     })
   }
 
-  const handleChangeRadioExtensionClickAction: svelte.JSX.MouseEventHandler<HTMLInputElement> = async ev => {
+  const handleChangeRadioExtensionClickAction: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
     await updateSettings({
       extensionClickAction: ev.currentTarget.value as ExtensionClickAction,
     })
@@ -72,7 +72,7 @@
     })
   }
 
-  const handleClickReset: svelte.JSX.MouseEventHandler<HTMLButtonElement> = async _ev => {
+  const handleClickReset: svelte.JSX.MouseEventHandler<HTMLButtonElement> = async () => {
     await updateSettings(defaultSettings)
   }
 </script>

@@ -1,5 +1,6 @@
 import { readSettings } from 'src/utils/browser/storage'
 import { buildVersion, buildTime } from 'src/utils/env'
+import { concatTruthy } from 'src/utils/helpers'
 import { log } from 'src/utils/logger'
 
 import { setupActions } from './configuration'
@@ -9,17 +10,26 @@ const logContext = 'background/index'
 
 const main = async () => {
   log.debug(logContext, 'main')
-  const settings = await readSettings()
 
+  const settings = await readSettings()
   setupListeners(settings)
-  setupActions(settings.extensionClickAction)
+  await setupActions(settings.extensionClickAction)
 
   const bytesUsed = await browser.storage.sync.getBytesInUse()
-  console.info(
-    `loaded: ${new Date().toISOString()};\nversion: ${buildVersion};\nbuild date: ${new Date(
-      buildTime
-    ).toISOString()}\nbytes in sync storage: ${bytesUsed} B`
-  )
+
+  const status = [
+    `loaded: ${new Date().toISOString()}`,
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    ...concatTruthy(buildVersion, `version: ${buildVersion!}`),
+    ...concatTruthy(
+      buildTime,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      `build date: ${new Date(buildTime!).toISOString()}`
+    ),
+    `bytes in sync storage: ${bytesUsed} B`,
+  ]
+
+  console.info(status.join('\n'))
 }
 
-main()
+void main()

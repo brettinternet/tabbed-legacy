@@ -10,8 +10,8 @@
   import { layouts } from 'src/utils/settings'
   import type { Layout } from 'src/utils/settings'
 
-  export let onClickSettings: OptionalProp<() => void> = null,
-    currentLayout: OptionalProp<Layout> = null,
+  export let onClickSettings: OptionalProp<() => void> = undefined,
+    currentLayout: OptionalProp<Layout> = undefined,
     onSubmitSearch: svelte.JSX.FormEventHandler<HTMLFormElement>
 </script>
 

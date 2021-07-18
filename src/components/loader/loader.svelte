@@ -2,10 +2,10 @@
   import { _ } from 'svelte-i18n'
   import cn, { Argument as ClassnamesArgument } from 'classnames'
 
-  export let label: string = null,
-    hideLabel = false,
+  export let hideLabel = false,
     size = 32,
-    classNames: ClassnamesArgument = null
+    label: OptionalProp<string> = undefined,
+    classNames: OptionalProp<ClassnamesArgument> = undefined
 </script>
 
 <div
@@ -13,7 +13,7 @@
     'flex justify-center items-center space-x-1 text-sm text-gray-700',
     classNames
   )}
-  aria-label={hideLabel && label}
+  aria-label={hideLabel ? label : undefined}
 >
   <svg
     fill="none"

@@ -5,5 +5,8 @@ declare global {
     browser: browser
   }
 
-  type OptionalProp<T> = T | undefined | null
+  /**
+   * For optional props in a svelte component that have no default value
+   */
+  type OptionalProp<T> = T | undefined
 }

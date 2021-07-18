@@ -1,7 +1,7 @@
 <script lang="ts">
   import './radio.css'
 
-  export let label: string = null,
+  export let label: OptionalProp<string> = undefined,
     id: string,
     onChange: svelte.JSX.FormEventHandler<HTMLInputElement>
 </script>

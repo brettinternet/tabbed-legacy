@@ -8,12 +8,11 @@
   import List from './list.svelte'
   import Grid from './grid.svelte'
 
-  export let currentLayout: Layout,
-    selectedSessionId: string = null
+  export let currentLayout: Layout
 </script>
 
 {#if currentLayout === layouts.GRID}
-  <Grid {selectedSessionId} />
+  <Grid />
 {:else}
-  <List {selectedSessionId} />
+  <List />
 {/if}

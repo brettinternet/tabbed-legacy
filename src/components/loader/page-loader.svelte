@@ -1,8 +1,8 @@
 <script lang="ts">
   import Loader from 'src/components/loader/loader.svelte'
 
-  export let style: string = null,
-    label: string = null,
+  export let style: OptionalProp<string> = undefined,
+    label: OptionalProp<string> = undefined,
     hideLabel = false
 </script>
 

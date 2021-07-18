@@ -8,7 +8,7 @@ export const isAuxiliaryTab = (tab: browser.tabs.Tab) =>
     isBookmarkManagerTab(tab))
 
 export const isNewTab = (tab: browser.tabs.Tab) =>
-  /^chrome:\/\/newtab\/?$/.test(tab.url)
+  tab.url && /^chrome:\/\/newtab\/?$/.test(tab.url)
 
 /**
  * Tab.id is an optional field, so compare other fields for a better estimation
@@ -107,7 +107,7 @@ export const openTab = async (
   query: browser.tabs._QueryQueryInfo,
   incognito = false
 ) => {
-  let tab: browser.tabs.Tab
+  let tab: browser.tabs.Tab | undefined
   const matches = await browser.tabs.query(query)
   if (matches.length === 1) {
     tab = matches[0]

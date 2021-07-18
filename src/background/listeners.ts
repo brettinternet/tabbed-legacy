@@ -15,9 +15,8 @@ const BADGE_BACKGROUND_COLOR = '#3b82f6'
 const updateTabCountBadge = async () => {
   try {
     log.debug(logContext, 'updateTabCountBadge')
-    let count: number
     const tabs = await browser.tabs.query({})
-    count = tabs.length
+    const count = tabs.length
     await browser.browserAction.setBadgeBackgroundColor({
       color: BADGE_BACKGROUND_COLOR,
     })
@@ -33,10 +32,10 @@ const clearTabCountBadge = async () => {
 
 const updateTabCountDebounce = debounce(updateTabCountBadge, 250)
 
-const setupTabListeners = async (showTabCountBadge: boolean) => {
+const setupTabListeners = (showTabCountBadge: boolean) => {
   log.debug(logContext, 'setupTabListeners', showTabCountBadge)
   if (showTabCountBadge) {
-    updateTabCountDebounce()
+    void updateTabCountDebounce()
     browser.tabs.onUpdated.addListener(updateTabCountDebounce)
     browser.tabs.onRemoved.addListener(updateTabCountDebounce)
     browser.tabs.onReplaced.addListener(updateTabCountDebounce)
@@ -44,7 +43,7 @@ const setupTabListeners = async (showTabCountBadge: boolean) => {
     browser.tabs.onAttached.addListener(updateTabCountDebounce)
     browser.tabs.onMoved.addListener(updateTabCountDebounce)
   } else {
-    clearTabCountBadge()
+    void clearTabCountBadge()
     browser.tabs.onUpdated.removeListener(updateTabCountDebounce)
     browser.tabs.onRemoved.removeListener(updateTabCountDebounce)
     browser.tabs.onReplaced.removeListener(updateTabCountDebounce)
@@ -54,21 +53,22 @@ const setupTabListeners = async (showTabCountBadge: boolean) => {
   }
 }
 
-export const setupListeners = async (settings: Settings) => {
+export const setupListeners = (settings: Settings) => {
   updateLogLevel(settings.debugMode)
   log.debug(logContext, 'setupListeners', settings)
+
   setupTabListeners(settings.showTabCountBadge)
 
-  browser.runtime.onMessage.addListener((message: ReloadActionsMessage, _sender, _sendResponse) => {
+  browser.runtime.onMessage.addListener((message: ReloadActionsMessage) => {
     if (message.type === MESSAGE_TYPE_RELOAD_ACTIONS) {
-      setupActions(message.value)
+      void setupActions(message.value)
     }
 
     return false
   })
 
   browser.runtime.onMessage.addListener(
-    (message: ReloadTabListeners, _sender, _sendResponse) => {
+    (message: ReloadTabListeners) => {
       if (message.type === MESSAGE_TYPE_RELOAD_TAB_LISTENERS) {
         setupTabListeners(message.value)
       }
@@ -78,9 +78,9 @@ export const setupListeners = async (settings: Settings) => {
   )
 
   browser.runtime.onMessage.addListener(
-    (message: UpdateLogLevel, _sender, _sendResponse) => {
+    (message: UpdateLogLevel) => {
       if (message.type === MESSAGE_TYPE_UPDATE_LOG_LEVEL) {
-        updateLogLevel(message.value)
+        void updateLogLevel(message.value)
       }
 
       return false

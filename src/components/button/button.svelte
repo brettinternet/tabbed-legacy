@@ -1,6 +1,6 @@
 <script lang="ts">
   export let onClick: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
-    label: OptionalProp<string> = null
+    label: OptionalProp<string> = undefined
 </script>
 
 <button

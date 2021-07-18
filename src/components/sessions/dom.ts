@@ -6,11 +6,13 @@ import File from 'src/components/icons/file.svelte'
  */
 export const replaceImageError = (node: HTMLImageElement) => {
   const handleError = () => {
-    new File({
-      target: node.parentElement,
-      anchor: node,
-    })
-    node.remove()
+    if (node.parentElement) {
+      new File({
+        target: node.parentElement,
+        anchor: node,
+      })
+      node.remove()
+    }
   }
 
   node.addEventListener('error', handleError)

@@ -1,8 +1,10 @@
 import { tick } from 'svelte'
 import { writable, get } from 'svelte/store'
 import hotkeys from 'hotkeys-js'
+import { noop } from 'lodash'
 
-import { defaultSettings, Settings, themes } from 'src/utils/settings'
+import { Settings, themes } from 'src/utils/settings'
+import {isDefined} from 'src/utils/helpers'
 import type { Theme } from 'src/utils/settings'
 import type { ReloadActionsMessage, ReloadTabListeners, UpdateLogLevel } from 'src/utils/messages'
 import {
@@ -18,7 +20,7 @@ const shortcutScopes = {
   ENABLED: 'enabled',
   DISABLED: 'disabled',
 }
-const setupShortcuts = async (enabled: boolean) => {
+const setupShortcuts = (enabled: boolean) => {
   hotkeys('shift+/,esc,/,`', shortcutScopes.ENABLED, (event, handler) => {
     if (enabled) {
       event.preventDefault()
@@ -35,18 +37,16 @@ const setupShortcuts = async (enabled: boolean) => {
             window.close()
           }
           break
-        case '/':
+        case '/': {
           showShortcuts.set(false)
           showSettings.set(false)
           const search = document.getElementById('search')
-          new Promise(resolve => {
-            tick()
-              .then(() => {
-                search.focus()
-              })
-              .then(resolve)
-          })
+          void tick()
+            .then(() => {
+              search?.focus()
+            })
           break
+        }
         case '`':
           showSettings.update(value => !value)
           showShortcuts.set(false)
@@ -55,7 +55,7 @@ const setupShortcuts = async (enabled: boolean) => {
     }
   })
 
-  hotkeys('', shortcutScopes.DISABLED, () => {})
+  hotkeys('', shortcutScopes.DISABLED, noop)
 
   // https://github.com/jaywcjlove/hotkeys/issues/90
   hotkeys.setScope(shortcutScopes[enabled ? 'ENABLED' : 'DISABLED'])
@@ -70,76 +70,105 @@ const setTheme = (theme: Theme) => {
   }
 }
 
-const handleSettingsSideEffects = async (
-  key: string,
-  value: unknown,
+/**
+ * Invokes side effects for settings startup and changes
+ */
+const handleSettingsSideEffects = async <K extends keyof Settings>(
+  key: K,
+  settings: Partial<Settings>,
   updateBackgroundTasks?: boolean,
 ) => {
-  switch (key as keyof Settings) {
-    case 'fontSize':
-      document.documentElement.style.fontSize = `${value.toString()}px`
-      break
-    case 'shortcuts':
-      setupShortcuts(value as boolean) // TODO: fix this fn's types
-      break
-    case 'showTabCountBadge':
-      if (updateBackgroundTasks) {
-        const message: ReloadTabListeners = {
-          type: MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
-          value: value as boolean
+    switch (key) {
+      case 'fontSize': {
+        const { fontSize } = settings
+        if (isDefined(fontSize)) {
+          document.documentElement.style.fontSize = `${fontSize.toString()}px`
         }
-        await browser.runtime.sendMessage(message)
         break
       }
-    case 'extensionClickAction':
-      if (updateBackgroundTasks) {
-        const message: ReloadActionsMessage = { type: MESSAGE_TYPE_RELOAD_ACTIONS, value: value as Settings['extensionClickAction'] }
-        await browser.runtime.sendMessage(message)
+      case 'shortcuts': {
+        const { shortcuts } = settings
+        if (isDefined(shortcuts)) {
+          setupShortcuts(shortcuts) // TODO: fix this fn's types
+        }
         break
       }
-    case 'popupDimensions':
-      const width = (value as Record<string, number>)?.width // TODO: fix typing
-      const height = (value as Record<string, number>)?.height
-      if (isPopup && width && height) {
-        document.body.style.width = `${width}px`
-        document.body.style.height = `${height}px`
+      case 'showTabCountBadge': {
+        const { showTabCountBadge } = settings
+        if (updateBackgroundTasks && isDefined(showTabCountBadge)) {
+          const message: ReloadTabListeners = {
+            type: MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
+            value: showTabCountBadge
+          }
+          await browser.runtime.sendMessage(message)
+        }
+        break
       }
-      break
-    case 'theme':
-      setTheme(value as Theme)
-      break
-    case 'debugMode':
-      updateLogLevel(value as boolean)
-      if (updateBackgroundTasks) {
-        const message: UpdateLogLevel = { type: MESSAGE_TYPE_UPDATE_LOG_LEVEL, value: value as boolean }
-        await browser.runtime.sendMessage(message)
+      case 'extensionClickAction': {
+        const { extensionClickAction } = settings
+        if (updateBackgroundTasks && isDefined(extensionClickAction)) {
+          const message: ReloadActionsMessage = { type: MESSAGE_TYPE_RELOAD_ACTIONS, value: extensionClickAction }
+          await browser.runtime.sendMessage(message)
+        }
+        break
       }
-      break
-  }
+      case 'popupDimensions': {
+        const width = settings.popupDimensions?.width // TODO: fix typing
+        const height = settings.popupDimensions?.height
+        if (isPopup && width && height) {
+          document.body.style.width = `${width}px`
+          document.body.style.height = `${height}px`
+        }
+        break
+      }
+      case 'theme': {
+        const { theme } = settings
+        if (isDefined(theme)) {
+          setTheme(theme)
+        }
+        break
+      }
+      case 'debugMode': {
+        const { debugMode } = settings
+        updateLogLevel(debugMode)
+        if (updateBackgroundTasks && isDefined(debugMode)) {
+          const message: UpdateLogLevel = { type: MESSAGE_TYPE_UPDATE_LOG_LEVEL, value: debugMode }
+          await browser.runtime.sendMessage(message)
+        }
+        break
+      }
+      default:
+        return
+    }
 }
+
+/**
+ * @source typed version of Object.keys
+ * https://stackoverflow.com/a/59459000
+ */
+const getKeys = Object.keys as <T extends Record<string, unknown>>(obj: T) => Array<keyof T>
 
 const getInitialSettings = async () => {
   const settings = await readSettings()
-  for (let key in defaultSettings) {
-    await handleSettingsSideEffects(key, settings[key], false)
-  }
+
+  const keys = getKeys(settings)
+  await Promise.all(keys.map(async key => handleSettingsSideEffects(key, settings, false)))
   return settings
 }
 
-export const settings = writable<Settings>(null, set => {
+export const settings = writable<Settings>(undefined, set => {
   const read = async () => {
     set(await getInitialSettings())
   }
 
-  read()
+  void read()
 })
 
 export const updateSettings = async (values: Partial<Settings>) => {
-  writeSetting(values)
+  await writeSetting(values)
   settings.update(current => {
     return ({ ...current, ...values })
   })
-  for (let key in values) {
-    handleSettingsSideEffects(key, values[key], true)
-  }
+  const keys = getKeys(values)
+  await Promise.all(keys.map(async key => handleSettingsSideEffects(key, values, false)))
 }

@@ -27,8 +27,11 @@
     showShortcuts.set(false)
   }
 
-  const handleChangeSearch: svelte.JSX.ChangeEventHandler<HTMLInputElement> = ev => {
-    console.log(ev.currentTarget.value)
+  const onSubmitSearch: svelte.JSX.FormEventHandler<HTMLFormElement> = ev => {
+    const search: HTMLInputElement | null = ev.currentTarget.querySelector(
+      '#search'
+    )
+    console.log(search?.value)
   }
 
   $: log.debug(logContext, $settings)
@@ -41,8 +44,8 @@
     pageTitle={$_('popup.page_title', { default: 'Options' })}
     onClickSettings={openSettings}
     currentLayout={$settings.layout}
-    onChangeSearch={handleChangeSearch}
-    height={isPopup && $settings.popupDimensions?.height}
+    {onSubmitSearch}
+    height={isPopup ? $settings.popupDimensions?.height : undefined}
   >
     <SessionLayouts currentLayout={$settings.layout} />
   </AppLayout>

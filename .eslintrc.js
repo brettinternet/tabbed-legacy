@@ -7,7 +7,11 @@ module.exports = {
   },
   globals: {
     // see `types/global.d.ts`
-    browser: true,
+    browser: 'readonly',
+    // https://github.com/sveltejs/language-tools/tree/master/packages/svelte2tsx
+    svelte: 'readonly',
+    // Some commonly used types worth declaring in global namespace
+    OptionalProp: 'readonly',
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -30,6 +34,7 @@ module.exports = {
   ],
   rules: {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-misused-promises': 'off', // TODO
   },
   overrides: [
     {
@@ -39,6 +44,7 @@ module.exports = {
         '@typescript-eslint/no-unsafe-call': 'off',
         '@typescript-eslint/no-unsafe-assignment': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/restrict-template-expressions': 'off',
       },
     },
     {
@@ -56,6 +62,12 @@ module.exports = {
       files: ['bin/**/*.ts'],
       env: {
         node: true,
+      },
+    },
+    {
+      files: ['types/*.d.ts'],
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
       },
     },
   ],

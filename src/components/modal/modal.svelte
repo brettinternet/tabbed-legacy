@@ -12,28 +12,34 @@
     close: () => void,
     ariaLabelledby: string
 
-  let trap: FocusTrap, modal: HTMLElement, main: HTMLElement
+  let trap: FocusTrap, modal: HTMLElement | null, main: HTMLElement | null
 
   onMount(() => {
     main = document.getElementById('main')
-    if (isPopup) {
-      // Hack: `overflow: hidden` on the body isn't enough for the 'popup' to disable body scroll
-      main.style.display = 'none'
+    if (main) {
+      if (isPopup) {
+        // Hack: `overflow: hidden` on the body isn't enough for the 'popup' to disable body scroll
+        main.style.display = 'none'
+      }
+      modal = document.getElementById(id)
+      if (modal) {
+        disableBodyScroll(modal)
+        trap = createFocusTrap(modal, {
+          clickOutsideDeactivates: true
+        })
+        trap.activate()
+      }
     }
-    modal = document.getElementById(id)
-    disableBodyScroll(modal)
-    trap = createFocusTrap(modal, {
-      clickOutsideDeactivates: true
-    })
-    trap.activate()
   })
 
   onDestroy(() => {
-    enableBodyScroll(modal)
-    trap.deactivate({
-      returnFocus: true,
-    })
-    if (isPopup) {
+    if (modal) {
+      enableBodyScroll(modal)
+      trap.deactivate({
+        returnFocus: true,
+      })
+    }
+    if (isPopup && main) {
       main.style.display = ''
     }
   })
