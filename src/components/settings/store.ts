@@ -23,44 +23,52 @@ const shortcutScopes = {
   DISABLED: 'disabled',
 }
 const setupShortcuts = (enabled: boolean) => {
-  hotkeys('shift+/,esc,/,`', shortcutScopes.ENABLED, (event, handler) => {
-    if (enabled) {
-      event.preventDefault()
-      switch (handler.key) {
-        case 'shift+/': // `?` mark
-          showShortcuts.update(value => !value)
-          showSettings.set(false)
-          break
-        case 'esc':
-          if (get(showShortcuts) || get(showSettings)) {
+  log.debug(logContext, 'setupShortcuts', enabled)
+
+  if (enabled) {
+    hotkeys('shift+/,esc,/,`', shortcutScopes.ENABLED, (event, handler) => {
+      if (enabled) {
+        event.preventDefault()
+        switch (handler.key) {
+          case 'shift+/': // `?` mark
+            showShortcuts.update(value => !value)
+            showSettings.set(false)
+            break
+          case 'esc':
+            if (get(showShortcuts) || get(showSettings)) {
+              showShortcuts.set(false)
+              showSettings.set(false)
+            } else if (isPopup) {
+              window.close()
+            }
+            break
+          case '/': {
             showShortcuts.set(false)
             showSettings.set(false)
-          } else if (isPopup) {
-            window.close()
+            const search = document.getElementById('search')
+            void tick()
+              .then(() => {
+                search?.focus()
+              })
+            break
           }
-          break
-        case '/': {
-          showShortcuts.set(false)
-          showSettings.set(false)
-          const search = document.getElementById('search')
-          void tick()
-            .then(() => {
-              search?.focus()
-            })
-          break
+          case '`':
+            showSettings.update(value => !value)
+            showShortcuts.set(false)
+            break
         }
-        case '`':
-          showSettings.update(value => !value)
-          showShortcuts.set(false)
-          break
       }
-    }
-  })
+    })
+  } else {
+    hotkeys('', shortcutScopes.DISABLED, noop)
+  }
 
-  hotkeys('', shortcutScopes.DISABLED, noop)
 
   // https://github.com/jaywcjlove/hotkeys/issues/90
   hotkeys.setScope(shortcutScopes[enabled ? 'ENABLED' : 'DISABLED'])
+  hotkeys.deleteScope(shortcutScopes[enabled ? 'DISABLED' : 'ENABLED'])
+
+  log.debug(logContext, `hotkeys scope: '${hotkeys.getScope()}'`)
 }
 
 const setTheme = (theme: Theme) => {
