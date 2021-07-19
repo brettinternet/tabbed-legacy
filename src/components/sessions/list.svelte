@@ -3,13 +3,10 @@
    * @note Use accordion accessibility
    * https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html
    */
-  import { locale } from 'svelte-i18n'
-  import cn from 'classnames'
-  import { formatDistanceToNow } from 'date-fns'
   import { onDestroy } from 'svelte'
 
   import { getAllWindows, getActiveTabId } from 'src/utils/browser/query'
-  import { getDateLocale } from 'src/i18n'
+  import ViewButton from './view-button.svelte'
   import WindowList from './window-list.svelte'
   import {
     currentWindowId,
@@ -105,40 +102,11 @@
     class="relative p-0 m-0 md:col-span-3 2xl:col-span-2 z-menu-accordion"
   >
     {#if $currentSession}
-      <button
-        id={$currentSession.id}
-        aria-expanded={($selectedSessionId &&
-          $selectedSessionId === $currentSession.id) ||
-          'false'}
-        on:click={handleClickAccordionItem}
-        class={cn(
-          'bg-gray-100 px-10 py-6 flex flex-row items-center w-full lg:rounded-sm',
-          $selectedSessionId === sampleId && 'bg-blue-600 text-white'
-        )}
-      >
-        {#if $currentSession.title}
-          <h3
-            title={$currentSession.title}
-            class="overflow-ellipsis overflow-hidden whitespace-pre"
-          >
-            {$currentSession.title}
-          </h3>
-        {:else}
-          <h3
-            class={cn(
-              'text-xs',
-              $selectedSessionId === sampleId
-                ? 'text-gray-200'
-                : 'text-gray-600'
-            )}
-          >
-            {formatDistanceToNow(new Date($currentSession.lastModified), {
-              locale: getDateLocale($locale),
-              addSuffix: true,
-            })}
-          </h3>
-        {/if}
-      </button>
+      <ViewButton
+        onClick={handleClickAccordionItem}
+        currentSession={$currentSession}
+        selectedSessionId={$selectedSessionId}
+      />
     {/if}
 
     {#if $selectedSessionId && selectedSession}
