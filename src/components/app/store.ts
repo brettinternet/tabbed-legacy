@@ -10,9 +10,9 @@ export const showSettings = writable(false)
 export const showShortcuts = writable(false)
 
 // Feature flags
-export const isPopout = window.location.href.includes(popoutUrl)
-export const isTab = window.location.href.includes(tabUrl)
 export const isPopup = window.location.href.includes(popupUrl)
+export const isTab = window.location.href.includes(tabUrl)
+export const isPopout = window.location.href.includes(popoutUrl)
 export const isSidebar = window.location.href.includes(sidebarUrl)
 export const isSidebarSupported = !!browser.sidebarAction
 

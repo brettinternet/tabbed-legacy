@@ -12,6 +12,7 @@ declare global {
 
   /**
    * For optional props in a svelte component that have no default value
+   * Defined globally since it's used so frequently
    */
   type OptionalProp<T> = T | undefined
 }

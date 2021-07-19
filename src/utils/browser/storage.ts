@@ -2,12 +2,12 @@
 import type { Settings } from 'src/utils/settings'
 import { defaultSettings } from 'src/utils/settings'
 
-const keys = {
+export const storageKeys = {
   SETTINGS: 'settings',
 }
 
 export const readSettings = async (): Promise<Settings> => {
-  const { settings = {} } = await (browser.storage.sync.get(keys.SETTINGS) as Promise<{settings: Settings}>)
+  const { settings = {} } = await browser.storage.sync.get(storageKeys.SETTINGS)
   const settingsWithDefaults = {
     ...defaultSettings,
     ...settings,
@@ -18,6 +18,6 @@ export const readSettings = async (): Promise<Settings> => {
 export const writeSetting = async (settings: Partial<Settings>) => {
   const currentSettings = await readSettings()
   await browser.storage.sync.set({
-    [keys.SETTINGS]: Object.assign({}, currentSettings, settings)
+    [storageKeys.SETTINGS]: Object.assign({}, currentSettings, settings)
   })
 }
