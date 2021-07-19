@@ -25,7 +25,7 @@ label.radio span:after {
   width: 7px;
 }
 
-.dark label.radio:hover input ~ span {
+.dark label.radio:hover input:not(:checked) ~ span {
   @apply bg-gray-500;
 }
 
