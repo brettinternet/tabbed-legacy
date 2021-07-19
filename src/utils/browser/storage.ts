@@ -7,7 +7,7 @@ export const storageKeys = {
 }
 
 export const readSettings = async (): Promise<Settings> => {
-  const { settings = {} } = await browser.storage.sync.get(storageKeys.SETTINGS)
+  const { settings = {} } = await (browser.storage.sync.get(storageKeys.SETTINGS) as Promise<{settings: Settings | undefined}>)
   const settingsWithDefaults = {
     ...defaultSettings,
     ...settings,

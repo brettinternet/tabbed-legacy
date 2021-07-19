@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { defaultSettings, Settings } from 'src/utils/settings'
 
 import { readSettings, writeSetting, storageKeys } from './storage'
