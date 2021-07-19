@@ -1,5 +1,7 @@
 # Tabbed
 
+[![Test](https://github.com/brettinternet/tabbed/actions/workflows/test.yml/badge.svg)](https://github.com/brettinternet/tabbed/actions/workflows/test.yml)
+
 Keep tabs on your browser sessions and don't lose track of websites you've tabbed.
 
 ## Privacy
