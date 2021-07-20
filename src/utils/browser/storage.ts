@@ -21,3 +21,19 @@ export const writeSetting = async (settings: Partial<Settings>) => {
     [storageKeys.SETTINGS]: Object.assign({}, currentSettings, settings)
   })
 }
+
+export type Session = {
+  id: string
+  title?: string
+  lastModified: number
+  windowCount?: number
+  tabCount?: number
+  windows: browser.windows.Window[]
+  current?: boolean
+}
+
+export type SessionLists = {
+  current: Session
+  previous: Session[]
+  saved: Session[]
+}

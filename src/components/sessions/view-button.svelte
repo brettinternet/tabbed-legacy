@@ -4,44 +4,43 @@
   import { formatDistanceToNow } from 'date-fns'
 
   import { getDateLocale } from 'src/i18n'
-  import type { Session } from './sessions'
+  import type { Session } from 'src/utils/browser/storage'
 
-  export let currentSession: Session,
+  export let session: Session,
     onClick: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
-    selectedSessionId: string | undefined
+    selected: boolean,
+    title: OptionalProp<string> = session.title
 
-    const sampleId = '1'
+  const timeAgo = formatDistanceToNow(new Date(session.lastModified), {
+    locale: getDateLocale($locale),
+    addSuffix: true,
+  })
 </script>
 
 <button
-  id={currentSession.id}
-  aria-expanded={(selectedSessionId &&
-    selectedSessionId === currentSession.id) ||
-    'false'}
+  id={session.id}
+  aria-expanded={selected}
   on:click={onClick}
   class={cn(
-    'bg-gray-100 px-10 py-6 flex flex-row items-center w-full lg:rounded-sm',
-    selectedSessionId === sampleId && 'bg-blue-600 text-white'
+    'bg-gray-100 px-10 py-4 flex flex-col justify-center w-full lg:rounded-sm text-left',
+    selected && 'bg-blue-600 text-white'
   )}
 >
-  {#if currentSession.title}
+  {#if title}
     <h3
-      title={currentSession.title}
-      class="overflow-ellipsis overflow-hidden whitespace-pre"
+      {title}
+      class="overflow-ellipsis overflow-hidden whitespace-pre w-full mb-1"
     >
-      {currentSession.title}
-    </h3>
-  {:else}
-    <h3
-      class={cn(
-        'text-xs',
-        selectedSessionId === sampleId ? 'text-gray-200' : 'text-gray-600'
-      )}
-    >
-      {formatDistanceToNow(new Date(currentSession.lastModified), {
-        locale: getDateLocale($locale),
-        addSuffix: true,
-      })}
+      {title}
     </h3>
   {/if}
+  <h3
+    title={timeAgo}
+    class={cn(
+      'text-xs overflow-ellipsis overflow-hidden whitespace-pre w-full',
+      selected ? 'text-gray-200' : 'text-gray-600'
+    )}
+  >
+    {timeAgo}
+  </h3>
 </button>

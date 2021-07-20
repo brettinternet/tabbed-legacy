@@ -30,7 +30,8 @@
     "postcss": "^8.3.5",
     "svelte": "^3.38.3",
     "svelte-i18n": "^3.3.9",
-    "tailwindcss": "^2.2.4"
+    "tailwindcss": "^2.2.4",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
@@ -50,6 +51,7 @@
     "@types/firefox-webext-browser": "^82.0.1",
     "@types/jest": "^26.0.24",
     "@types/lodash": "^4.14.171",
+    "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
     "babel-jest": "^27.0.6",

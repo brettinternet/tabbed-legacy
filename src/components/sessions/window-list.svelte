@@ -8,8 +8,8 @@
 
   export let windows: browser.windows.Window[],
     ariaLabelledby: string,
-    currentWindowId: OptionalProp<number> = undefined,
-    currentTabId: OptionalProp<number> = undefined
+    currentWindowId: number | undefined,
+    currentTabId: number | undefined
 
   const handleWindowClick: svelte.JSX.MouseEventHandler<HTMLButtonElement> = async ev => {
     const button = ev.currentTarget
@@ -45,7 +45,7 @@
       <div
         class={cn(
           'flex flex-row items-center justify-between xl:justify-start',
-          currentWindowId === id && 'text-blue-700'
+          currentWindowId === id && 'text-green-500'
         )}
       >
         <div class="flex flex-row items-center py-3 mr-3 leading-5">
@@ -58,7 +58,7 @@
               Window
             </button>
             {#if currentWindowId === id}
-              <span class="text-blue-700 ml-2"><Focused /></span>
+              <span class="ml-2"><Focused /></span>
             {/if}
           </h2>
         </div>
@@ -78,7 +78,12 @@
                     <img use:replaceImageError src={favIconUrl} alt={title} />
                   {/if}
                 </div>
-                <div class="leading-5 inline-flex items-center">
+                <div
+                  class={cn(
+                    'leading-5 inline-flex items-center',
+                    id === currentTabId && 'text-green-500'
+                  )}
+                >
                   {#if url}
                     <a
                       data-tab-id={id}
@@ -106,7 +111,7 @@
                     </span>
                   {/if}
                   {#if id === currentTabId}
-                    <span class="text-blue-700 ml-2"><Focused /></span>
+                    <span class="ml-2"><Focused /></span>
                   {/if}
                 </div>
               </li>

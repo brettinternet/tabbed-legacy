@@ -6,7 +6,7 @@ import { noop } from 'lodash'
 import { Settings, themes } from 'src/utils/settings'
 import {isDefined} from 'src/utils/helpers'
 import type { Theme } from 'src/utils/settings'
-import type { ReloadActionsMessage, ReloadTabListeners, UpdateLogLevel } from 'src/utils/messages'
+import type { ReloadActionsMessage, ReloadTabListenersMessage, UpdateLogLevelMessage } from 'src/utils/messages'
 import {
   MESSAGE_TYPE_RELOAD_ACTIONS,
   MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
@@ -106,7 +106,7 @@ const handleSettingsSideEffects = async <K extends keyof Settings>(
       case 'showTabCountBadge': {
         const { showTabCountBadge } = settings
         if (updateBackgroundTasks && isDefined(showTabCountBadge)) {
-          const message: ReloadTabListeners = {
+          const message: ReloadTabListenersMessage = {
             type: MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
             value: showTabCountBadge
           }
@@ -142,7 +142,7 @@ const handleSettingsSideEffects = async <K extends keyof Settings>(
         const { debugMode } = settings
         updateLogLevel(debugMode)
         if (updateBackgroundTasks && isDefined(debugMode)) {
-          const message: UpdateLogLevel = { type: MESSAGE_TYPE_UPDATE_LOG_LEVEL, value: debugMode }
+          const message: UpdateLogLevelMessage = { type: MESSAGE_TYPE_UPDATE_LOG_LEVEL, value: debugMode }
           await browser.runtime.sendMessage(message)
         }
         break

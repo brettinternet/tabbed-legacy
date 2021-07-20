@@ -1,16 +1,50 @@
 import { debounce } from 'lodash'
+
 import {
   MESSAGE_TYPE_RELOAD_ACTIONS,
   MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
-  MESSAGE_TYPE_UPDATE_LOG_LEVEL
+  MESSAGE_TYPE_UPDATE_LOG_LEVEL,
+  MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
+  MESSAGE_TYPE_GET_SESSIONS_LIST
 } from 'src/utils/messages'
-import type { ReloadActionsMessage, ReloadTabListeners, UpdateLogLevel } from 'src/utils/messages'
+import type { ReloadActionsMessage, ReloadTabListenersMessage, UpdateLogLevelMessage, UpdateSessionsListMessage, GetSessionsListMessage } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
 import { setupActions } from './configuration'
+import {getSessions} from './sessions'
 
 const logContext = 'background/listeners'
 const BADGE_BACKGROUND_COLOR = '#3b82f6'
+
+const updateSession = async () => {
+  log.debug(logContext, 'getWindows')
+
+  const sessions = await getSessions(true)
+
+  const message: UpdateSessionsListMessage = {
+    type: MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
+    value: sessions,
+  }
+  await browser.runtime.sendMessage(message)
+}
+
+const setupWindowListeners = () => {
+  log.debug(logContext, 'setupWindowListeners')
+
+  browser.runtime.onMessage.addListener(
+    (message: GetSessionsListMessage, _sender, sendResponse) => {
+      if (message.type === MESSAGE_TYPE_GET_SESSIONS_LIST) {
+        sendResponse(getSessions())
+        return true
+      }
+
+      return false
+    }
+  )
+
+  browser.windows.onCreated.addListener(updateSession)
+  browser.windows.onRemoved.addListener(updateSession)
+}
 
 const updateTabCountBadge = async () => {
   try {
@@ -32,8 +66,8 @@ const clearTabCountBadge = async () => {
 
 const updateTabCountDebounce = debounce(updateTabCountBadge, 250)
 
-const setupTabListeners = (showTabCountBadge: boolean) => {
-  log.debug(logContext, 'setupTabListeners', showTabCountBadge)
+const setupTabCountListeners = (showTabCountBadge: boolean) => {
+  log.debug(logContext, 'setupTabCountListeners', showTabCountBadge)
   if (showTabCountBadge) {
     void updateTabCountDebounce()
     browser.tabs.onUpdated.addListener(updateTabCountDebounce)
@@ -57,7 +91,8 @@ export const setupListeners = (settings: Settings) => {
   updateLogLevel(settings.debugMode)
   log.debug(logContext, 'setupListeners', settings)
 
-  setupTabListeners(settings.showTabCountBadge)
+  setupWindowListeners()
+  setupTabCountListeners(settings.showTabCountBadge)
 
   browser.runtime.onMessage.addListener((message: ReloadActionsMessage) => {
     if (message.type === MESSAGE_TYPE_RELOAD_ACTIONS) {
@@ -68,9 +103,9 @@ export const setupListeners = (settings: Settings) => {
   })
 
   browser.runtime.onMessage.addListener(
-    (message: ReloadTabListeners) => {
+    (message: ReloadTabListenersMessage) => {
       if (message.type === MESSAGE_TYPE_RELOAD_TAB_LISTENERS) {
-        setupTabListeners(message.value)
+        setupTabCountListeners(message.value)
       }
 
       return false
@@ -78,7 +113,7 @@ export const setupListeners = (settings: Settings) => {
   )
 
   browser.runtime.onMessage.addListener(
-    (message: UpdateLogLevel) => {
+    (message: UpdateLogLevelMessage) => {
       if (message.type === MESSAGE_TYPE_UPDATE_LOG_LEVEL) {
         void updateLogLevel(message.value)
       }

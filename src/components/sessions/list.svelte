@@ -3,97 +3,18 @@
    * @note Use accordion accessibility
    * https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html
    */
-  import { onDestroy } from 'svelte'
-
-  import { getAllWindows, getActiveTabId } from 'src/utils/browser/query'
+  import type { SessionLists } from 'src/utils/browser/storage'
   import ViewButton from './view-button.svelte'
   import WindowList from './window-list.svelte'
-  import {
-    currentWindowId,
-    currentTabId,
-    currentSession,
-    selectedSessionId,
-  } from './sessions'
-  import type { Session } from './sessions'
 
-  const sampleId = '1'
+  export let onSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
+    selectedSessionId: string | undefined,
+    sessionLists: SessionLists,
+    currentWindowId: number | undefined,
+    currentTabId: number | undefined
 
-  let previousSessions: Session[]
-  const previousCount = 0
-  const savedCount = 0
-
-  const fetch = async () => {
-    const windows = await getAllWindows({ populate: true }, true)
-    console.log('windows: ', windows)
-    $currentSession = {
-      id: sampleId,
-      lastModified: new Date().getTime(),
-      windows,
-      current: true,
-    }
-
-    if (!$selectedSessionId) {
-      $selectedSessionId = $currentSession.id
-    }
-
-    const windowId = $currentSession?.windows[0].id
-    const tabs = $currentSession?.windows[0]?.tabs
-    if (windowId && tabs) {
-      const tabId = tabs.find(
-        ({ active }) => active
-      )?.id
-      $currentWindowId = windowId
-      if (tabId) {
-        $currentTabId = tabId
-      }
-    }
-  }
-
-  void fetch()
-
-  const handleClickAccordionItem: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (ev) => {
-    $selectedSessionId = $selectedSessionId
-      ? undefined
-      : ev.currentTarget.id
-  }
-
-  const handleActiveTabChange = (info: browser.tabs._OnActivatedActiveInfo) => {
-    $currentWindowId = info.windowId
-    $currentTabId = info.tabId
-    // reorder windows
-  }
-
-  const handleFocusWindowChange = async (windowId: number) => {
-    console.log('focus change windowId: ', windowId);
-    if (windowId > 0) {
-      const tabId = await getActiveTabId(windowId)
-      $currentWindowId = windowId
-      $currentTabId = tabId
-      // reorder windows
-    } else {
-      $currentWindowId = undefined
-      $currentTabId = undefined
-    }
-  }
-
-  $: selectedSession = [
-    ...([$currentSession] || []),
-    ...(previousSessions || []),
-  ].find(session => session && session.id === $selectedSessionId)
-
-  browser.tabs.onActivated.addListener(handleActiveTabChange)
-  browser.windows.onFocusChanged.addListener(handleFocusWindowChange)
-  browser.windows.onCreated.addListener(fetch)
-  browser.windows.onRemoved.addListener(fetch)
-
-  onDestroy(() => {
-    browser.tabs.onActivated.removeListener(handleActiveTabChange)
-    browser.windows.onFocusChanged.removeListener(handleFocusWindowChange)
-    browser.windows.onCreated.removeListener(fetch)
-    browser.windows.onRemoved.removeListener(fetch)
-  })
-
-  // TODO: move events to new file?
+  const previousCount = sessionLists.previous.length
+  const savedCount = sessionLists.saved.length
 </script>
 
 <section class="w-full md:grid md:gap-6 md:grid-cols-12 md:px-4">
@@ -101,21 +22,24 @@
     id="menu"
     class="relative p-0 m-0 md:col-span-3 2xl:col-span-2 z-menu-accordion"
   >
-    {#if $currentSession}
+    {#if sessionLists.current}
       <ViewButton
-        onClick={handleClickAccordionItem}
-        currentSession={$currentSession}
-        selectedSessionId={$selectedSessionId}
+        onClick={onSelectSession}
+        title="Current"
+        session={sessionLists.current}
+        selected={selectedSessionId
+          ? selectedSessionId === sessionLists.current.id
+          : false}
       />
     {/if}
 
-    {#if $selectedSessionId && selectedSession}
+    {#if selectedSessionId === sessionLists.current.id}
       <div class="md:hidden px-4 xs:px-10 py-4">
         <WindowList
-          windows={selectedSession.windows}
-          ariaLabelledby={$selectedSessionId}
-          currentWindowId={$currentWindowId}
-          currentTabId={$currentTabId}
+          windows={sessionLists.current.windows}
+          ariaLabelledby={selectedSessionId}
+          {currentWindowId}
+          {currentTabId}
         />
       </div>
     {/if}
@@ -132,13 +56,13 @@
       </h2>
     {/if}
   </menu>
-  {#if $selectedSessionId && selectedSession}
+  {#if selectedSessionId === sessionLists.current.id}
     <article class="hidden md:block md:col-span-9 2xl:col-span-10 pb-10">
       <WindowList
-        windows={selectedSession.windows}
-        ariaLabelledby={$selectedSessionId}
-        currentWindowId={$currentWindowId}
-        currentTabId={$currentTabId}
+        windows={sessionLists.current.windows}
+        ariaLabelledby={selectedSessionId}
+        {currentWindowId}
+        {currentTabId}
       />
     </article>
   {/if}

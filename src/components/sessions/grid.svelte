@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { selectedSessionId } from './sessions'
+  export let selectedSessionId: string | undefined
 </script>
 
 <div>
-  {$selectedSessionId}
+  {selectedSessionId}
 </div>

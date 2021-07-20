@@ -11,7 +11,7 @@
   import { log } from 'src/utils/logger'
   import AppLayout from 'src/components/layout/layout.svelte'
   import PageLoader from 'src/components/loader/page-loader.svelte'
-  import SessionLayouts from 'src/components/sessions/layouts.svelte'
+  import Sessions from 'src/components/sessions/sessions.svelte'
   import SettingsModal from 'src/components/settings/settings.svelte'
   import ShortcutsModal from 'src/components/shortcuts/shortcuts.svelte'
 
@@ -47,7 +47,7 @@
     {onSubmitSearch}
     height={isPopup ? $settings.popupDimensions?.height : undefined}
   >
-    <SessionLayouts currentLayout={$settings.layout} />
+    <Sessions currentLayout={$settings.layout} />
   </AppLayout>
   {#if $showSettings}
     <SettingsModal close={closeSettings} />
