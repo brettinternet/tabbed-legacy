@@ -15,7 +15,8 @@
     const button = ev.currentTarget
     if (button.dataset.windowId) {
       const windowId: number | undefined = parseInt(button.dataset.windowId)
-      if (windowId) {
+      const ariaDisabled = button.getAttribute('aria-disabled') === 'true'
+      if (windowId && !ariaDisabled) {
         await focusWindow(windowId)
       }
     }
@@ -51,7 +52,11 @@
         <div class="flex flex-row items-center py-3 mr-3 leading-5">
           <div class="flex justify-center w-5 mr-3"><Window /></div>
           <h2 class="font-semibold flex items-center">
-            <button data-window-id={id} on:click={handleWindowClick}>
+            <button
+              data-window-id={id}
+              on:click={handleWindowClick}
+              aria-disabled={currentWindowId === id}
+            >
               {#if currentWindowId === id}
                 Current
               {/if}
@@ -92,8 +97,8 @@
                       on:click={handleTabLinkClick}
                       class={cn(
                         !(id === currentTabId) && 'hover:underline',
-                        'py-1'
-                        // 'overflow-ellipsis overflow-hidden whitespace-pre'
+                        'py-1',
+                        'overflow-ellipsis overflow-hidden whitespace-pre'
                       )}
                       target="_blank"
                       rel="noopener noreferrer"

@@ -51,7 +51,7 @@ npm test
 - [ ] multi-select tabs and windows, shift click
 - [ ] Add focus/active listeners to background, refresh window/tab list on window/tab changes
 - [ ] save tab groups
-- [ ] select box (left), context menu for tab actions
+- [ ] select box (left) - also move active indicator, context menu for tab actions
 
 #### Sessions
 
