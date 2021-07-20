@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { defaultSettings, Settings } from 'src/utils/settings'
 
-import { readSettings, writeSetting, storageKeys } from './storage'
+import { readSettings, writeSetting, localStorageKeys } from './storage'
 
 describe('utils/browser/storage.ts', () => {
   describe('readSettings', () => {
     it('returns default settings when no storage is found', async () => {
       const settings = await readSettings()
       expect(browser.storage.sync.get).toHaveBeenCalledWith(
-        storageKeys.SETTINGS
+        localStorageKeys.SETTINGS
       )
       expect(settings).toEqual(defaultSettings)
     })
@@ -22,7 +22,7 @@ describe('utils/browser/storage.ts', () => {
 
       await writeSetting(newSettings)
       expect(browser.storage.sync.set).toHaveBeenCalledWith({
-        [storageKeys.SETTINGS]: {
+        [localStorageKeys.SETTINGS]: {
           ...defaultSettings,
           ...newSettings,
         },

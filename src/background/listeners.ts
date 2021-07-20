@@ -11,31 +11,60 @@ import type { ReloadActionsMessage, ReloadTabListenersMessage, UpdateLogLevelMes
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
 import { setupActions } from './configuration'
-import {getSessions} from './sessions'
+import { getSessions, autoSaveSession } from './sessions'
 
 const logContext = 'background/listeners'
 const BADGE_BACKGROUND_COLOR = '#3b82f6'
 
-const updateSession = async () => {
-  log.debug(logContext, 'getWindows')
-
-  const sessions = await getSessions(true)
+const updateSessionMessage = async (sessions: UpdateSessionsListMessage['value']) => {
+  log.debug(logContext, 'updateSessionMessage()', sessions)
 
   const message: UpdateSessionsListMessage = {
     type: MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
     value: sessions,
   }
-  await browser.runtime.sendMessage(message)
+  try {
+    await browser.runtime.sendMessage(message)
+  } catch (_err) {
+    const err = browser.runtime.lastError
+    if (err?.message !== "Could not establish connection. Receiving end does not exist.") {
+      throw err
+    }
+  }
+}
+
+const handleClosedWindow = async (closedWindowId: number) => {
+  log.debug(logContext, 'handleClosedWindow()', closedWindowId)
+
+  try {
+    await autoSaveSession(closedWindowId)
+    const sessions = await getSessions()
+    await updateSessionMessage(sessions)
+  } catch (err) {
+    log.error(logContext, 'handleClosedWindow', err)
+  }
+}
+
+const updateSession = async () => {
+  log.debug(logContext, 'getWindows')
+
+  try {
+    const sessions = await getSessions()
+    await updateSessionMessage(sessions)
+  } catch (err) {
+    log.error(logContext, 'updateSession', err)
+  }
 }
 
 const setupWindowListeners = () => {
-  log.debug(logContext, 'setupWindowListeners')
+  log.debug(logContext, 'setupWindowListeners()')
 
   browser.runtime.onMessage.addListener(
-    (message: GetSessionsListMessage, _sender, sendResponse) => {
+    (message: GetSessionsListMessage) => {
       if (message.type === MESSAGE_TYPE_GET_SESSIONS_LIST) {
-        sendResponse(getSessions())
-        return true
+        return new Promise(resolve => {
+          resolve(getSessions())
+        })
       }
 
       return false
@@ -43,12 +72,13 @@ const setupWindowListeners = () => {
   )
 
   browser.windows.onCreated.addListener(updateSession)
-  browser.windows.onRemoved.addListener(updateSession)
+  browser.tabs.onUpdated.addListener(updateSession)
+  browser.windows.onRemoved.addListener(handleClosedWindow)
 }
 
 const updateTabCountBadge = async () => {
   try {
-    log.debug(logContext, 'updateTabCountBadge')
+    log.debug(logContext, 'updateTabCountBadge()')
     const tabs = await browser.tabs.query({})
     const count = tabs.length
     await browser.browserAction.setBadgeBackgroundColor({
@@ -67,7 +97,7 @@ const clearTabCountBadge = async () => {
 const updateTabCountDebounce = debounce(updateTabCountBadge, 250)
 
 const setupTabCountListeners = (showTabCountBadge: boolean) => {
-  log.debug(logContext, 'setupTabCountListeners', showTabCountBadge)
+  log.debug(logContext, 'setupTabCountListeners()', showTabCountBadge)
   if (showTabCountBadge) {
     void updateTabCountDebounce()
     browser.tabs.onUpdated.addListener(updateTabCountDebounce)
@@ -89,7 +119,7 @@ const setupTabCountListeners = (showTabCountBadge: boolean) => {
 
 export const setupListeners = (settings: Settings) => {
   updateLogLevel(settings.debugMode)
-  log.debug(logContext, 'setupListeners', settings)
+  log.debug(logContext, 'setupListeners()', settings)
 
   setupWindowListeners()
   setupTabCountListeners(settings.showTabCountBadge)

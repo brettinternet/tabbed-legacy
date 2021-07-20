@@ -17,7 +17,7 @@
       const windowId: number | undefined = parseInt(button.dataset.windowId)
       const ariaDisabled = button.getAttribute('aria-disabled') === 'true'
       if (windowId && !ariaDisabled) {
-        await focusWindow(windowId)
+        await focusWindow(windowId) // TODO: on fail, open in new window
       }
     }
   }
@@ -31,7 +31,7 @@
         ev.preventDefault()
         const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
         if (!ariaDisabled) {
-          await focusWindowTab(windowId, tabId)
+          await focusWindowTab(windowId, tabId) // TODO: on fail, open in new tab
           currentWindowId = windowId
           currentTabId = tabId
         }

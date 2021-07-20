@@ -9,18 +9,23 @@
   export let session: Session,
     onClick: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
     selected: boolean,
-    title: OptionalProp<string> = session.title
+    title: OptionalProp<string> = session.title,
+    date: OptionalProp<string> = undefined,
+    datePrefix: OptionalProp<string> = undefined
 
-  const timeAgo = formatDistanceToNow(new Date(session.lastModified), {
+  const timeAgo = date ? formatDistanceToNow(new Date(date), {
     locale: getDateLocale($locale),
     addSuffix: true,
-  })
+  }) : undefined
+
+  const timeStr = timeAgo ? `${datePrefix} ${timeAgo}` : undefined
 </script>
 
 <button
   id={session.id}
   aria-expanded={selected}
   on:click={onClick}
+  style="height:70px;"
   class={cn(
     'bg-gray-100 px-10 py-4 flex flex-col justify-center w-full lg:rounded-sm text-left',
     selected && 'bg-blue-600 text-white'
@@ -29,18 +34,23 @@
   {#if title}
     <h3
       {title}
-      class="overflow-ellipsis overflow-hidden whitespace-pre w-full mb-1"
+      class={cn(
+        'overflow-ellipsis overflow-hidden whitespace-pre w-full',
+        timeAgo && 'mb-1'
+      )}
     >
       {title}
     </h3>
   {/if}
-  <h3
-    title={timeAgo}
-    class={cn(
-      'text-xs overflow-ellipsis overflow-hidden whitespace-pre w-full',
-      selected ? 'text-gray-200' : 'text-gray-600'
-    )}
-  >
-    {timeAgo}
-  </h3>
+  {#if timeAgo}
+    <h3
+      title={timeStr}
+      class={cn(
+        'text-xs overflow-ellipsis overflow-hidden whitespace-pre w-full',
+        selected ? 'text-gray-200' : 'text-gray-600'
+      )}
+    >
+      {timeStr}
+    </h3>
+  {/if}
 </button>

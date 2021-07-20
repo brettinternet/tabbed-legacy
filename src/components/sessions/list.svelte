@@ -11,10 +11,14 @@
     selectedSessionId: string | undefined,
     sessionLists: SessionLists,
     currentWindowId: number | undefined,
-    currentTabId: number | undefined
+    currentTabId: number | undefined,
+    deleteSession: (id: string) => void
 
   const previousCount = sessionLists.previous.length
   const savedCount = sessionLists.saved.length
+
+  $: selectedSession = [sessionLists.current, ...sessionLists.previous, ...sessionLists.saved].find(({id}) => id === selectedSessionId)
+  $: console.log('sessionLists', sessionLists);
 </script>
 
 <section class="w-full md:grid md:gap-6 md:grid-cols-12 md:px-4">
@@ -22,45 +26,75 @@
     id="menu"
     class="relative p-0 m-0 md:col-span-3 2xl:col-span-2 z-menu-accordion"
   >
-    {#if sessionLists.current}
+    {#each [sessionLists.current, ...sessionLists.previous] as session, i}
       <ViewButton
         onClick={onSelectSession}
-        title="Current"
-        session={sessionLists.current}
-        selected={selectedSessionId
-          ? selectedSessionId === sessionLists.current.id
-          : false}
+        title={i === 0 ? 'Current' : undefined}
+        {session}
+        selected={selectedSessionId ? selectedSessionId === session.id : false}
+        date={session.lastModifiedDate}
+        datePrefix="created"
       />
-    {/if}
+      {#if selectedSessionId === session.id}
+        <div class="md:hidden px-4 xs:px-10 py-4">
+          {#if i !== 0}
+            <button
+              on:click={() => {
+                deleteSession(session.id)
+              }}>delete</button
+            >
+          {/if}
+          <WindowList
+            windows={session.windows}
+            ariaLabelledby={session.id}
+            {currentWindowId}
+            {currentTabId}
+          />
+        </div>
+      {/if}
 
-    {#if selectedSessionId === sessionLists.current.id}
-      <div class="md:hidden px-4 xs:px-10 py-4">
-        <WindowList
-          windows={sessionLists.current.windows}
-          ariaLabelledby={selectedSessionId}
-          {currentWindowId}
-          {currentTabId}
-        />
-      </div>
-    {/if}
-
-    {#if previousCount > 0}
-      <h2 class="px-10 py-6">
-        Previous<span class="hidden md:inline">{' '}Sessions</span>
-      </h2>
-    {/if}
+      {#if i === 0 && previousCount > 0}
+        <h2 class="px-10 py-6">
+          Previous<span class="hidden md:inline">{' '}Sessions</span>
+        </h2>
+      {/if}
+    {/each}
 
     {#if savedCount > 0}
       <h2 class="px-10 py-6">
         Saved<span class="hidden lg:inline">{' '}Sessions</span>
       </h2>
+
+      {#each sessionLists.saved as session}
+        <ViewButton
+          onClick={onSelectSession}
+          title="Current"
+          {session}
+          selected={selectedSessionId
+            ? selectedSessionId === session.id
+            : false}
+          date={session.lastModifiedDate}
+          datePrefix="created"
+        />
+        {#if selectedSessionId === session.id}
+          <div class="md:hidden px-4 xs:px-10 py-4">
+            <WindowList
+              windows={session.windows}
+              ariaLabelledby={session.id}
+              {currentWindowId}
+              {currentTabId}
+            />
+          </div>
+        {/if}
+      {/each}
     {/if}
   </menu>
-  {#if selectedSessionId === sessionLists.current.id}
+
+  {#if selectedSession && selectedSession.id === selectedSessionId}
     <article class="hidden md:block md:col-span-9 2xl:col-span-10 pb-10">
       <WindowList
-        windows={sessionLists.current.windows}
-        ariaLabelledby={selectedSessionId}
+        windows={selectedSession.windows}
+        ariaLabelledby={selectedSession.id}
         {currentWindowId}
         {currentTabId}
       />

@@ -17,6 +17,7 @@
     sessionLists,
     selectedSessionId,
   } from 'src/components/sessions/store'
+  import { deletePreviousSession } from 'src/utils/browser/storage'
   import List from './list.svelte'
   import Grid from './grid.svelte'
 
@@ -25,13 +26,20 @@
   const logContext = 'components/sessions/sessions.svelte'
   let firstUpdateComplete = false
 
-  const fetch = async () => {
+  const getSessions = async () => {
     log.debug(logContext, 'fetch')
 
     const message: GetSessionsListMessage = {
       type: MESSAGE_TYPE_GET_SESSIONS_LIST
     }
-    $sessionLists = await browser.runtime.sendMessage(message) as GetSessionsListResponse
+
+    try {
+      $sessionLists = await browser.runtime.sendMessage(message) as GetSessionsListResponse
+    } catch (err) {
+      log.error(err)
+      // TODO: handle error presentation
+    }
+
     console.log('$sessionLists: ', $sessionLists);
 
     if (!$selectedSessionId && !firstUpdateComplete) {
@@ -43,7 +51,12 @@
     $currentTabId = focusedWindow?.tabs?.find(({ active }) => active)?.id
   }
 
-  void fetch()
+  void getSessions()
+
+  const deleteSession = async (id: string) => {
+    await deletePreviousSession(id)
+    await getSessions()
+  }
 
   const updateSessions = (message: UpdateSessionsListMessage) => {
     if (message.type === MESSAGE_TYPE_UPDATE_SESSIONS_LIST) {
@@ -59,9 +72,10 @@
   browser.runtime.onMessage.addListener(updateSessions)
 
   const handleSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (ev) => {
-    $selectedSessionId = $selectedSessionId
+    const nextId = ev.currentTarget.id
+    $selectedSessionId = $selectedSessionId === nextId
       ? undefined
-      : ev.currentTarget.id
+      : nextId
   }
 
   const handleActiveTabChange = (info: browser.tabs._OnActivatedActiveInfo) => {
@@ -104,6 +118,7 @@
       sessionLists={$sessionLists}
       currentWindowId={$currentWindowId}
       currentTabId={$currentTabId}
+      {deleteSession}
     />
   {/if}
 {/if}

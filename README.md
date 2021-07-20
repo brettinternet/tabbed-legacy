@@ -77,6 +77,7 @@ npm test
 - [ ] highlight duplicate tabs
 - [ ] save last selected session
 - [ ] allow to optionally save private windows
+- [ ] implement undo stack
 
 #### Related issues
 
