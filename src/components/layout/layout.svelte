@@ -17,19 +17,13 @@
 {#if height}
   <div id="popup" style={`height:${height}px;`} class="scroll overflow-y-auto">
     <Header {currentLayout} {onClickSettings} {onSubmitSearch} />
-    <main
-      id="main"
-      class="dark:bg-gray-900 dark:text-white mx-auto max-w-screen-2xl"
-    >
+    <main id="main" class="mx-auto max-w-screen-2xl">
       <slot />
     </main>
   </div>
 {:else}
   <Header {currentLayout} {onClickSettings} {onSubmitSearch} />
-  <main
-    id="main"
-    class="dark:bg-gray-900 dark:text-white mx-auto max-w-screen-2xl"
-  >
+  <main id="main" class="mx-auto max-w-screen-2xl">
     <slot />
   </main>
 {/if}

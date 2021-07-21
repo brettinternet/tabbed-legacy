@@ -1,3 +1,4 @@
+import 'src/utils/global.css'
 import 'src/utils/tailwind.css'
 import { setup as setupI18n } from 'src/i18n'
 import { setup as setupDocument } from 'src/utils/document'
