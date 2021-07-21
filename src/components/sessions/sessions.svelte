@@ -10,7 +10,7 @@
   import type { Layout } from 'src/utils/settings'
   import type { UpdateSessionsListMessage, GetSessionsListMessage, GetSessionsListResponse } from 'src/utils/messages'
   import { MESSAGE_TYPE_UPDATE_SESSIONS_LIST, MESSAGE_TYPE_GET_SESSIONS_LIST } from 'src/utils/messages'
-  import { getActiveTabId } from 'src/utils/browser/query'
+  import { getActiveTabId, openSession } from 'src/utils/browser/query'
   import {
     currentWindowId,
     currentTabId,
@@ -60,8 +60,26 @@
 
   void fetch()
 
-  const deleteSession = async (id: string) => {
-    log.debug(logContext, 'deleteSession()', id)
+  const handleOpenSession = async (id: string) => {
+    log.debug(logContext, 'handleOpenSession()', id)
+
+    try {
+      const selectedSession = [$sessionLists.current, ...$sessionLists.previous, ...$sessionLists.saved].find((s) => s.id === id)
+      if (selectedSession) {
+        await openSession(selectedSession)
+      }
+      $sessionLists = await getSessions()
+    } catch (err) {
+      log.error(err)
+    }
+
+    if ($selectedSessionId === id) {
+      $selectedSessionId = undefined
+    }
+  }
+
+  const handleDeleteSession = async (id: string) => {
+    log.debug(logContext, 'handleDeleteSession()', id)
 
     try {
       await deletePreviousSession(id)
@@ -134,7 +152,8 @@
       sessionLists={$sessionLists}
       currentWindowId={$currentWindowId}
       currentTabId={$currentTabId}
-      {deleteSession}
+      openSession={handleOpenSession}
+      deleteSession={handleDeleteSession}
     />
   {/if}
 {/if}

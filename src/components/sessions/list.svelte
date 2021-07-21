@@ -6,12 +6,14 @@
   import type { SessionLists } from 'src/utils/browser/storage'
   import ViewButton from './view-button.svelte'
   import WindowList from './window-list.svelte'
+  import SessionActions from './actions.svelte'
 
   export let onSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
     selectedSessionId: string | undefined,
     sessionLists: SessionLists,
     currentWindowId: number | undefined,
     currentTabId: number | undefined,
+    openSession: (id: string) => void,
     deleteSession: (id: string) => void
 
   $: selectedSession = [sessionLists.current, ...sessionLists.previous, ...sessionLists.saved].find(({id}) => id === selectedSessionId)
@@ -23,7 +25,7 @@
     id="menu"
     class="relative p-0 m-0 md:col-span-3 2xl:col-span-2 z-menu-accordion"
   >
-    {#each [sessionLists.current, ...sessionLists.previous] as session, i}
+    {#each [sessionLists.current, ...sessionLists.previous] as session, i (session.id)}
       <ViewButton
         onClick={onSelectSession}
         title={i === 0 ? 'Current' : undefined}
@@ -34,13 +36,13 @@
       />
       {#if selectedSessionId === session.id}
         <div class="md:hidden px-4 xs:px-10 py-4">
-          {#if i !== 0}
-            <button
-              on:click={() => {
-                deleteSession(session.id)
-              }}>delete</button
-            >
-          {/if}
+          <div class="flex justify-end">
+            <SessionActions
+              sessionId={session.id}
+              openSession={i !== 0 ? openSession : undefined}
+              deleteSession={i !== 0 ? deleteSession : undefined}
+            />
+          </div>
           <WindowList
             windows={session.windows}
             ariaLabelledby={session.id}
