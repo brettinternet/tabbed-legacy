@@ -1,7 +1,13 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 
 import { getAllWindows } from 'src/utils/browser/query'
-import { saveCurrentSession, readCurrentSession, removeCurrentSession, savePreviousSession, readPreviousSessions } from 'src/utils/browser/storage'
+import {
+  saveCurrentSession,
+  readCurrentSession,
+  removeCurrentSession,
+  savePreviousSession,
+  readPreviousSessions,
+} from 'src/utils/browser/storage'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
 import { log } from 'src/utils/logger'
 import { isNewTab } from 'src/utils/browser/query'
@@ -45,25 +51,35 @@ export const getSessions = async (): Promise<SessionLists> => {
   }
 }
 
+// TODO: how to manage multiple closed windows on browser exit
 export const autoSaveSession = async (closedWindowId?: number) => {
   log.debug(logContext, 'autoSaveSession()', closedWindowId)
 
-  const currentSession = await readCurrentSession() ?? await getCurrentSession()
+  const currentSession =
+    (await readCurrentSession()) ?? (await getCurrentSession())
 
   if (closedWindowId) {
     // if a window was closed
-    const closedWindow = currentSession.windows.find(({ id }) => id === closedWindowId)
+    const closedWindow = currentSession.windows.find(
+      ({ id }) => id === closedWindowId
+    )
 
     if (closedWindow) {
       // if matching window from cached current session in `readCurrentSession`
-      const validTabs = closedWindow?.tabs?.filter(tab => !isNewTab(tab))
+      const validTabs = closedWindow?.tabs?.filter((tab) => !isNewTab(tab))
 
       if (validTabs && validTabs.length === 0) {
         // if there are no meaningful tabs for autosave to store
-        log.debug(logContext, 'autoSaveSession', 'note: ignoring closed window', closedWindow)
+        log.debug(
+          logContext,
+          'autoSaveSession',
+          'note: ignoring closed window',
+          closedWindow
+        )
         return
       }
 
+      // TODO: check to see if tabs exist elsewhere, then the tab was just moved to another window
       const closedWindowSession = createSession([closedWindow])
       await savePreviousSession(closedWindowSession)
     } else {

@@ -9,12 +9,12 @@ const originalReplaceState = history.replaceState
 
 const updateHref = () => href.set(window.location.href)
 
-history.pushState = function(...args) {
+history.pushState = function (...args) {
   originalPushState.apply(this, args)
   updateHref()
 }
 
-history.replaceState = function(...args) {
+history.replaceState = function (...args) {
   originalReplaceState.apply(this, args)
   updateHref()
 }
@@ -22,4 +22,4 @@ history.replaceState = function(...args) {
 window.addEventListener('popstate', updateHref)
 window.addEventListener('hashchange', updateHref)
 
-export const url = derived(href, $href => new URL($href))
+export const url = derived(href, ($href) => new URL($href))

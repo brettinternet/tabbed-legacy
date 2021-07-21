@@ -1,3 +1,5 @@
+import type { Session } from 'src/utils/browser/storage'
+
 export const isBookmarkManagerTab = (tab: browser.tabs.Tab) =>
   tab.url && tab.url.startsWith('chrome://bookmarks/')
 
@@ -8,7 +10,7 @@ export const isAuxiliaryTab = (tab: browser.tabs.Tab) =>
     isBookmarkManagerTab(tab))
 
 export const isNewTab = (tab: browser.tabs.Tab) =>
-  tab.url && /^chrome:\/\/newtab\/?$/.test(tab.url)
+  tab?.url && /^chrome:\/\/newtab\/?$/.test(tab.url)
 
 /**
  * Tab.id is an optional field, so compare other fields for a better estimation
@@ -35,8 +37,10 @@ export const isSameWindow = (
   window1.focused === window2.focused &&
   window1.incognito === window2.incognito
 
-export const getWindow = (windowId: number, options: browser.windows.GetInfo) =>
-  browser.windows.get(windowId, options)
+export const getWindow = (
+  windowId: number,
+  options: browser.windows.GetInfo = {}
+) => browser.windows.get(windowId, options)
 
 export const getActiveTabId = async (
   windowId: number
@@ -65,7 +69,7 @@ export const getAllWindows = async (
   const windows = await browser.windows.getAll(options)
   if (sorted) {
     const currentWindow = await getCurrentWindow(options)
-    const index = windows.findIndex(w => isSameWindow(currentWindow, w))
+    const index = windows.findIndex((w) => isSameWindow(currentWindow, w))
     windows.splice(index, 1)
     windows.unshift(currentWindow)
   }
@@ -133,4 +137,75 @@ export const openTab = async (
     const url = Array.isArray(query.url) ? query.url[0] : query.url
     await browser.tabs.create(tab || { url })
   }
+}
+
+const openTabs = async (tabs: browser.tabs.Tab[], windowId?: number) => {
+  const tasks = tabs
+    .sort((a, b) => a.index - b.index)
+    .map(async (tab) => {
+      const { url, pinned, index, active } = tab
+      /**
+       * some fields such as `discarded` and reader mode ought to be supported,
+       * but throw an error in Chrome in spite of the polyfill
+       */
+      return await browser.tabs.create({
+        url,
+        pinned,
+        index,
+        active,
+        windowId,
+      })
+    })
+  await Promise.all(tasks)
+}
+
+export const openSession = async (session: Session) => {
+  const tasks = session.windows.map(async (w) => {
+    // promise.all resolve?
+    const firstTab = w.tabs?.[0]
+
+    const options: browser.windows._CreateCreateData = {
+      state: w.state,
+    }
+    switch (w.state) {
+      case 'normal':
+        options.height = w.height
+        options.width = w.width
+        break
+      case 'minimized':
+        break
+      case 'maximized':
+        options.top = w.top
+        options.left = w.left
+        break
+    }
+
+    const createdWindow = await browser.windows.create({
+      incognito: firstTab?.incognito,
+      ...options,
+    })
+
+    if (w.tabs && createdWindow.id) {
+      await openTabs(w.tabs, createdWindow.id)
+      const startupTabIds = createdWindow.tabs?.map(({ id }) => id) || []
+      const newWindow = await getWindow(createdWindow.id, { populate: true }) // race condition with promises.....
+      console.log('newWindow: ', newWindow)
+      // const tabsToClose = newWindow.tabs?.filter(({ id }) => startupTabIds.includes(id))
+      const tabsToClose = newWindow.tabs?.filter((tab) => isNewTab(tab))
+      console.log('tabsToClose: ', tabsToClose)
+      const closeTabs = tabsToClose?.map(async (tab) => {
+        if (tab.id) {
+          return await closeTab(tab.id)
+        }
+      })
+      console.log('closeTabs: ', closeTabs)
+      if (closeTabs) {
+        const result = await Promise.all(closeTabs)
+        console.log('result: ', result)
+      }
+    }
+  })
+
+  console.log('tasks: ', tasks)
+  await Promise.all(tasks)
 }

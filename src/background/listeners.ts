@@ -5,9 +5,15 @@ import {
   MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
   MESSAGE_TYPE_UPDATE_LOG_LEVEL,
   MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
-  MESSAGE_TYPE_GET_SESSIONS_LIST
+  MESSAGE_TYPE_GET_SESSIONS_LIST,
 } from 'src/utils/messages'
-import type { ReloadActionsMessage, ReloadTabListenersMessage, UpdateLogLevelMessage, UpdateSessionsListMessage, GetSessionsListMessage } from 'src/utils/messages'
+import type {
+  ReloadActionsMessage,
+  ReloadTabListenersMessage,
+  UpdateLogLevelMessage,
+  UpdateSessionsListMessage,
+  GetSessionsListMessage,
+} from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
 import { setupActions } from './configuration'
@@ -16,7 +22,9 @@ import { getSessions, autoSaveSession } from './sessions'
 const logContext = 'background/listeners'
 const BADGE_BACKGROUND_COLOR = '#3b82f6'
 
-const updateSessionMessage = async (sessions: UpdateSessionsListMessage['value']) => {
+const updateSessionMessage = async (
+  sessions: UpdateSessionsListMessage['value']
+) => {
   log.debug(logContext, 'updateSessionMessage()', sessions)
 
   const message: UpdateSessionsListMessage = {
@@ -27,7 +35,10 @@ const updateSessionMessage = async (sessions: UpdateSessionsListMessage['value']
     await browser.runtime.sendMessage(message)
   } catch (_err) {
     const err = browser.runtime.lastError
-    if (err?.message !== "Could not establish connection. Receiving end does not exist.") {
+    if (
+      err?.message !==
+      'Could not establish connection. Receiving end does not exist.'
+    ) {
       throw err
     }
   }
@@ -61,17 +72,15 @@ const updateSessionDebounce = debounce(updateSession, 250)
 const setupWindowListeners = () => {
   log.debug(logContext, 'setupWindowListeners()')
 
-  browser.runtime.onMessage.addListener(
-    (message: GetSessionsListMessage) => {
-      if (message.type === MESSAGE_TYPE_GET_SESSIONS_LIST) {
-        return new Promise(resolve => {
-          resolve(getSessions())
-        })
-      }
-
-      return false
+  browser.runtime.onMessage.addListener((message: GetSessionsListMessage) => {
+    if (message.type === MESSAGE_TYPE_GET_SESSIONS_LIST) {
+      return new Promise((resolve) => {
+        resolve(getSessions())
+      })
     }
-  )
+
+    return false
+  })
 
   browser.windows.onCreated.addListener(updateSessionDebounce)
   browser.tabs.onUpdated.addListener(updateSessionDebounce)
@@ -144,13 +153,11 @@ export const setupListeners = (settings: Settings) => {
     }
   )
 
-  browser.runtime.onMessage.addListener(
-    (message: UpdateLogLevelMessage) => {
-      if (message.type === MESSAGE_TYPE_UPDATE_LOG_LEVEL) {
-        void updateLogLevel(message.value)
-      }
-
-      return false
+  browser.runtime.onMessage.addListener((message: UpdateLogLevelMessage) => {
+    if (message.type === MESSAGE_TYPE_UPDATE_LOG_LEVEL) {
+      void updateLogLevel(message.value)
     }
-  )
+
+    return false
+  })
 }

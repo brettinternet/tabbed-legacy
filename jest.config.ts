@@ -6,29 +6,29 @@ import type { Config } from '@jest/types'
 const config: Config.InitialOptions = {
   globals: {
     // See global.d.ts
-    browser: true
+    browser: true,
   },
   transform: {
-    "^.+\\.svelte$": [
-      "svelte-jester",
+    '^.+\\.svelte$': [
+      'svelte-jester',
       {
-        preprocess: true
-      }
+        preprocess: true,
+      },
     ],
-    "^.+.js$": "babel-jest",
-    "^.+.ts$": "ts-jest",
-    "^.+\\.js$": "babel-jest"
+    '^.+.js$': 'babel-jest',
+    '^.+.ts$': 'ts-jest',
+    '^.+\\.js$': 'babel-jest',
   },
-  moduleFileExtensions: ["js", "ts", "svelte"],
+  moduleFileExtensions: ['js', 'ts', 'svelte'],
   moduleDirectories: [
     'node_modules',
     // Allows for absolute imports at `src`
-    '<rootDir>'
+    '<rootDir>',
   ],
-  setupFilesAfterEnv: ["<rootDir>/test/setup.ts"],
+  setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
   moduleNameMapper: {
-    '^.+\\.css$': '<rootDir>/test/css-stub.ts'
-  }
+    '^.+\\.css$': '<rootDir>/test/css-stub.ts',
+  },
 }
 
 export default config
