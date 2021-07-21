@@ -13,10 +13,12 @@
     date: OptionalProp<string> = undefined,
     datePrefix: OptionalProp<string> = undefined
 
-  const timeAgo = date ? formatDistanceToNow(new Date(date), {
-    locale: getDateLocale($locale),
-    addSuffix: true,
-  }) : undefined
+  const timeAgo = date
+    ? formatDistanceToNow(new Date(date), {
+        locale: getDateLocale($locale),
+        addSuffix: true,
+      })
+    : undefined
 
   const timeStr = timeAgo ? `${datePrefix} ${timeAgo}` : undefined
 </script>
@@ -67,6 +69,8 @@
         : 'text-gray-400 dark:text-gray-400'
     )}
   >
-    {session.windows.length} windows
+    {session.windows.length === 1
+      ? `${session.windows.length} window`
+      : `${session.windows.length} windows`}
   </div>
 </button>
