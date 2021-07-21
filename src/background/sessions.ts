@@ -51,7 +51,7 @@ export const getSessions = async (): Promise<SessionLists> => {
   }
 }
 
-// TODO: how to manage multiple closed windows on browser exit
+// TODO: how to manage multiple closed windows on browser exit https://stackoverflow.com/a/3390760
 export const autoSaveSession = async (closedWindowId?: number) => {
   log.debug(logContext, 'autoSaveSession()', closedWindowId)
 
@@ -66,9 +66,12 @@ export const autoSaveSession = async (closedWindowId?: number) => {
 
     if (closedWindow) {
       // if matching window from cached current session in `readCurrentSession`
-      const validTabs = closedWindow?.tabs?.filter((tab) => !isNewTab(tab))
+      const tabIds = (await browser.tabs.query({}))?.map(({ id }) => id)
 
-      if (validTabs && validTabs.length === 0) {
+      // filter by newtab or if tab exists elsewhere now then it was only moved
+      const tabsToSave = closedWindow?.tabs?.filter((tab) => !isNewTab(tab) && !tabIds.includes(tab.id))
+
+      if (tabsToSave && tabsToSave.length === 0) {
         // if there are no meaningful tabs for autosave to store
         log.debug(
           logContext,
@@ -79,7 +82,6 @@ export const autoSaveSession = async (closedWindowId?: number) => {
         return
       }
 
-      // TODO: check to see if tabs exist elsewhere, then the tab was just moved to another window
       const closedWindowSession = createSession([closedWindow])
       await savePreviousSession(closedWindowSession)
     } else {
