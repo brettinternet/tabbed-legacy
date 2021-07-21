@@ -56,6 +56,8 @@ const updateSession = async () => {
   }
 }
 
+const updateSessionDebounce = debounce(updateSession, 250)
+
 const setupWindowListeners = () => {
   log.debug(logContext, 'setupWindowListeners()')
 
@@ -71,8 +73,8 @@ const setupWindowListeners = () => {
     }
   )
 
-  browser.windows.onCreated.addListener(updateSession)
-  browser.tabs.onUpdated.addListener(updateSession)
+  browser.windows.onCreated.addListener(updateSessionDebounce)
+  browser.tabs.onUpdated.addListener(updateSessionDebounce)
   browser.windows.onRemoved.addListener(handleClosedWindow)
 }
 
