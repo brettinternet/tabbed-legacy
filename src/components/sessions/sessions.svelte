@@ -27,20 +27,25 @@
   let firstUpdateComplete = false
 
   const getSessions = async () => {
-    log.debug(logContext, 'fetch')
+    log.debug(logContext, 'getSessions()')
 
     const message: GetSessionsListMessage = {
       type: MESSAGE_TYPE_GET_SESSIONS_LIST
     }
 
+      return await browser.runtime.sendMessage(message) as GetSessionsListResponse
+
+  }
+
+  const fetch = async () => {
+    log.debug(logContext, 'fetch()')
+
     try {
-      $sessionLists = await browser.runtime.sendMessage(message) as GetSessionsListResponse
+      $sessionLists = await getSessions()
     } catch (err) {
       log.error(err)
       // TODO: handle error presentation
     }
-
-    console.log('$sessionLists: ', $sessionLists);
 
     if (!$selectedSessionId && !firstUpdateComplete) {
       $selectedSessionId = $sessionLists.current.id
@@ -51,11 +56,21 @@
     $currentTabId = focusedWindow?.tabs?.find(({ active }) => active)?.id
   }
 
-  void getSessions()
+  void fetch()
 
   const deleteSession = async (id: string) => {
-    await deletePreviousSession(id)
-    await getSessions()
+    log.debug(logContext, 'deleteSession()', id)
+
+    try {
+      await deletePreviousSession(id)
+      $sessionLists = await getSessions()
+    } catch (err) {
+      log.error(err)
+    }
+
+    if ($selectedSessionId === id) {
+      $selectedSessionId = undefined
+    }
   }
 
   const updateSessions = (message: UpdateSessionsListMessage) => {
@@ -63,11 +78,12 @@
       log.debug(logContext, 'updateSessions', message.value)
 
       $sessionLists = message.value
-      console.log('$selectedSessionId', $selectedSessionId)
     }
 
     return false // no reply
   }
+
+  console.log('$selectedSessionId', $selectedSessionId)
 
   browser.runtime.onMessage.addListener(updateSessions)
 
@@ -104,8 +120,6 @@
     browser.tabs.onActivated.removeListener(handleActiveTabChange)
     browser.windows.onFocusChanged.removeListener(handleFocusWindowChange)
   })
-
-  $: console.log('$selectedSessionId', $selectedSessionId);
 </script>
 
 {#if $sessionLists}

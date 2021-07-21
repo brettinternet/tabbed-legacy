@@ -14,9 +14,6 @@
     currentTabId: number | undefined,
     deleteSession: (id: string) => void
 
-  const previousCount = sessionLists.previous.length
-  const savedCount = sessionLists.saved.length
-
   $: selectedSession = [sessionLists.current, ...sessionLists.previous, ...sessionLists.saved].find(({id}) => id === selectedSessionId)
   $: console.log('sessionLists', sessionLists);
 </script>
@@ -53,14 +50,14 @@
         </div>
       {/if}
 
-      {#if i === 0 && previousCount > 0}
+      {#if i === 0 && sessionLists.previous.length > 0}
         <h2 class="px-10 py-6">
           Previous<span class="hidden md:inline">{' '}Sessions</span>
         </h2>
       {/if}
     {/each}
 
-    {#if savedCount > 0}
+    {#if sessionLists.saved.length > 0}
       <h2 class="px-10 py-6">
         Saved<span class="hidden lg:inline">{' '}Sessions</span>
       </h2>
