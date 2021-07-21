@@ -60,6 +60,7 @@ npm test
 
 #### Layouts
 
+- [ ] list layout - add accessible rows for tab/arrows
 - [ ] Grid layout ([1](https://github.com/isaacHagoel/svelte-dnd-action), [2](https://github.com/vaheqelyan/svelte-grid))
 - [ ] resize boxes
 - [ ] zones to move window groups to? current/minimized/saved
