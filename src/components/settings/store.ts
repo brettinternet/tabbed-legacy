@@ -198,6 +198,6 @@ export const updateSettings = async (values: Partial<Settings>) => {
   })
   const keys = getKeys(values)
   await Promise.all(
-    keys.map(async (key) => handleSettingsSideEffects(key, values, false))
+    keys.map(async (key) => handleSettingsSideEffects(key, values, true))
   )
 }
