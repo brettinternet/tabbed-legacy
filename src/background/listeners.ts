@@ -6,6 +6,7 @@ import {
   MESSAGE_TYPE_UPDATE_LOG_LEVEL,
   MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
   MESSAGE_TYPE_GET_SESSIONS_LIST,
+  MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
 } from 'src/utils/messages'
 import type {
   ReloadActionsMessage,
@@ -13,6 +14,7 @@ import type {
   UpdateLogLevelMessage,
   UpdateSessionsListMessage,
   GetSessionsListMessage,
+  ReloadClosedWindowListener
 } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
@@ -69,6 +71,16 @@ const updateSession = async () => {
 
 const updateSessionDebounce = debounce(updateSession, 250)
 
+const setupClosedWindowListener = (saveClosedWindows: Settings['saveClosedWindows']) => {
+  log.debug(logContext, 'setupClosedWindowListener()', saveClosedWindows)
+
+  if (saveClosedWindows) {
+    browser.windows.onRemoved.addListener(handleClosedWindow)
+  } else {
+    browser.windows.onRemoved.removeListener(handleClosedWindow)
+  }
+}
+
 const setupWindowListeners = () => {
   log.debug(logContext, 'setupWindowListeners()')
 
@@ -84,7 +96,6 @@ const setupWindowListeners = () => {
 
   browser.windows.onCreated.addListener(updateSessionDebounce)
   browser.tabs.onUpdated.addListener(updateSessionDebounce)
-  browser.windows.onRemoved.addListener(handleClosedWindow)
 }
 
 const updateTabCountBadge = async () => {
@@ -133,6 +144,7 @@ export const setupListeners = (settings: Settings) => {
   log.debug(logContext, 'setupListeners()', settings)
 
   setupWindowListeners()
+  setupClosedWindowListener(settings.saveClosedWindows)
   setupTabCountListeners(settings.showTabCountBadge)
 
   browser.runtime.onMessage.addListener((message: ReloadActionsMessage) => {
@@ -156,6 +168,14 @@ export const setupListeners = (settings: Settings) => {
   browser.runtime.onMessage.addListener((message: UpdateLogLevelMessage) => {
     if (message.type === MESSAGE_TYPE_UPDATE_LOG_LEVEL) {
       void updateLogLevel(message.value)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: ReloadClosedWindowListener) => {
+    if (message.type === MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER) {
+      void setupClosedWindowListener(message.value)
     }
 
     return false

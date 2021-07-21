@@ -40,3 +40,9 @@ export type GetSessionsListMessage = Message<
 >
 
 export type GetSessionsListResponse = SessionLists
+
+export const MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER = 'reload_closed_window_listener'
+export type ReloadClosedWindowListener = MessageWithValue<
+  typeof MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
+  boolean
+>

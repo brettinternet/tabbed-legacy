@@ -27,6 +27,9 @@ export type Setting =
   | 'shortcuts'
   | 'fontSize'
   | 'popupDimensions'
+  | 'theme'
+  | 'debugMode'
+  | 'saveClosedWindows'
 export type Settings = {
   layout: Layout
   extensionClickAction: ExtensionClickAction
@@ -39,6 +42,7 @@ export type Settings = {
   }
   theme: Theme
   debugMode: boolean
+  saveClosedWindows: boolean
 }
 
 export const defaultSettings: Settings = {
@@ -53,4 +57,5 @@ export const defaultSettings: Settings = {
   },
   theme: themes.LIGHT,
   debugMode: !isProd,
+  saveClosedWindows: false,
 }

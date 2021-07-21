@@ -4,73 +4,95 @@
   import Toggle from 'src/components/toggle/toggle.svelte'
   import Input from 'src/components/input/input.svelte'
   import Radio from 'src/components/radio/radio.svelte'
-  import Button from 'src/components/button/button.svelte';
-  import { extensionClickActions, layouts, themes, defaultSettings } from 'src/utils/settings'
+  import Button from 'src/components/button/button.svelte'
+  import {
+    extensionClickActions,
+    layouts,
+    themes,
+    defaultSettings,
+  } from 'src/utils/settings'
   import type { Theme, ExtensionClickAction, Layout } from 'src/utils/settings'
   import { updateSettings, settings } from 'src/components/settings/store'
   import { isSidebarSupported } from 'src/components/app/store'
 
   export let headerId: string
 
-  const handleChangeLayout: svelte.JSX.FormEventHandler<HTMLInputElement> = async (ev) => {
-    await updateSettings({ layout: ev.currentTarget.value as Layout })
-  }
+  const handleChangeLayout: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      await updateSettings({ layout: ev.currentTarget.value as Layout })
+    }
 
-  const handleChangeToggleExtensionClickAction: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
-    const checked = ev.currentTarget.checked
-    await updateSettings({
-      extensionClickAction: extensionClickActions[checked ? 'TAB' : 'POPUP'],
-    })
-  }
+  const handleChangeToggleExtensionClickAction: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      const checked = ev.currentTarget.checked
+      await updateSettings({
+        extensionClickAction: extensionClickActions[checked ? 'TAB' : 'POPUP'],
+      })
+    }
 
-  const handleChangeRadioExtensionClickAction: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
-    await updateSettings({
-      extensionClickAction: ev.currentTarget.value as ExtensionClickAction,
-    })
-  }
+  const handleChangeRadioExtensionClickAction: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      await updateSettings({
+        extensionClickAction: ev.currentTarget.value as ExtensionClickAction,
+      })
+    }
 
-  const handleChangeTabCountBadge: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
-    await updateSettings({
-      showTabCountBadge: ev.currentTarget.checked,
-    })
-  }
+  const handleChangeSaveClosedWindow: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      await updateSettings({
+        saveClosedWindows: ev.currentTarget.checked,
+      })
+    }
 
-  const handleChangeShortcuts: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
-    await updateSettings({
-      shortcuts: ev.currentTarget.checked,
-    })
-  }
+  const handleChangeTabCountBadge: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      await updateSettings({
+        showTabCountBadge: ev.currentTarget.checked,
+      })
+    }
 
-  const handleChangeFontSize: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
-    await updateSettings({
-      fontSize: parseInt(ev.currentTarget.value),
-    })
-  }
+  const handleChangeShortcuts: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      await updateSettings({
+        shortcuts: ev.currentTarget.checked,
+      })
+    }
 
-  const handleChangePopupDimension: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
-    await updateSettings({
-      popupDimensions: {
-        ...$settings.popupDimensions,
-        [ev.currentTarget.name]: parseInt(ev.currentTarget.value),
-      },
-    })
-  }
+  const handleChangeFontSize: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      await updateSettings({
+        fontSize: parseInt(ev.currentTarget.value),
+      })
+    }
 
-  const handleChangeTheme: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
-    await updateSettings({
-      theme: ev.currentTarget.value as Theme,
-    })
-  }
+  const handleChangePopupDimension: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      await updateSettings({
+        popupDimensions: {
+          ...$settings.popupDimensions,
+          [ev.currentTarget.name]: parseInt(ev.currentTarget.value),
+        },
+      })
+    }
 
-  const handleChangeDebugMode: svelte.JSX.FormEventHandler<HTMLInputElement> = async ev => {
-    await updateSettings({
-      debugMode: ev.currentTarget.checked,
-    })
-  }
+  const handleChangeTheme: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      await updateSettings({
+        theme: ev.currentTarget.value as Theme,
+      })
+    }
 
-  const handleClickReset: svelte.JSX.MouseEventHandler<HTMLButtonElement> = async () => {
-    await updateSettings(defaultSettings)
-  }
+  const handleChangeDebugMode: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      await updateSettings({
+        debugMode: ev.currentTarget.checked,
+      })
+    }
+
+  const handleClickReset: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
+    async () => {
+      await updateSettings(defaultSettings)
+    }
 </script>
 
 <h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">Options</h1>
@@ -149,6 +171,25 @@
       </div>
       <p id="font-size-description" class="text-gray-600">
         Changes base font size.
+      </p>
+    </div>
+
+    <hr class="my-6" />
+
+    <h2 class="text-md font-semibold mb-6 capitalize">Session</h2>
+
+    <div class="mb-6">
+      <div class="mb-3">
+        <Toggle
+          id="save-closed-window-toggle"
+          label="Save closed windows"
+          onChange={handleChangeSaveClosedWindow}
+          checked={$settings.saveClosedWindows}
+          aria-describedby="save-closed-window-description"
+        />
+      </div>
+      <p id="save-closed-window-description" class="text-gray-600">
+        Saves a single window session when windows are closed.
       </p>
     </div>
 

@@ -10,11 +10,13 @@ import type {
   ReloadActionsMessage,
   ReloadTabListenersMessage,
   UpdateLogLevelMessage,
+  ReloadClosedWindowListener,
 } from 'src/utils/messages'
 import {
   MESSAGE_TYPE_RELOAD_ACTIONS,
   MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
   MESSAGE_TYPE_UPDATE_LOG_LEVEL,
+  MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
 } from 'src/utils/messages'
 import { readSettings, writeSetting } from 'src/utils/browser/storage'
 import { isPopup, showSettings, showShortcuts } from 'src/components/app/store'
@@ -150,6 +152,17 @@ const handleSettingsSideEffects = async <K extends keyof Settings>(
         const message: UpdateLogLevelMessage = {
           type: MESSAGE_TYPE_UPDATE_LOG_LEVEL,
           value: debugMode,
+        }
+        await browser.runtime.sendMessage(message)
+      }
+      break
+    }
+    case 'saveClosedWindows': {
+      const { saveClosedWindows } = settings
+      if (updateBackgroundTasks && isDefined(saveClosedWindows)) {
+        const message: ReloadClosedWindowListener = {
+          type: MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
+          value: saveClosedWindows,
         }
         await browser.runtime.sendMessage(message)
       }
