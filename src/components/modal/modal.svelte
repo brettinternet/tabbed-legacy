@@ -6,7 +6,7 @@
   import { onMount, onDestroy } from 'svelte'
 
   import { isPopup } from 'src/components/app/store'
-  import { clickAway } from 'src/components/modal/click-away'
+  import { clickAway } from 'src/utils/click-away'
 
   export let id = 'modal',
     close: () => void,
