@@ -29,7 +29,7 @@ const main = async () => {
     `bytes in sync storage: ${bytesUsed} B`,
   ]
 
-  console.info(status.join('\n'))
+  log.info(status.join('\n'))
 }
 
 void main()

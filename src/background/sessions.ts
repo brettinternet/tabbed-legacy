@@ -69,7 +69,9 @@ export const autoSaveSession = async (closedWindowId?: number) => {
       const tabIds = (await browser.tabs.query({}))?.map(({ id }) => id)
 
       // filter by newtab or if tab exists elsewhere now then it was only moved
-      const tabsToSave = closedWindow?.tabs?.filter((tab) => !isNewTab(tab) && !tabIds.includes(tab.id))
+      const tabsToSave = closedWindow?.tabs?.filter(
+        (tab) => !isNewTab(tab) && !tabIds.includes(tab.id)
+      )
 
       if (tabsToSave && tabsToSave.length === 0) {
         // if there are no meaningful tabs for autosave to store

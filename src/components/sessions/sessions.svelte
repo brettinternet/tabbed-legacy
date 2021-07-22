@@ -3,13 +3,20 @@
    * @notes Layouts should comply with accessibility standards
    * https://www.w3.org/TR/2017/WD-wai-aria-practices-1.1-20170628/examples/grid/LayoutGrids.html
    */
-   import { onDestroy } from 'svelte'
+  import { onDestroy } from 'svelte'
 
-   import { log } from 'src/utils/logger'
+  import { log } from 'src/utils/logger'
   import { layouts } from 'src/utils/settings'
   import type { Layout } from 'src/utils/settings'
-  import type { UpdateSessionsListMessage, GetSessionsListMessage, GetSessionsListResponse } from 'src/utils/messages'
-  import { MESSAGE_TYPE_UPDATE_SESSIONS_LIST, MESSAGE_TYPE_GET_SESSIONS_LIST } from 'src/utils/messages'
+  import type {
+    UpdateSessionsListMessage,
+    GetSessionsListMessage,
+    GetSessionsListResponse,
+  } from 'src/utils/messages'
+  import {
+    MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
+    MESSAGE_TYPE_GET_SESSIONS_LIST,
+  } from 'src/utils/messages'
   import { getActiveTabId, openSession } from 'src/utils/browser/query'
   import {
     currentWindowId,
@@ -30,11 +37,12 @@
     log.debug(logContext, 'getSessions()')
 
     const message: GetSessionsListMessage = {
-      type: MESSAGE_TYPE_GET_SESSIONS_LIST
+      type: MESSAGE_TYPE_GET_SESSIONS_LIST,
     }
 
-      return await browser.runtime.sendMessage(message) as GetSessionsListResponse
-
+    return (await browser.runtime.sendMessage(
+      message
+    )) as GetSessionsListResponse
   }
 
   const fetch = async () => {
@@ -52,7 +60,9 @@
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    const focusedWindow = $sessionLists.current?.windows.find(({ focused }) => focused)
+    const focusedWindow = $sessionLists.current?.windows.find(
+      ({ focused }) => focused
+    )
     $currentWindowId = focusedWindow?.id
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     $currentTabId = focusedWindow?.tabs?.find(({ active }) => active)?.id
@@ -64,17 +74,17 @@
     log.debug(logContext, 'handleOpenSession()', id)
 
     try {
-      const selectedSession = [$sessionLists.current, ...$sessionLists.previous, ...$sessionLists.saved].find((s) => s.id === id)
+      const selectedSession = [
+        $sessionLists.current,
+        ...$sessionLists.previous,
+        ...$sessionLists.saved,
+      ].find((s) => s.id === id)
       if (selectedSession) {
         await openSession(selectedSession)
       }
       $sessionLists = await getSessions()
     } catch (err) {
       log.error(err)
-    }
-
-    if ($selectedSessionId === id) {
-      $selectedSessionId = undefined
     }
   }
 
@@ -107,11 +117,11 @@
 
   browser.runtime.onMessage.addListener(updateSessions)
 
-  const handleSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (ev) => {
+  const handleSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (
+    ev
+  ) => {
     const nextId = ev.currentTarget.id
-    $selectedSessionId = $selectedSessionId === nextId
-      ? undefined
-      : nextId
+    $selectedSessionId = $selectedSessionId === nextId ? undefined : nextId
   }
 
   const handleActiveTabChange = (info: browser.tabs._OnActivatedActiveInfo) => {

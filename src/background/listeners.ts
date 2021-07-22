@@ -14,7 +14,7 @@ import type {
   UpdateLogLevelMessage,
   UpdateSessionsListMessage,
   GetSessionsListMessage,
-  ReloadClosedWindowListener
+  ReloadClosedWindowListener,
 } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
@@ -71,7 +71,9 @@ const updateSession = async () => {
 
 const updateSessionDebounce = debounce(updateSession, 250)
 
-const setupClosedWindowListener = (saveClosedWindows: Settings['saveClosedWindows']) => {
+const setupClosedWindowListener = (
+  saveClosedWindows: Settings['saveClosedWindows']
+) => {
   log.debug(logContext, 'setupClosedWindowListener()', saveClosedWindows)
 
   if (saveClosedWindows) {
@@ -173,11 +175,13 @@ export const setupListeners = (settings: Settings) => {
     return false
   })
 
-  browser.runtime.onMessage.addListener((message: ReloadClosedWindowListener) => {
-    if (message.type === MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER) {
-      void setupClosedWindowListener(message.value)
-    }
+  browser.runtime.onMessage.addListener(
+    (message: ReloadClosedWindowListener) => {
+      if (message.type === MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER) {
+        void setupClosedWindowListener(message.value)
+      }
 
-    return false
-  })
+      return false
+    }
+  )
 }

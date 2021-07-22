@@ -16,8 +16,12 @@
     openSession: (id: string) => void,
     deleteSession: (id: string) => void
 
-  $: selectedSession = [sessionLists.current, ...sessionLists.previous, ...sessionLists.saved].find(({id}) => id === selectedSessionId)
-  $: console.log('sessionLists', sessionLists);
+  $: selectedSession = [
+    sessionLists.current,
+    ...sessionLists.previous,
+    ...sessionLists.saved,
+  ].find(({ id }) => id === selectedSessionId)
+  $: console.log('sessionLists', sessionLists)
 </script>
 
 <section class="w-full md:grid md:gap-6 md:grid-cols-12 md:px-4">
@@ -91,6 +95,15 @@
 
   {#if selectedSession && selectedSession.id === selectedSessionId}
     <article class="hidden md:block md:col-span-9 2xl:col-span-10 pb-10">
+      <SessionActions
+        sessionId={selectedSession.id}
+        openSession={selectedSession.id !== sessionLists.current.id
+          ? openSession
+          : undefined}
+        deleteSession={selectedSession.id !== sessionLists.current.id
+          ? deleteSession
+          : undefined}
+      />
       <WindowList
         windows={selectedSession.windows}
         ariaLabelledby={selectedSession.id}

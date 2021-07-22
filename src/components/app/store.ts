@@ -16,10 +16,13 @@ export const isPopout = window.location.href.includes(popoutUrl)
 export const isSidebar = window.location.href.includes(sidebarUrl)
 export const isSidebarSupported = !!browser.sidebarAction
 
-log.debug(logContext, [
-  ...concatTruthy(isPopup, isPopup),
-  ...concatTruthy(isPopout, 'isPopout'),
-  ...concatTruthy(isTab, 'isTab'),
-  ...concatTruthy(isSidebar, 'isSidebar'),
-  ...concatTruthy(isSidebarSupported, 'isSidebarSupported'),
-])
+log.debug(
+  [
+    logContext,
+    ...concatTruthy(isPopup, isPopup),
+    ...concatTruthy(isPopout, 'isPopout'),
+    ...concatTruthy(isTab, 'isTab'),
+    ...concatTruthy(isSidebar, 'isSidebar'),
+    ...concatTruthy(isSidebarSupported, 'isSidebarSupported'),
+  ].join('\n')
+)
