@@ -13,7 +13,7 @@ declare global {
      * `chrome.app` is available on Chrome browsers, used
      */
     chrome?: {
-      app?: {}
+      app?: unknown
     }
   }
 

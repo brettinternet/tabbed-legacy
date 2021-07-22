@@ -59,12 +59,10 @@
       $selectedSessionId = $sessionLists.current.id
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     const focusedWindow = $sessionLists.current?.windows.find(
       ({ focused }) => focused
     )
     $currentWindowId = focusedWindow?.id
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     $currentTabId = focusedWindow?.tabs?.find(({ active }) => active)?.id
   }
 

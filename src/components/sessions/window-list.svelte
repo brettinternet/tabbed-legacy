@@ -58,7 +58,7 @@
             )
             if (selectedTab) {
               const { url, pinned } = selectedTab
-              openTab({ url, pinned }, selectedWindow?.incognito)
+              await openTab({ url, pinned }, selectedWindow?.incognito)
             }
           }
         }

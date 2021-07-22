@@ -1,12 +1,11 @@
 import { log } from 'src/utils/logger'
-import type { Session } from 'src/utils/browser/storage'
 
 export const browsers = {
   CHROME: 'chrome',
   FIREFOX: 'firefox',
 }
 
-export const getBrowser = async () => {
+export const getBrowser = () => {
   if (window.chrome?.app) {
     return browsers.CHROME
   }
@@ -15,7 +14,7 @@ export const getBrowser = async () => {
    * Only available on Firefox
    * @source https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getBrowserInfo
    */
-  if (!!browser.runtime.getBrowserInfo) {
+  if (browser.runtime.getBrowserInfo) {
     return browsers.FIREFOX
   }
 }
