@@ -10,17 +10,19 @@
     deleteSession: ((id: string) => void) | undefined = undefined,
     openSession: ((id: string) => void) | undefined = undefined
 
-  const handleClickOpen: svelte.JSX.MouseEventHandler<HTMLButtonElement> = () => {
-    if (openSession) {
-      void openSession(sessionId)
+  const handleClickOpen: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
+    () => {
+      if (openSession) {
+        void openSession(sessionId)
+      }
     }
-  }
 
-  const handleClickDelete: svelte.JSX.MouseEventHandler<HTMLButtonElement> = () => {
-    if (deleteSession) {
-      void deleteSession(sessionId)
+  const handleClickDelete: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
+    () => {
+      if (deleteSession) {
+        void deleteSession(sessionId)
+      }
     }
-  }
 
   const iconButtonClassName = 'px-3 py-2'
 </script>

@@ -11,33 +11,35 @@
     currentWindowId: number | undefined,
     currentTabId: number | undefined
 
-  const handleWindowClick: svelte.JSX.MouseEventHandler<HTMLButtonElement> = async ev => {
-    const button = ev.currentTarget
-    if (button.dataset.windowId) {
-      const windowId: number | undefined = parseInt(button.dataset.windowId)
-      const ariaDisabled = button.getAttribute('aria-disabled') === 'true'
-      if (windowId && !ariaDisabled) {
-        await focusWindow(windowId) // TODO: on fail, open in new window
-      }
-    }
-  }
-
-  const handleTabLinkClick: svelte.JSX.MouseEventHandler<HTMLAnchorElement> = async ev => {
-    const anchor = ev.currentTarget
-    if (anchor.dataset.tabId && anchor.dataset.windowId) {
-      const tabId: number | undefined = parseInt(anchor.dataset.tabId)
-      const windowId: number | undefined = parseInt(anchor.dataset.windowId)
-      if (tabId && windowId) {
-        ev.preventDefault()
-        const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
-        if (!ariaDisabled) {
-          await focusWindowTab(windowId, tabId) // TODO: on fail, open in new tab
-          currentWindowId = windowId
-          currentTabId = tabId
+  const handleWindowClick: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
+    async (ev) => {
+      const button = ev.currentTarget
+      if (button.dataset.windowId) {
+        const windowId: number | undefined = parseInt(button.dataset.windowId)
+        const ariaDisabled = button.getAttribute('aria-disabled') === 'true'
+        if (windowId && !ariaDisabled) {
+          await focusWindow(windowId) // TODO: on fail, open in new window
         }
       }
     }
-  }
+
+  const handleTabLinkClick: svelte.JSX.MouseEventHandler<HTMLAnchorElement> =
+    async (ev) => {
+      const anchor = ev.currentTarget
+      if (anchor.dataset.tabId && anchor.dataset.windowId) {
+        const tabId: number | undefined = parseInt(anchor.dataset.tabId)
+        const windowId: number | undefined = parseInt(anchor.dataset.windowId)
+        if (tabId && windowId) {
+          ev.preventDefault()
+          const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
+          if (!ariaDisabled) {
+            await focusWindowTab(windowId, tabId) // TODO: on fail, open in new tab
+            currentWindowId = windowId
+            currentTabId = tabId
+          }
+        }
+      }
+    }
 </script>
 
 <div role="region" aria-labelledby={ariaLabelledby}>

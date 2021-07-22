@@ -4,19 +4,19 @@
   export let label: OptionalProp<string> = undefined,
     id: OptionalProp<string> = undefined,
     classNames: OptionalProp<string> = undefined,
-    onChange: OptionalProp<svelte.JSX.FormEventHandler<
-      HTMLInputElement
-    >> = undefined
+    onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLInputElement>> =
+      undefined
 
   /**
    * Filter escape key to prevent closing popup, and blur the input instead
    */
-  const handleSearchKeyDown: svelte.JSX.KeyboardEventHandler<HTMLInputElement> = ev => {
-    if (ev.key === 'Escape') {
-      ev.preventDefault()
-      ev.currentTarget.blur()
+  const handleSearchKeyDown: svelte.JSX.KeyboardEventHandler<HTMLInputElement> =
+    (ev) => {
+      if (ev.key === 'Escape') {
+        ev.preventDefault()
+        ev.currentTarget.blur()
+      }
     }
-  }
 </script>
 
 {#if label}

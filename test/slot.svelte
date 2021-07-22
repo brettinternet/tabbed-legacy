@@ -7,9 +7,7 @@
    */
   import type { SvelteComponent } from 'svelte'
 
-  export let component: SvelteComponent,
-    text: string,
-    props: unknown
+  export let component: SvelteComponent, text: string, props: unknown
 </script>
 
 <svelte:component this={component} {...props}>
