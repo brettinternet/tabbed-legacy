@@ -6,6 +6,7 @@
   import Window from 'src/components/icons/window.svelte'
   import { getDateLocale } from 'src/i18n'
   import type { Session } from 'src/utils/browser/storage'
+  import { onInterval } from 'src/components/sessions/timer'
 
   export let session: Session,
     onClick: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
@@ -14,14 +15,23 @@
     date: OptionalProp<string> = undefined,
     datePrefix: OptionalProp<string> = undefined
 
-  const timeAgo = date
-    ? formatDistanceToNow(new Date(date), {
-        locale: getDateLocale($locale),
-        addSuffix: true,
-      })
-    : undefined
+  const getDateStr = (date: string | undefined) => {
+    const timeStr = date
+      ? formatDistanceToNow(new Date(date), {
+          locale: getDateLocale($locale),
+          addSuffix: true,
+        })
+      : undefined
+    return timeStr ? `${datePrefix} ${timeStr}` : undefined
+  }
 
-  const timeStr = timeAgo ? `${datePrefix} ${timeAgo}` : undefined
+  let timeAgoStr = getDateStr(date)
+
+  const updateTimeAgoStr = () => {
+    timeAgoStr = getDateStr(date)
+  }
+
+  onInterval(updateTimeAgoStr, 60000)
 </script>
 
 <button
@@ -42,22 +52,22 @@
         {title}
         class={cn(
           'overflow-ellipsis overflow-hidden whitespace-pre w-full',
-          timeAgo && 'mb-1',
+          timeAgoStr && 'mb-1',
           selected && 'font-bold'
         )}
       >
         {title}
       </h3>
     {/if}
-    {#if timeAgo}
+    {#if timeAgoStr}
       <h3
-        title={timeStr}
+        title={timeAgoStr}
         class={cn(
           'text-xs overflow-ellipsis overflow-hidden whitespace-pre w-full',
           selected ? 'text-gray-200 dark:text-gray-800' : 'text-gray-400'
         )}
       >
-        {timeStr}
+        {timeAgoStr}
       </h3>
     {/if}
   </div>
