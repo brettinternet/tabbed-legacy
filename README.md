@@ -72,7 +72,7 @@ npm test
 
 #### Accessibility
 
-- [ ] tab-able elements, tab groups that can change focus with arrows
+- [ ] tab-able elements, tab groups that can change focus with arrows (AKA focus rings/focus layers or groups ([1](https://github.com/discord/focus-rings), [2](https://github.com/davidtheclark/focus-group)))
 
 #### App
 
