@@ -40,7 +40,7 @@
   on:click={onClick}
   style="height:70px;"
   class={cn(
-    'px-10 py-4 flex justify-between items-center text-left w-full lg:rounded-sm lg:px-6',
+    'px-4 py-4 sm:px-10 flex justify-between items-center text-left w-full overflow-hidden whitespace-nowrap lg:rounded-sm lg:px-6',
     selected
       ? 'bg-blue-600 text-white dark:bg-blue-400 dark:text-gray-900'
       : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-100'
@@ -48,27 +48,27 @@
 >
   <div>
     {#if title}
-      <h3
+      <h1
         {title}
         class={cn(
-          'overflow-ellipsis overflow-hidden whitespace-pre w-full',
+          'overflow-ellipsis overflow-hidden w-full',
           timeAgoStr && 'mb-1',
           selected && 'font-bold'
         )}
       >
         {title}
-      </h3>
+      </h1>
     {/if}
     {#if timeAgoStr}
-      <h3
+      <h2
         title={timeAgoStr}
         class={cn(
-          'text-xs overflow-ellipsis overflow-hidden whitespace-pre w-full',
+          'text-xs overflow-ellipsis overflow-hidden w-full',
           selected ? 'text-gray-200 dark:text-gray-800' : 'text-gray-400'
         )}
       >
         {timeAgoStr}
-      </h3>
+      </h2>
     {/if}
   </div>
 

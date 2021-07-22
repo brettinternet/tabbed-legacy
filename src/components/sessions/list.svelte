@@ -1,6 +1,6 @@
 <script lang="ts">
   /**
-   * @note Use accordion accessibility
+   * @accessibility Use accordion accessibility
    * https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html
    */
   import type { SessionLists } from 'src/utils/browser/storage'
@@ -43,7 +43,7 @@
           : 'created'}
       />
       {#if selectedSessionId === session.id}
-        <div class="lg:hidden px-4 xs:px-10 py-4">
+        <div class="lg:hidden px-4 sm:px-10 py-4">
           <div class="flex justify-end">
             <SessionActions
               sessionId={session.id}
@@ -96,7 +96,9 @@
   </menu>
 
   {#if selectedSession && selectedSession.id === selectedSessionId}
-    <article class="scroll hidden lg:block lg:col-span-8 xl:col-span-9 pb-10">
+    <article
+      class="scroll hidden lg:block lg:col-span-8 xl:col-span-9 pb-10 h-main overflow-y-auto"
+    >
       <div class="flex justify-end">
         <SessionActions
           sessionId={selectedSession.id}

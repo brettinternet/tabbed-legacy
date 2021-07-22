@@ -21,8 +21,18 @@ module.exports = {
       fontSize: {
         xxs: '.6rem',
       },
+      height: {
+        header: '60px',
+        main: 'calc(100vh - 60px)',
+      },
       maxHeight: {
         modal: 'calc(100vh - 10rem)',
+      },
+      minWidth: {
+        5: '1.25rem', // `window-list.svelte` image container
+      },
+      margin: {
+        outline: '2px', // to allow space for focus ring outline
       },
     },
   },

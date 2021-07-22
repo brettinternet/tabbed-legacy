@@ -1,4 +1,8 @@
 <script lang="ts">
+  /**
+   * @accessibility use rows and gridcells
+   * https://www.w3.org/TR/2017/WD-wai-aria-practices-1.1-20170628/examples/grid/LayoutGrids.html
+   */
   import cn from 'classnames'
 
   import {
@@ -77,16 +81,16 @@
       >
         <div class="flex flex-row items-center py-3 mr-3 leading-5">
           <div class="flex justify-center w-5 mr-3"><Window /></div>
-          <h2 class="font-semibold flex items-center">
+          <h2
+            class="font-semibold flex items-center overflow-hidden whitespace-pre"
+          >
             <button
               data-window-id={id}
               on:click={handleWindowClick}
               aria-disabled={currentWindowId === id}
+              class="overflow-ellipsis overflow-hidden m-outline"
             >
-              {#if currentWindowId === id}
-                Current
-              {/if}
-              Window
+              {#if currentWindowId === id}Current{' '}{/if}Window
             </button>
             {#if currentWindowId === id}
               <span class="ml-2"><Focused /></span>
@@ -94,24 +98,28 @@
           </h2>
         </div>
         {#if tabs}
-          <div class="text-gray-500 font-extralight">
+          <div
+            class="text-gray-500 font-extralight whitespace-nowrap overflow-ellipsis overflow-hidden"
+          >
             {tabs.length} tabs
           </div>
         {/if}
       </div>
       {#if tabs}
-        <ul class="overflow-hidden">
+        <ul role="grid" class="overflow-hidden">
           {#each tabs as { id, windowId, title, url, favIconUrl }}
             {#if title || url}
-              <li class="flex flex-row">
-                <div class="flex justify-center h-5 w-5 mb-1 mr-3 ">
+              <li role="row" class="flex flex-row">
+                <div class="flex justify-center h-5 w-5 min-w-5 mb-1 mr-3">
                   {#if favIconUrl}
                     <img use:replaceImageError src={favIconUrl} alt={title} />
                   {/if}
                 </div>
                 <div
+                  role="gridcell"
                   class={cn(
                     'leading-5 inline-flex items-center',
+                    'overflow-hidden whitespace-pre',
                     id === currentTabId && 'text-green-500'
                   )}
                 >
@@ -122,9 +130,8 @@
                       href={url}
                       on:click={handleTabLinkClick}
                       class={cn(
-                        !(id === currentTabId) && 'hover:underline',
-                        'py-1',
-                        'overflow-ellipsis overflow-hidden whitespace-pre'
+                        'overflow-ellipsis overflow-hidden mx-outline',
+                        id !== currentTabId && 'hover:underline'
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
