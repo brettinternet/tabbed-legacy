@@ -1,5 +1,29 @@
 import type { Session } from 'src/utils/browser/storage'
 
+export const browsers = {
+  CHROME: 'chrome',
+  FIREFOX: 'firefox',
+}
+
+export const getBrowser = async () => {
+  if (window.chrome?.app) {
+    return browsers.CHROME
+  }
+
+  /**
+   * Only available on Firefox
+   * @source https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getBrowserInfo
+   */
+  if (!!browser.runtime.getBrowserInfo) {
+    return browsers.FIREFOX
+  }
+}
+
+/**
+ * See `browser.d.ts` for information on `pendingUrl`
+ */
+export const getTabUrl = (tab: browser.tabs.Tab) => tab.pendingUrl || tab.url
+
 export const isBookmarkManagerTab = (tab: browser.tabs.Tab) =>
   tab.url && tab.url.startsWith('chrome://bookmarks/')
 
@@ -9,8 +33,25 @@ export const isAuxiliaryTab = (tab: browser.tabs.Tab) =>
     tab.url.startsWith('chrome-devtools:') ||
     isBookmarkManagerTab(tab))
 
-export const isNewTab = (tab: browser.tabs.Tab) =>
-  tab?.url && /^chrome:\/\/newtab\/?$/.test(tab.url)
+export const isNewTab = (tab: browser.tabs.Tab) => {
+  // Chrome
+  const url = getTabUrl(tab)
+  if (url && /^chrome:\/\/newtab\/?$/.test(url)) {
+    return true
+  }
+
+  // Firefox
+  // Firefox tabs have a `about:blank` url when status === 'loading'
+  if (
+    (url === 'about:blank' || url === 'about:newtab') &&
+    tab?.status === 'complete' &&
+    tab?.title === 'New Tab'
+  ) {
+    return true
+  }
+
+  return false
+}
 
 /**
  * Tab.id is an optional field, so compare other fields for a better estimation
@@ -161,7 +202,6 @@ const openTabs = async (tabs: browser.tabs.Tab[], windowId?: number) => {
 
 export const openSession = async (session: Session) => {
   const tasks = session.windows.map(async (w) => {
-    // promise.all resolve?
     const firstTab = w.tabs?.[0]
 
     const options: browser.windows._CreateCreateData = {
@@ -186,26 +226,22 @@ export const openSession = async (session: Session) => {
     })
 
     if (w.tabs && createdWindow.id) {
+      const emptyStartupTabIds = createdWindow.tabs?.map(({ id }) => id) || []
       await openTabs(w.tabs, createdWindow.id)
-      const startupTabIds = createdWindow.tabs?.map(({ id }) => id) || []
-      const newWindow = await getWindow(createdWindow.id, { populate: true }) // race condition with promises.....
-      console.log('newWindow: ', newWindow)
-      // const tabsToClose = newWindow.tabs?.filter(({ id }) => startupTabIds.includes(id))
-      const tabsToClose = newWindow.tabs?.filter((tab) => isNewTab(tab))
-      console.log('tabsToClose: ', tabsToClose)
+      const newWindow = await getWindow(createdWindow.id, { populate: true })
+      const tabsToClose = newWindow.tabs?.filter(({ id }) =>
+        emptyStartupTabIds.includes(id)
+      )
       const closeTabs = tabsToClose?.map(async (tab) => {
         if (tab.id) {
           return await closeTab(tab.id)
         }
       })
-      console.log('closeTabs: ', closeTabs)
       if (closeTabs) {
-        const result = await Promise.all(closeTabs)
-        console.log('result: ', result)
+        await Promise.all(closeTabs)
       }
     }
   })
 
-  console.log('tasks: ', tasks)
   await Promise.all(tasks)
 }

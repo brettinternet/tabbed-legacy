@@ -8,6 +8,13 @@ declare global {
      * https://github.com/mozilla/webextension-polyfill
      */
     browser: browser
+
+    /**
+     * `chrome.app` is available on Chrome browsers, used
+     */
+    chrome?: {
+      app?: {}
+    }
   }
 
   /**
