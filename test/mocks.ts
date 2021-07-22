@@ -70,23 +70,26 @@ type LoggerModule = {
   log: Logger
 }
 
-jest.mock('src/utils/logger', (): LoggerModule => ({
-  updateLogLevel: jest.fn(),
-  log: {
-    levels,
-    methodFactory: jest.fn(),
-    trace: jest.fn(),
-    debug: jest.fn(),
-    log: jest.fn(),
-    info: jest.fn(),
-    warn: console.warn,
-    error: console.error,
-    setLevel: jest.fn(),
-    getLevel: jest.fn(),
-    setDefaultLevel: jest.fn(),
-    enableAll: jest.fn(),
-    disableAll: jest.fn(),
-  }
-}))
+jest.mock(
+  'src/utils/logger',
+  (): LoggerModule => ({
+    updateLogLevel: jest.fn(),
+    log: {
+      levels,
+      methodFactory: jest.fn(),
+      trace: jest.fn(),
+      debug: jest.fn(),
+      log: jest.fn(),
+      info: jest.fn(),
+      warn: console.warn,
+      error: console.error,
+      setLevel: jest.fn(),
+      getLevel: jest.fn(),
+      setDefaultLevel: jest.fn(),
+      enableAll: jest.fn(),
+      disableAll: jest.fn(),
+    },
+  })
+)
 
 export {}

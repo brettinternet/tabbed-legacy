@@ -19,9 +19,7 @@ const config: Config.InitialOptions = {
     '^.+.ts$': 'ts-jest',
     '^.+\\.js$': 'babel-jest',
   },
-  transformIgnorePatterns: [
-    "node_modules/(?!jest-webextension-mock)",
-  ],
+  transformIgnorePatterns: ['node_modules/(?!jest-webextension-mock)'],
   moduleFileExtensions: ['js', 'ts', 'svelte'],
   moduleDirectories: [
     'node_modules',

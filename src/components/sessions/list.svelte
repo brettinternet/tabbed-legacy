@@ -35,8 +35,12 @@
         title={i === 0 ? 'Current' : undefined}
         {session}
         selected={selectedSessionId ? selectedSessionId === session.id : false}
-        date={session.lastModifiedDate}
-        datePrefix="created"
+        date={session.id === sessionLists.current.id
+          ? session.lastModifiedDate
+          : session.lastSavedDate}
+        datePrefix={session.id === sessionLists.current.id
+          ? 'updated'
+          : 'created'}
       />
       {#if selectedSessionId === session.id}
         <div class="lg:hidden px-4 xs:px-10 py-4">
@@ -93,15 +97,17 @@
 
   {#if selectedSession && selectedSession.id === selectedSessionId}
     <article class="scroll hidden lg:block lg:col-span-8 xl:col-span-9 pb-10">
-      <SessionActions
-        sessionId={selectedSession.id}
-        openSession={selectedSession.id !== sessionLists.current.id
-          ? openSession
-          : undefined}
-        deleteSession={selectedSession.id !== sessionLists.current.id
-          ? deleteSession
-          : undefined}
-      />
+      <div class="flex justify-end">
+        <SessionActions
+          sessionId={selectedSession.id}
+          openSession={selectedSession.id !== sessionLists.current.id
+            ? openSession
+            : undefined}
+          deleteSession={selectedSession.id !== sessionLists.current.id
+            ? deleteSession
+            : undefined}
+        />
+      </div>
       <WindowList
         current={selectedSession.id === sessionLists.current.id}
         windows={selectedSession.windows}
