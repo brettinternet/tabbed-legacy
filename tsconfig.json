@@ -5,7 +5,11 @@
     "baseUrl": ".",
     "module": "esnext",
     "types": ["node", "jest"],
-    "strict": true
+    "strict": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types",
+  ]
   },
   "include": ["src/**/*", "**/*.ts", "*.js", ".eslintrc.js"],
   "exclude": ["node_modules", "dist"]

@@ -7,7 +7,7 @@ describe('utils/browser/storage.ts', () => {
   describe('readSettings', () => {
     it('returns default settings when no storage is found', async () => {
       const settings = await readSettings()
-      expect(browser.storage.sync.get).toHaveBeenCalledWith(
+      expect(browser.storage.local.get).toHaveBeenCalledWith(
         localStorageKeys.SETTINGS
       )
       expect(settings).toEqual(defaultSettings)
@@ -21,7 +21,7 @@ describe('utils/browser/storage.ts', () => {
       }
 
       await writeSetting(newSettings)
-      expect(browser.storage.sync.set).toHaveBeenCalledWith({
+      expect(browser.storage.local.set).toHaveBeenCalledWith({
         [localStorageKeys.SETTINGS]: {
           ...defaultSettings,
           ...newSettings,

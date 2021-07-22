@@ -9,7 +9,7 @@ export const localStorageKeys = {
 } as const
 
 export const readSettings = async (): Promise<Settings> => {
-  const { settings } = await (browser.storage.sync.get(
+  const { settings } = await (browser.storage.local.get(
     localStorageKeys.SETTINGS
   ) as Promise<{ settings: Settings | undefined }>)
   if (settings) {
@@ -23,7 +23,7 @@ export const readSettings = async (): Promise<Settings> => {
 
 export const writeSetting = async (settings: Partial<Settings>) => {
   const currentSettings = await readSettings()
-  await browser.storage.sync.set({
+  await browser.storage.local.set({
     [localStorageKeys.SETTINGS]: Object.assign({}, currentSettings, settings),
   })
 }

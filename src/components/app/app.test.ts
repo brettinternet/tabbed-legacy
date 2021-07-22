@@ -15,7 +15,6 @@ describe('components/app/app.svelte', () => {
 
     await waitFor(() => {
       const main = screen.getByRole('main')
-      screen.debug()
       expect(main).toBeInTheDocument()
     })
   })

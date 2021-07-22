@@ -56,10 +56,10 @@
     }
 
     if (!$selectedSessionId && !firstUpdateComplete) {
-      $selectedSessionId = $sessionLists.current.id
+      $selectedSessionId = $sessionLists?.current.id
     }
 
-    const focusedWindow = $sessionLists.current?.windows.find(
+    const focusedWindow = $sessionLists?.current?.windows.find(
       ({ focused }) => focused
     )
     $currentWindowId = focusedWindow?.id
@@ -71,18 +71,20 @@
   const handleOpenSession = async (id: string) => {
     log.debug(logContext, 'handleOpenSession()', id)
 
-    try {
-      const selectedSession = [
-        $sessionLists.current,
-        ...$sessionLists.previous,
-        ...$sessionLists.saved,
-      ].find((s) => s.id === id)
-      if (selectedSession) {
-        await openWindows(selectedSession.windows)
+    if ($sessionLists) {
+      try {
+        const selectedSession = [
+          $sessionLists?.current,
+          ...$sessionLists?.previous,
+          ...$sessionLists?.saved,
+        ].find((s) => s.id === id)
+        if (selectedSession) {
+          await openWindows(selectedSession.windows)
+        }
+        $sessionLists = await getSessions()
+      } catch (err) {
+        log.error(err)
       }
-      $sessionLists = await getSessions()
-    } catch (err) {
-      log.error(err)
     }
   }
 
@@ -110,8 +112,6 @@
 
     return false // no reply
   }
-
-  console.log('$selectedSessionId', $selectedSessionId)
 
   browser.runtime.onMessage.addListener(updateSessions)
 

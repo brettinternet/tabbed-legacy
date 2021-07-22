@@ -29,7 +29,8 @@ export const getBrowser = () => {
 }
 
 /**
- * See `browser.d.ts` for information on `pendingUrl`
+ * `pendingUrl` for Chrome browsers where status === 'loading'
+ * See `browser.d.ts`
  */
 export const getTabUrl = (tab: browser.tabs.Tab) => tab.pendingUrl || tab.url
 
