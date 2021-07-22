@@ -1,12 +1,18 @@
 <script lang="ts">
   import cn from 'classnames'
 
-  import { focusWindowTab, focusWindow } from 'src/utils/browser/query'
+  import {
+    focusWindowTab,
+    focusWindow,
+    openTab,
+    openWindow,
+  } from 'src/utils/browser/query'
   import Window from 'src/components/icons/window.svelte'
   import { replaceImageError } from 'src/components/sessions/dom'
   import Focused from 'src/components/icons/eye.svelte'
 
   export let windows: browser.windows.Window[],
+    current: boolean,
     ariaLabelledby: string,
     currentWindowId: number | undefined,
     currentTabId: number | undefined
@@ -18,7 +24,14 @@
         const windowId: number | undefined = parseInt(button.dataset.windowId)
         const ariaDisabled = button.getAttribute('aria-disabled') === 'true'
         if (windowId && !ariaDisabled) {
-          await focusWindow(windowId) // TODO: on fail, open in new window
+          if (current) {
+            await focusWindow(windowId)
+          } else {
+            const selectedWindow = windows.find(({ id }) => id === windowId)
+            if (selectedWindow) {
+              await openWindow(selectedWindow)
+            }
+          }
         }
       }
     }
@@ -31,11 +44,22 @@
         const windowId: number | undefined = parseInt(anchor.dataset.windowId)
         if (tabId && windowId) {
           ev.preventDefault()
-          const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
-          if (!ariaDisabled) {
-            await focusWindowTab(windowId, tabId) // TODO: on fail, open in new tab
-            currentWindowId = windowId
-            currentTabId = tabId
+          if (current) {
+            const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
+            if (!ariaDisabled) {
+              await focusWindowTab(windowId, tabId)
+              currentWindowId = windowId
+              currentTabId = tabId
+            }
+          } else {
+            const selectedWindow = windows.find(({ id }) => id === windowId)
+            const selectedTab = selectedWindow?.tabs?.find(
+              ({ id }) => id === tabId
+            )
+            if (selectedTab) {
+              const { url, pinned } = selectedTab
+              openTab({ url, pinned }, selectedWindow?.incognito)
+            }
           }
         }
       }

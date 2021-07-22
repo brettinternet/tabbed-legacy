@@ -32,8 +32,6 @@ export type Session = {
   id: string
   title?: string
   lastModifiedDate: string
-  windowCount?: number
-  tabCount?: number
   windows: browser.windows.Window[]
   lastSavedDate?: string
 }

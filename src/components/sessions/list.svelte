@@ -48,6 +48,7 @@
             />
           </div>
           <WindowList
+            current={i === 0}
             windows={session.windows}
             ariaLabelledby={session.id}
             {currentWindowId}
@@ -78,6 +79,7 @@
         {#if selectedSessionId === session.id}
           <div class="lg:hidden px-4 xs:px-10 py-4">
             <WindowList
+              current={false}
               windows={session.windows}
               ariaLabelledby={session.id}
               {currentWindowId}
@@ -101,6 +103,7 @@
           : undefined}
       />
       <WindowList
+        current={selectedSession.id === sessionLists.current.id}
         windows={selectedSession.windows}
         ariaLabelledby={selectedSession.id}
         {currentWindowId}

@@ -17,7 +17,7 @@
     MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
     MESSAGE_TYPE_GET_SESSIONS_LIST,
   } from 'src/utils/messages'
-  import { getActiveTabId, openSession } from 'src/utils/browser/query'
+  import { getActiveTabId, openWindows } from 'src/utils/browser/query'
   import {
     currentWindowId,
     currentTabId,
@@ -80,7 +80,7 @@
         ...$sessionLists.saved,
       ].find((s) => s.id === id)
       if (selectedSession) {
-        await openSession(selectedSession)
+        await openWindows(selectedSession.windows)
       }
       $sessionLists = await getSessions()
     } catch (err) {

@@ -1,3 +1,4 @@
+import { log } from 'src/utils/logger'
 import type { Session } from 'src/utils/browser/storage'
 
 export const browsers = {
@@ -148,14 +149,27 @@ export const focusWindowTab = async (windowId: number, tabId: number) => {
   await activateTab(tabId)
 }
 
+/**
+ * Find existing tab with matching query, otherwise
+ * open with matching incognito state
+ */
 export const openTab = async (
   query: browser.tabs._QueryQueryInfo,
   incognito = false
 ) => {
+  const url = Array.isArray(query.url) ? query.url[0] : query.url
+  // hashes cause queries to return empty
+  const hashIndex = url?.indexOf('#') ?? -1
+  query.url = url && hashIndex > -1 ? url.substr(0, hashIndex) : url
+
   let tab: browser.tabs.Tab | undefined
-  const matches = await browser.tabs.query(query)
-  if (matches.length === 1) {
-    tab = matches[0]
+  try {
+    const matches = await browser.tabs.query(query)
+    if (matches.length >= 1) {
+      tab = matches[0]
+    }
+  } catch (err) {
+    log.error(err)
   }
 
   const allowed = await browser.extension.isAllowedIncognitoAccess()
@@ -175,7 +189,6 @@ export const openTab = async (
   ) {
     await browser.windows.create({ ...tab, incognito })
   } else {
-    const url = Array.isArray(query.url) ? query.url[0] : query.url
     await browser.tabs.create(tab || { url })
   }
 }
@@ -200,48 +213,49 @@ const openTabs = async (tabs: browser.tabs.Tab[], windowId?: number) => {
   await Promise.all(tasks)
 }
 
-export const openSession = async (session: Session) => {
-  const tasks = session.windows.map(async (w) => {
-    const firstTab = w.tabs?.[0]
+// TODO: Add find option to optionally search by ID
+export const openWindow = async (w: browser.windows.Window) => {
+  const options: browser.windows._CreateCreateData = {
+    state: w.state,
+  }
+  switch (w.state) {
+    case 'normal':
+      options.height = w.height
+      options.width = w.width
+      break
+    case 'minimized':
+      break
+    case 'maximized':
+      options.top = w.top
+      options.left = w.left
+      break
+  }
 
-    const options: browser.windows._CreateCreateData = {
-      state: w.state,
-    }
-    switch (w.state) {
-      case 'normal':
-        options.height = w.height
-        options.width = w.width
-        break
-      case 'minimized':
-        break
-      case 'maximized':
-        options.top = w.top
-        options.left = w.left
-        break
-    }
-
-    const createdWindow = await browser.windows.create({
-      incognito: firstTab?.incognito,
-      ...options,
-    })
-
-    if (w.tabs && createdWindow.id) {
-      const emptyStartupTabIds = createdWindow.tabs?.map(({ id }) => id) || []
-      await openTabs(w.tabs, createdWindow.id)
-      const newWindow = await getWindow(createdWindow.id, { populate: true })
-      const tabsToClose = newWindow.tabs?.filter(({ id }) =>
-        emptyStartupTabIds.includes(id)
-      )
-      const closeTabs = tabsToClose?.map(async (tab) => {
-        if (tab.id) {
-          return await closeTab(tab.id)
-        }
-      })
-      if (closeTabs) {
-        await Promise.all(closeTabs)
-      }
-    }
+  const firstTab = w.tabs?.[0]
+  const createdWindow = await browser.windows.create({
+    incognito: firstTab?.incognito,
+    ...options,
   })
 
+  if (w.tabs && createdWindow.id) {
+    const emptyStartupTabIds = createdWindow.tabs?.map(({ id }) => id) || []
+    await openTabs(w.tabs, createdWindow.id)
+    const newWindow = await getWindow(createdWindow.id, { populate: true })
+    const tabsToClose = newWindow.tabs?.filter(({ id }) =>
+      emptyStartupTabIds.includes(id)
+    )
+    const closeTabs = tabsToClose?.map(async (tab) => {
+      if (tab.id) {
+        return await closeTab(tab.id)
+      }
+    })
+    if (closeTabs) {
+      await Promise.all(closeTabs)
+    }
+  }
+}
+
+export const openWindows = async (windows: browser.windows.Window[]) => {
+  const tasks = windows.map(openWindow)
   await Promise.all(tasks)
 }
