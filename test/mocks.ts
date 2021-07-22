@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { browser as partialBrowser } from 'jest-webextension-mock/src/index'
 import type { Logger } from 'src/utils/logger'
@@ -25,6 +26,7 @@ type BrowserMock = {
   windows: typeof browser.windows
 } & ExistingBrowserMock
 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 /**
  * Monkey patching "jest-webextension-mock" mocks
  */
@@ -44,7 +46,9 @@ const browserMock: BrowserMock = {
     },
   },
 }
+/* eslint-enable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 global.browser = browserMock
 
