@@ -14,6 +14,7 @@
   import Sessions from 'src/components/sessions/sessions.svelte'
   import SettingsModal from 'src/components/settings/settings.svelte'
   import ShortcutsModal from 'src/components/shortcuts/shortcuts.svelte'
+  import Overlay from 'src/components/modal/overlay.svelte'
 
   const logContext = 'components/app/app.svelte'
 
@@ -27,10 +28,10 @@
     showShortcuts.set(false)
   }
 
-  const onSubmitSearch: svelte.JSX.FormEventHandler<HTMLFormElement> = ev => {
-    const search: HTMLInputElement | null = ev.currentTarget.querySelector(
-      '#search'
-    )
+  const onSubmitSearch: svelte.JSX.FormEventHandler<HTMLFormElement> = (ev) => {
+    ev.preventDefault()
+    const search: HTMLInputElement | null =
+      ev.currentTarget.querySelector('#search')
     console.log(search?.value)
   }
 
@@ -54,5 +55,8 @@
   {/if}
   {#if $showShortcuts}
     <ShortcutsModal close={closeShortcuts} />
+  {/if}
+  {#if $showShortcuts || $showSettings}
+    <Overlay />
   {/if}
 {/if}

@@ -3,6 +3,7 @@
   import cn from 'classnames'
   import { formatDistanceToNow } from 'date-fns'
 
+  import Window from 'src/components/icons/window.svelte'
   import { getDateLocale } from 'src/i18n'
   import type { Session } from 'src/utils/browser/storage'
 
@@ -29,7 +30,7 @@
   on:click={onClick}
   style="height:70px;"
   class={cn(
-    'px-10 py-4 flex justify-between items-center w-full lg:rounded-sm text-left',
+    'px-10 py-4 flex justify-between items-center text-left w-full lg:rounded-sm lg:px-6',
     selected
       ? 'bg-blue-600 text-white dark:bg-blue-400 dark:text-gray-900'
       : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-100'
@@ -63,14 +64,13 @@
 
   <div
     class={cn(
-      'text-xxs',
+      'text-xxs flex flex-row items-center',
       selected
         ? 'text-gray-200 dark:text-gray-800'
         : 'text-gray-400 dark:text-gray-400'
     )}
   >
-    {session.windows.length === 1
-      ? `${session.windows.length} window`
-      : `${session.windows.length} windows`}
+    <span class="mr-1">{session.windows.length}</span>
+    <Window size={10} />
   </div>
 </button>

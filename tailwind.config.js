@@ -1,3 +1,8 @@
+/**
+ * https://github.com/tailwindlabs/tailwindcss/discussions/1077#discussioncomment-528222
+ *
+ * @type {import("@types/tailwindcss/tailwind-config").TailwindConfig }
+ */
 module.exports = {
   purge: ['./src/popup/**/*.{svelte,html}'],
   darkMode: 'class',
@@ -11,12 +16,13 @@ module.exports = {
         header: 100,
         'menu-accordion': 80,
         modal: 150,
-      },
-      height: {
-        modal: '30rem',
+        overlay: 140,
       },
       fontSize: {
         xxs: '.6rem',
+      },
+      maxHeight: {
+        modal: 'calc(100vh - 10rem)',
       },
     },
   },

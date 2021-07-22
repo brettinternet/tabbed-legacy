@@ -24,10 +24,10 @@
   $: console.log('sessionLists', sessionLists)
 </script>
 
-<section class="w-full md:grid md:gap-6 md:grid-cols-12 md:px-4">
+<section class="w-full lg:grid lg:gap-10 lg:grid-cols-12 lg:px-4">
   <menu
     id="menu"
-    class="relative p-0 m-0 md:col-span-3 2xl:col-span-2 z-menu-accordion"
+    class="relative p-0 m-0 lg:col-span-4 xl:col-span-3 z-menu-accordion"
   >
     {#each [sessionLists.current, ...sessionLists.previous] as session, i (session.id)}
       <ViewButton
@@ -39,7 +39,7 @@
         datePrefix="created"
       />
       {#if selectedSessionId === session.id}
-        <div class="md:hidden px-4 xs:px-10 py-4">
+        <div class="lg:hidden px-4 xs:px-10 py-4">
           <div class="flex justify-end">
             <SessionActions
               sessionId={session.id}
@@ -57,16 +57,12 @@
       {/if}
 
       {#if i === 0 && sessionLists.previous.length > 0}
-        <h2 class="px-10 py-6">
-          Previous<span class="hidden md:inline">{' '}Sessions</span>
-        </h2>
+        <h2 class="px-10 pt-8 pb-4 lg:px-6">Previous</h2>
       {/if}
     {/each}
 
     {#if sessionLists.saved.length > 0}
-      <h2 class="px-10 py-6">
-        Saved<span class="hidden lg:inline">{' '}Sessions</span>
-      </h2>
+      <h2 class="px-10 pt-8 pb-4 lg:px-6">Saved</h2>
 
       {#each sessionLists.saved as session}
         <ViewButton
@@ -80,7 +76,7 @@
           datePrefix="created"
         />
         {#if selectedSessionId === session.id}
-          <div class="md:hidden px-4 xs:px-10 py-4">
+          <div class="lg:hidden px-4 xs:px-10 py-4">
             <WindowList
               windows={session.windows}
               ariaLabelledby={session.id}
@@ -94,7 +90,7 @@
   </menu>
 
   {#if selectedSession && selectedSession.id === selectedSessionId}
-    <article class="hidden md:block md:col-span-9 2xl:col-span-10 pb-10">
+    <article class="scroll hidden lg:block lg:col-span-8 xl:col-span-9 pb-10">
       <SessionActions
         sessionId={selectedSession.id}
         openSession={selectedSession.id !== sessionLists.current.id
