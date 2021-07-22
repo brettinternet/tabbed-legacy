@@ -1,13 +1,22 @@
 import { log } from 'src/utils/logger'
 
+/**
+ * Supported browsers
+ */
 export const browsers = {
-  CHROME: 'chrome',
+  /**
+   * Chromium-based
+   */
+  CHROMIUM: 'chromium',
+  /**
+   * Firefox
+   */
   FIREFOX: 'firefox',
 }
 
 export const getBrowser = () => {
   if (window.chrome?.app) {
-    return browsers.CHROME
+    return browsers.CHROMIUM
   }
 
   /**
