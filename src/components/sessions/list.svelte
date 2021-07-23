@@ -43,7 +43,7 @@
           : 'created'}
       />
       {#if selectedSessionId === session.id}
-        <div class="lg:hidden px-4 sm:px-10 py-4">
+        <div class="lg:hidden p-4 xs:px-6 sm:px-10 py-4">
           <div class="flex justify-end">
             <SessionActions
               sessionId={session.id}
@@ -62,12 +62,12 @@
       {/if}
 
       {#if i === 0 && sessionLists.previous.length > 0}
-        <h2 class="px-10 pt-8 pb-4 lg:px-6">Previous</h2>
+        <h2 class="p-4 xs:px-6 sm:px-10 pt-8 pb-4 lg:px-6">Previous</h2>
       {/if}
     {/each}
 
     {#if sessionLists.saved.length > 0}
-      <h2 class="px-10 pt-8 pb-4 lg:px-6">Saved</h2>
+      <h2 class="p-4 xs:px-6 sm:px-10 pt-8 pb-4 lg:px-6">Saved</h2>
 
       {#each sessionLists.saved as session}
         <ViewButton
