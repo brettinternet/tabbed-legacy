@@ -11,7 +11,7 @@
   const td = 'text-gray-600 dark:text-gray-300'
 </script>
 
-<Modal id="shortcuts-modal" {close} ariaLabelledby={headerId}>
+<Modal {close} ariaLabelledby={headerId}>
   <header
     class="flex flex-row justify-between items-baseline p-5"
     style={`height:${headerHeight}px`}

@@ -18,7 +18,7 @@
   const headerHeight = 76
 </script>
 
-<Modal id="settings-modal" {close} ariaLabelledby={headerId}>
+<Modal {close} ariaLabelledby={headerId}>
   <header
     class="flex flex-row justify-between p-5"
     style={`height:${headerHeight}px`}

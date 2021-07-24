@@ -8,9 +8,7 @@
   import { isPopup } from 'src/components/app/store'
   import { clickAway } from 'src/utils/click-away'
 
-  export let id = 'modal',
-    close: () => void,
-    ariaLabelledby: string
+  export let close: () => void, ariaLabelledby: string
 
   let trap: FocusTrap, modal: HTMLElement | null, main: HTMLElement | null
 
@@ -21,7 +19,6 @@
         // Hack: `overflow: hidden` on the body isn't enough for the 'popup' to disable body scroll
         main.style.display = 'none'
       }
-      modal = document.getElementById(id)
       if (modal) {
         disableBodyScroll(modal)
         trap = createFocusTrap(modal, {
@@ -46,7 +43,7 @@
 </script>
 
 <section
-  {id}
+  bind:this={modal}
   role="dialog"
   aria-modal="true"
   aria-labelledby={ariaLabelledby}
