@@ -1,5 +1,6 @@
 import { debounce } from 'lodash'
 
+import { isProd } from 'src/utils/env'
 import {
   MESSAGE_TYPE_RELOAD_ACTIONS,
   MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
@@ -87,7 +88,10 @@ const loadClosedWindowListener = (
 const setupWindowListeners = () => {
   log.debug(logContext, 'setupWindowListeners()')
 
-  void autoSaveSession()
+  // Don't auto save unless prod, else live reload clutters the previous sessions
+  if (isProd) {
+    void autoSaveSession()
+  }
 
   browser.runtime.onMessage.addListener((message: GetSessionsListMessage) => {
     if (message.type === MESSAGE_TYPE_GET_SESSIONS_LIST) {
