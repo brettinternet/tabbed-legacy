@@ -17,17 +17,13 @@
     MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
     MESSAGE_TYPE_GET_SESSIONS_LIST,
   } from 'src/utils/messages'
-  import {
-    getActiveTabId,
-    openWindows,
-    sortWindows,
-    findWindow,
-  } from 'src/utils/browser/query'
+  import { getActiveTabId, openWindows } from 'src/utils/browser/query'
   import {
     currentWindowId,
     currentTabId,
     sessionLists,
     selectedSessionId,
+    sortCurrentSession,
   } from 'src/components/sessions/store'
   import { deletePreviousSession } from 'src/utils/browser/storage'
   import SessionContext from 'src/components/context-menu/session-context.svelte'
@@ -135,36 +131,17 @@
     $selectedSessionId = nextId
   }
 
-  const handleActiveTabChange = async (
-    info: browser.tabs._OnActivatedActiveInfo
-  ) => {
+  const handleActiveTabChange = (info: browser.tabs._OnActivatedActiveInfo) => {
     $currentWindowId = info.windowId
     $currentTabId = info.tabId
   }
 
-  const handleFocusWindowChange = async (windowId: number) => {
-    if (windowId > 0) {
-      const tabId = await getActiveTabId(windowId)
-      $currentWindowId = windowId
+  const handleFocusWindowChange = async (activeWindowId: number) => {
+    if (activeWindowId > 0) {
+      const tabId = await getActiveTabId(activeWindowId)
+      $currentWindowId = activeWindowId
       $currentTabId = tabId
-
-      if ($sessionLists) {
-        const windows = await sortWindows(
-          $sessionLists.current.windows,
-          windowId
-        )
-        sessionLists.update((state) =>
-          state
-            ? {
-                ...state,
-                current: {
-                  ...state.current,
-                  windows,
-                },
-              }
-            : undefined
-        )
-      }
+      await sortCurrentSession(activeWindowId)
     } else {
       $currentWindowId = undefined
       $currentTabId = undefined

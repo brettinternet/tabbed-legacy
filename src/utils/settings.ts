@@ -34,7 +34,7 @@ export type Settings = {
   theme: Theme
   debugMode: boolean
   saveClosedWindows: boolean
-  sortActiveWindowFirst: boolean
+  sortFocusedWindowFirst: boolean
 }
 
 export const defaultSettings: Settings = {
@@ -50,5 +50,5 @@ export const defaultSettings: Settings = {
   theme: themes.LIGHT,
   debugMode: !isProd,
   saveClosedWindows: false,
-  sortActiveWindowFirst: false,
+  sortFocusedWindowFirst: false,
 }

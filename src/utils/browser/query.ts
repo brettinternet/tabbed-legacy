@@ -1,5 +1,5 @@
 import { log } from 'src/utils/logger'
-import { isDefined } from 'src/utils/helpers'
+import { readSettings } from 'src/utils/browser/storage'
 
 /**
  * Supported browsers
@@ -121,10 +121,15 @@ export const getCurrentWindow = (options?: browser.windows.GetInfo) =>
  * This assumes browsers create window IDs sequentially auto-incrementing value
  *
  * TODO: allow settings sort-by option
+ *
+ * `browser.windows.WINDOW_ID_CURRENT` and `getCurrentWindow` are distinct from focused window
+ * See https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/windows/getCurrent
+ *
+ * browser.windows.WINDOW_ID_NONE === -2
  */
 export const sortWindows = async (
   _windows: browser.windows.Window[],
-  currentWindowId?: number
+  focusedWindowId = browser.windows.WINDOW_ID_NONE
 ) => {
   const windows = _windows.slice() // copy
   windows.sort((a, b) => {
@@ -140,11 +145,21 @@ export const sortWindows = async (
 
     return 0
   })
-  if (isDefined(currentWindowId)) {
-    const index = windows.findIndex((w) => w.id === currentWindowId)
-    if (index > -1) {
-      const currentWindow = windows.splice(index, 1)[0]
-      windows.unshift(currentWindow)
+
+  const settings = await readSettings()
+  if (settings.sortFocusedWindowFirst) {
+    if (focusedWindowId === browser.windows.WINDOW_ID_NONE) {
+      focusedWindowId =
+        windows.find(({ focused }) => focused)?.id ||
+        browser.windows.WINDOW_ID_NONE
+    }
+
+    if (focusedWindowId !== browser.windows.WINDOW_ID_NONE) {
+      const index = windows.findIndex((w) => w.id === focusedWindowId)
+      if (index > -1) {
+        const currentWindow = windows.splice(index, 1)[0]
+        windows.unshift(currentWindow)
+      }
     }
   }
   return windows
@@ -159,7 +174,7 @@ export const getAllWindows = async (
 ) => {
   let windows = await browser.windows.getAll(options)
   if (sorted) {
-    windows = await sortWindows(windows, browser.windows.WINDOW_ID_CURRENT)
+    windows = await sortWindows(windows)
   }
   return windows
 }

@@ -21,6 +21,7 @@ import {
 import { readSettings, writeSetting } from 'src/utils/browser/storage'
 import { isPopup, showSettings, showShortcuts } from 'src/components/app/store'
 import { updateLogLevel, log } from 'src/utils/logger'
+import { sortCurrentSession } from 'src/components/sessions/store'
 
 const logContext = 'components/settings/store'
 
@@ -168,6 +169,9 @@ const handleSettingsSideEffects = async <K extends keyof Settings>(
       }
       break
     }
+    case 'sortFocusedWindowFirst':
+      await sortCurrentSession()
+      break
     default:
       return
   }

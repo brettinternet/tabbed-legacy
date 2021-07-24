@@ -93,6 +93,13 @@
     async () => {
       await updateSettings(defaultSettings)
     }
+
+  const handleChangeSortFocusedWindowFirst: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      await updateSettings({
+        sortFocusedWindowFirst: ev.currentTarget.checked,
+      })
+    }
 </script>
 
 <h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">Options</h1>
@@ -173,6 +180,20 @@
         Changes base font size.
       </p>
     </div>
+    <div class="mb-6">
+      <div class="mb-3">
+        <Toggle
+          id="shortcuts-toggle"
+          label="Shortcuts"
+          onChange={handleChangeShortcuts}
+          checked={$settings.shortcuts}
+          aria-describedby="shortcuts-description"
+        />
+      </div>
+      <p id="shortcuts-description" class="text-gray-600">
+        Enables extension shortcuts. Use <Kbd>?</Kbd> when enabled to view shortcuts.
+      </p>
+    </div>
 
     <hr class="my-6" />
 
@@ -190,6 +211,20 @@
       </div>
       <p id="save-closed-window-description" class="text-gray-600">
         Saves a single window session when windows are closed.
+      </p>
+    </div>
+    <div class="mb-6">
+      <div class="mb-3">
+        <Toggle
+          id="sort-focused-first-toggle"
+          label="Sort focused window first"
+          onChange={handleChangeSortFocusedWindowFirst}
+          checked={$settings.sortFocusedWindowFirst}
+          aria-describedby="sort-focused-first-description"
+        />
+      </div>
+      <p id="sort-focused-first-description" class="text-gray-600">
+        Sorts the focused window first in the current session window list.
       </p>
     </div>
 
@@ -256,20 +291,6 @@
       </div>
       <p id="tab-count-badge-description" class="text-gray-600">
         Shows a badge count of the total number of tabs.
-      </p>
-    </div>
-    <div class="mb-6">
-      <div class="mb-3">
-        <Toggle
-          id="shortcuts-toggle"
-          label="Shortcuts"
-          onChange={handleChangeShortcuts}
-          checked={$settings.shortcuts}
-          aria-describedby="shortcuts-description"
-        />
-      </div>
-      <p id="shortcuts-description" class="text-gray-600">
-        Enables extension shortcuts. Use <Kbd>?</Kbd> when enabled to view shortcuts.
       </p>
     </div>
 

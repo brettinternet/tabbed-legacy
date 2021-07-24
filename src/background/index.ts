@@ -30,7 +30,8 @@ const main = async () => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       `build date: ${new Date(buildTime!).toISOString()}`
     ),
-    ...concatTruthy(bytesUsed, `bytes in local storage: ${bytesUsed} B`),
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    ...concatTruthy(bytesUsed, `bytes in local storage: ${bytesUsed!} B`),
   ]
 
   log.info(status.join('\n'))
