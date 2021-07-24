@@ -1,35 +1,26 @@
 import { isProd } from 'src/utils/env'
+import type { Valueof } from 'src/utils/helpers'
 
-export type Layout = 'list' | 'grid'
-export const layouts: { [key: string]: Layout } = {
+export const layouts = {
   LIST: 'list',
   GRID: 'grid',
 }
+export type Layout = Valueof<typeof layouts>
 
-export type ExtensionClickAction = 'tab' | 'popup' | 'sidebar'
-export const extensionClickActions: { [key: string]: ExtensionClickAction } = {
+export const extensionClickActions = {
   TAB: 'tab',
   POPUP: 'popup',
   SIDEBAR: 'sidebar',
 }
+export type ExtensionClickAction = Valueof<typeof extensionClickActions>
 
-export type Theme = 'dark' | 'light' | 'system'
-export const themes: { [key: string]: Theme } = {
+export const themes = {
   DARK: 'dark',
   LIGHT: 'light',
   SYSTEM: 'system',
 }
+export type Theme = Valueof<typeof themes>
 
-export type Setting =
-  | 'layout'
-  | 'extensionClickAction'
-  | 'showTabCountBadge'
-  | 'shortcuts'
-  | 'fontSize'
-  | 'popupDimensions'
-  | 'theme'
-  | 'debugMode'
-  | 'saveClosedWindows'
 export type Settings = {
   layout: Layout
   extensionClickAction: ExtensionClickAction
@@ -43,6 +34,7 @@ export type Settings = {
   theme: Theme
   debugMode: boolean
   saveClosedWindows: boolean
+  sortActiveWindowFirst: boolean
 }
 
 export const defaultSettings: Settings = {
@@ -58,4 +50,5 @@ export const defaultSettings: Settings = {
   theme: themes.LIGHT,
   debugMode: !isProd,
   saveClosedWindows: false,
+  sortActiveWindowFirst: false,
 }

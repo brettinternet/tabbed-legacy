@@ -25,3 +25,5 @@ export const objValue = <T extends Record<string, unknown>>(
     return value as T[keyof T]
   }
 }
+
+export type Valueof<T> = T[keyof T]
