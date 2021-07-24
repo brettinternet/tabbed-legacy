@@ -14,6 +14,8 @@
   import type { Theme, ExtensionClickAction, Layout } from 'src/utils/settings'
   import { updateSettings, settings } from 'src/components/settings/store'
   import { isSidebarSupported } from 'src/components/app/store'
+  import Description from './description.svelte'
+  import SectionTitle from './section-title.svelte'
 
   export let headerId: string
 
@@ -106,9 +108,7 @@
 
 {#if $settings}
   <div class="mb-10">
-    <hr class="my-6" />
-
-    <h2 class="text-md font-semibold mb-6 capitalize">App</h2>
+    <SectionTitle>App</SectionTitle>
 
     <div class="mb-6">
       <fieldset class="mb-3 space-y-2" aria-describedby="layout-description">
@@ -130,7 +130,7 @@
           />
         </div>
       </fieldset>
-      <p id="layout-description" class="text-gray-600">Choose a layout.</p>
+      <Description id="layout-description">Choose a layout.</Description>
     </div>
     <div class="mb-6">
       <fieldset class="mb-3 space-y-2" aria-describedby="theme-description">
@@ -159,9 +159,9 @@
           />
         </div>
       </fieldset>
-      <p id="theme-description" class="text-gray-600">
+      <Description id="theme-description">
         Changes extension color theme.
-      </p>
+      </Description>
     </div>
     <div class="mb-6">
       <div class="mb-3">
@@ -176,9 +176,9 @@
           step="2"
         />
       </div>
-      <p id="font-size-description" class="text-gray-600">
+      <Description id="font-size-description">
         Changes base font size.
-      </p>
+      </Description>
     </div>
     <div class="mb-6">
       <div class="mb-3">
@@ -190,14 +190,12 @@
           aria-describedby="shortcuts-description"
         />
       </div>
-      <p id="shortcuts-description" class="text-gray-600">
+      <Description id="shortcuts-description">
         Enables extension shortcuts. Use <Kbd>?</Kbd> when enabled to view shortcuts.
-      </p>
+      </Description>
     </div>
 
-    <hr class="my-6" />
-
-    <h2 class="text-md font-semibold mb-6 capitalize">Session</h2>
+    <SectionTitle>Session</SectionTitle>
 
     <div class="mb-6">
       <div class="mb-3">
@@ -209,9 +207,9 @@
           aria-describedby="save-closed-window-description"
         />
       </div>
-      <p id="save-closed-window-description" class="text-gray-600">
+      <Description id="save-closed-window-description">
         Saves a single window session when windows are closed.
-      </p>
+      </Description>
     </div>
     <div class="mb-6">
       <div class="mb-3">
@@ -223,14 +221,12 @@
           aria-describedby="sort-focused-first-description"
         />
       </div>
-      <p id="sort-focused-first-description" class="text-gray-600">
+      <Description id="sort-focused-first-description">
         Sorts the focused window first in the current session window list.
-      </p>
+      </Description>
     </div>
 
-    <hr class="my-6" />
-
-    <h2 class="text-md font-semibold mb-6 capitalize">Actions</h2>
+    <SectionTitle>Actions</SectionTitle>
 
     <div class="mb-6">
       <div class="mb-3">
@@ -275,9 +271,9 @@
           />
         {/if}
       </div>
-      <p id="browser-action-description" class="text-gray-600">
+      <Description id="browser-action-description">
         Opens the extension in a tab instead of a popup.
-      </p>
+      </Description>
     </div>
     <div class="mb-6">
       <div class="mb-3">
@@ -289,14 +285,12 @@
           aria-describedby="tab-count-badge-description"
         />
       </div>
-      <p id="tab-count-badge-description" class="text-gray-600">
+      <Description id="tab-count-badge-description">
         Shows a badge count of the total number of tabs.
-      </p>
+      </Description>
     </div>
 
-    <hr class="my-6" />
-
-    <h2 class="text-md font-semibold mb-6 capitalize">Popup</h2>
+    <SectionTitle>Popup</SectionTitle>
 
     <div class="mb-6">
       <div class="flex flex-row mb-3 space-x-6">
@@ -329,15 +323,13 @@
           />
         </div>
       </div>
-      <p id="popup-dimension-description" class="text-gray-600">
+      <Description id="popup-dimension-description">
         Changes popup dimensions. Browsers limit the permissable dimensions of
         popups.
-      </p>
+      </Description>
     </div>
 
-    <hr class="my-6" />
-
-    <h2 class="text-md font-semibold mb-6 capitalize">Other</h2>
+    <SectionTitle>Other</SectionTitle>
 
     <div class="mb-6">
       <div class="mb-3">
@@ -349,17 +341,17 @@
           aria-describedby="debug-mode-description"
         />
       </div>
-      <p id="debug-mode-description" class="text-gray-600">
+      <Description id="debug-mode-description">
         Enables verbose debugging in the console.
-      </p>
+      </Description>
     </div>
     <div class="mb-6">
       <div class="mb-3">
         <Button onClick={handleClickReset}>Reset settings</Button>
       </div>
-      <p id="debug-mode-description" class="text-gray-600">
+      <Description id="debug-mode-description">
         Restores all settings to default values.
-      </p>
+      </Description>
     </div>
   </div>
 {/if}
