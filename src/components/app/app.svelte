@@ -15,6 +15,7 @@
   import SettingsModal from 'src/components/settings/settings.svelte'
   import ShortcutsModal from 'src/components/shortcuts/shortcuts.svelte'
   import Overlay from 'src/components/modal/overlay.svelte'
+  import GlobalContextMenu from 'src/components/context-menu/global-context.svelte'
 
   const logContext = 'components/app/app.svelte'
 
@@ -59,4 +60,5 @@
   {#if $showShortcuts || $showSettings}
     <Overlay />
   {/if}
+  <GlobalContextMenu />
 {/if}
