@@ -31,7 +31,7 @@
   class={cn(
     'py-1 px-3 flex items-center w-full',
     disabled
-      ? 'cursor-default text-gray-500 hover:bg-transparent dark:text-gray-700'
+      ? 'cursor-default text-gray-500 hover:bg-transparent'
       : 'hover:bg-gray-200 dark:hover:bg-gray-700'
   )}
   aria-disabled={disabled}
