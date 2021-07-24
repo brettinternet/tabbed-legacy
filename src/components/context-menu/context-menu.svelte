@@ -31,7 +31,6 @@
 
   const handleRightClick = (ev: MouseEvent) => {
     const clickTarget = ev.target as HTMLElement
-    console.log('clickTarget: ', clickTarget)
     // Search closest ancestor for match in case inner element is clicked, also searches self
     target = clickTarget.closest(`[data-context-id="${id}"]`)
 
