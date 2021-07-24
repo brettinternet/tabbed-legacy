@@ -18,7 +18,7 @@ import type {
 } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
-import { setupActions } from './configuration'
+import { loadActions } from './configuration'
 import { getSessions, autoSaveSession } from './sessions'
 
 const logContext = 'background/listeners'
@@ -71,10 +71,10 @@ const updateSession = async () => {
 
 const updateSessionDebounce = debounce(updateSession, 250)
 
-const setupClosedWindowListener = (
+const loadClosedWindowListener = (
   saveClosedWindows: Settings['saveClosedWindows']
 ) => {
-  log.debug(logContext, 'setupClosedWindowListener()', saveClosedWindows)
+  log.debug(logContext, 'loadClosedWindowListener()', saveClosedWindows)
 
   if (saveClosedWindows) {
     browser.windows.onRemoved.addListener(handleClosedWindow)
@@ -87,11 +87,11 @@ const setupClosedWindowListener = (
 const setupWindowListeners = () => {
   log.debug(logContext, 'setupWindowListeners()')
 
+  void autoSaveSession()
+
   browser.runtime.onMessage.addListener((message: GetSessionsListMessage) => {
     if (message.type === MESSAGE_TYPE_GET_SESSIONS_LIST) {
-      return new Promise((resolve) => {
-        resolve(getSessions())
-      })
+      return getSessions()
     }
 
     return false
@@ -124,8 +124,9 @@ const clearTabCountBadge = async () => {
 
 const updateTabCountDebounce = debounce(updateTabCountBadge, 250)
 
-const setupTabCountListeners = (showTabCountBadge: boolean) => {
-  log.debug(logContext, 'setupTabCountListeners()', showTabCountBadge)
+const loadTabCountListeners = (showTabCountBadge: boolean) => {
+  log.debug(logContext, 'loadTabCountListeners()', showTabCountBadge)
+
   if (showTabCountBadge) {
     void updateTabCountDebounce()
     browser.tabs.onUpdated.addListener(updateTabCountDebounce)
@@ -150,12 +151,12 @@ export const setupListeners = (settings: Settings) => {
   log.debug(logContext, 'setupListeners()', settings)
 
   setupWindowListeners()
-  setupClosedWindowListener(settings.saveClosedWindows)
-  setupTabCountListeners(settings.showTabCountBadge)
+  loadClosedWindowListener(settings.saveClosedWindows)
+  loadTabCountListeners(settings.showTabCountBadge)
 
   browser.runtime.onMessage.addListener((message: ReloadActionsMessage) => {
     if (message.type === MESSAGE_TYPE_RELOAD_ACTIONS) {
-      void setupActions(message.value)
+      void loadActions(message.value)
     }
 
     return false
@@ -164,7 +165,7 @@ export const setupListeners = (settings: Settings) => {
   browser.runtime.onMessage.addListener(
     (message: ReloadTabListenersMessage) => {
       if (message.type === MESSAGE_TYPE_RELOAD_TAB_LISTENERS) {
-        setupTabCountListeners(message.value)
+        loadTabCountListeners(message.value)
       }
 
       return false
@@ -182,7 +183,7 @@ export const setupListeners = (settings: Settings) => {
   browser.runtime.onMessage.addListener(
     (message: ReloadClosedWindowListener) => {
       if (message.type === MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER) {
-        void setupClosedWindowListener(message.value)
+        void loadClosedWindowListener(message.value)
       }
 
       return false

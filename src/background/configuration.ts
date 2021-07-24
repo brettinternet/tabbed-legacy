@@ -72,10 +72,10 @@ const setupMenus = (popupDisabled?: boolean) => {
 /**
  * Setup certain browser actions related to the browser toolbar
  */
-export const setupActions = async (
+export const loadActions = async (
   extensionClickAction: Settings['extensionClickAction']
 ) => {
-  log.debug(logContext, 'setupActions()', extensionClickAction)
+  log.debug(logContext, 'loadActions()', extensionClickAction)
 
   if (extensionClickAction === extensionClickActions.TAB) {
     await disablePopup()

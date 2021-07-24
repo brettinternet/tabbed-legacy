@@ -3,7 +3,7 @@ import { buildVersion, buildTime } from 'src/utils/env'
 import { concatTruthy } from 'src/utils/helpers'
 import { log } from 'src/utils/logger'
 
-import { setupActions } from './configuration'
+import { loadActions } from './configuration'
 import { setupListeners } from './listeners'
 
 const logContext = 'background/index'
@@ -12,10 +12,14 @@ const main = async () => {
   log.debug(logContext, 'main')
 
   const settings = await readSettings()
+  // "setup" fns are invoked on background startup
   setupListeners(settings)
-  await setupActions(settings.extensionClickAction)
+  // "load" fns are invoked on background startup and can be reloaded through messages from client
+  await loadActions(settings.extensionClickAction)
 
-  const bytesUsed = await browser.storage.sync.getBytesInUse()
+  const bytesUsed =
+    browser.storage.local.getBytesInUse &&
+    (await browser.storage.local.getBytesInUse())
 
   const status = [
     `loaded: ${new Date().toISOString()}`,
@@ -26,7 +30,7 @@ const main = async () => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       `build date: ${new Date(buildTime!).toISOString()}`
     ),
-    `bytes in sync storage: ${bytesUsed} B`,
+    ...concatTruthy(bytesUsed, `bytes in local storage: ${bytesUsed} B`),
   ]
 
   log.info(status.join('\n'))

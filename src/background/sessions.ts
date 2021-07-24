@@ -51,14 +51,20 @@ export const getSessions = async (): Promise<SessionLists> => {
   }
 }
 
-// TODO: how to manage multiple closed windows on browser exit https://stackoverflow.com/a/3390760
+/**
+ * TODO: how to manage multiple closed windows on browser exit https://stackoverflow.com/a/3390760
+ * In the meantime, we auto-save the current on startup in order to supplement on exit
+ */
 export const autoSaveSession = async (closedWindowId?: number) => {
   log.debug(logContext, 'autoSaveSession()', closedWindowId)
 
-  const currentSession =
-    (await readCurrentSession()) ?? (await getCurrentSession())
+  let currentSession = await readCurrentSession()
 
-  if (closedWindowId) {
+  if (closedWindowId !== undefined) {
+    if (!currentSession) {
+      currentSession = await getCurrentSession()
+    }
+
     // if a window was closed
     const closedWindow = currentSession.windows.find(
       ({ id }) => id === closedWindowId
@@ -86,10 +92,14 @@ export const autoSaveSession = async (closedWindowId?: number) => {
 
       const closedWindowSession = createSession([closedWindow])
       await savePreviousSession(closedWindowSession)
-    } else {
-      // otherwise save the entire session just in case
-      await savePreviousSession(currentSession)
-      await removeCurrentSession()
+      return
     }
+  }
+
+  if (currentSession) {
+    // otherwise save the entire session
+    // TODO: possibly compare current session to be saved with most recent to determine if session is unique enough to be saved?
+    await savePreviousSession(currentSession)
+    await removeCurrentSession()
   }
 }
