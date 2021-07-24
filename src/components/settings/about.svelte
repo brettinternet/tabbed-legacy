@@ -1,4 +1,9 @@
 <script lang="ts">
+  /**
+   * TODO: User agent will be reduced soon
+   * https://blog.chromium.org/2021/05/update-on-user-agent-string-reduction.html
+   * @reference https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
+   */
   import { locale } from 'svelte-i18n'
   import {
     appName,
