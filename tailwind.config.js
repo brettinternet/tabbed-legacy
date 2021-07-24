@@ -17,6 +17,7 @@ module.exports = {
         'menu-accordion': 80,
         modal: 150,
         overlay: 140,
+        'context-menu': 200,
       },
       fontSize: {
         xxs: '.6rem',
