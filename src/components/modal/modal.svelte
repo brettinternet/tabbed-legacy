@@ -24,7 +24,6 @@
         trap = createFocusTrap(modal, {
           clickOutsideDeactivates: true,
         })
-        console.log('trap: ', trap)
         trap.activate()
       }
     }
