@@ -24,6 +24,7 @@
         trap = createFocusTrap(modal, {
           clickOutsideDeactivates: true,
         })
+        console.log('trap: ', trap)
         trap.activate()
       }
     }
@@ -32,9 +33,11 @@
   onDestroy(() => {
     if (modal) {
       enableBodyScroll(modal)
-      trap.deactivate({
-        returnFocus: true,
-      })
+      if (trap) {
+        trap.deactivate({
+          returnFocus: true,
+        })
+      }
     }
     if (isPopup && main) {
       main.style.display = ''

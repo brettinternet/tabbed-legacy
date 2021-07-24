@@ -96,4 +96,16 @@ jest.mock(
   })
 )
 
+jest.mock('focus-trap', () => ({
+  createFocusTrap: jest.fn().mockImplementation(() => ({
+    activate: jest.fn(),
+    deactivate: jest.fn(),
+  })),
+}))
+
+jest.mock('body-scroll-lock', () => ({
+  disableBodyScroll: jest.fn(),
+  enableBodyScroll: jest.fn(),
+}))
+
 export {}
