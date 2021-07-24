@@ -13,3 +13,15 @@ export const isDefined = <T>(arg: T | undefined): arg is T =>
  */
 export const concatTruthy = <T>(val: T | unknown, insert?: T) =>
   val ? [insert || val] : []
+
+/**
+ * Returns value if exists in object
+ */
+export const objValue = <T extends Record<string, unknown>>(
+  value: unknown,
+  obj: T
+): T[keyof T] | undefined => {
+  if (Object.values(obj).includes(value)) {
+    return value as T[keyof T]
+  }
+}

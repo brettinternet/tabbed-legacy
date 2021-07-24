@@ -60,6 +60,7 @@
 
 <div
   id="context-menu"
+  data-no-context-menu
   role="menu"
   bind:this={menu}
   use:portal
