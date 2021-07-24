@@ -80,6 +80,7 @@ const setupClosedWindowListener = (
     browser.windows.onRemoved.addListener(handleClosedWindow)
   } else {
     browser.windows.onRemoved.removeListener(handleClosedWindow)
+    browser.windows.onRemoved.addListener(updateSessionDebounce)
   }
 }
 
@@ -98,6 +99,9 @@ const setupWindowListeners = () => {
 
   browser.windows.onCreated.addListener(updateSessionDebounce)
   browser.tabs.onUpdated.addListener(updateSessionDebounce)
+  browser.tabs.onDetached.addListener(updateSessionDebounce)
+  browser.tabs.onRemoved.addListener(updateSessionDebounce)
+  browser.tabs.onMoved.addListener(updateSessionDebounce)
 }
 
 const updateTabCountBadge = async () => {
