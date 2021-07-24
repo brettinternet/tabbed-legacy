@@ -1,4 +1,5 @@
 import { log } from 'src/utils/logger'
+import { isDefined } from 'src/utils/helpers'
 
 /**
  * Supported browsers
@@ -83,10 +84,12 @@ export const isSameTab = (tab1: browser.tabs.Tab, tab2: browser.tabs.Tab) =>
 export const isSameWindow = (
   window1: browser.windows.Window,
   window2: browser.windows.Window
-) =>
-  window1.id === window2.id &&
-  window1.focused === window2.focused &&
-  window1.incognito === window2.incognito
+) => window1.id === window2.id && window1.incognito === window2.incognito
+
+export const findWindow = (
+  windows: browser.windows.Window[],
+  window: browser.windows.Window
+) => windows.find((w) => isSameWindow(window, w))
 
 export const getWindow = (
   windowId: number,
@@ -110,6 +113,43 @@ export const getExtensionId = () => browser.i18n.getMessage('@@extension_id')
 export const getWindowAndTabs = (windowId: number) =>
   browser.windows.get(windowId, { populate: true })
 
+export const getCurrentWindow = (options?: browser.windows.GetInfo) =>
+  browser.windows.getCurrent(options)
+
+/**
+ * Sort windows with current window first, then sort by ID
+ * This assumes browsers create window IDs sequentially auto-incrementing value
+ *
+ * TODO: allow settings sort-by option
+ */
+export const sortWindows = async (
+  _windows: browser.windows.Window[],
+  currentWindowId?: number
+) => {
+  const windows = _windows.slice() // copy
+  windows.sort((a, b) => {
+    if (a.id && b.id) {
+      if (a.id > b.id) {
+        return -1
+      }
+
+      if (a.id < b.id) {
+        return 1
+      }
+    }
+
+    return 0
+  })
+  if (isDefined(currentWindowId)) {
+    const index = windows.findIndex((w) => w.id === currentWindowId)
+    if (index > -1) {
+      const currentWindow = windows.splice(index, 1)[0]
+      windows.unshift(currentWindow)
+    }
+  }
+  return windows
+}
+
 /**
  * Get windows, optionally order the current window first
  */
@@ -117,18 +157,12 @@ export const getAllWindows = async (
   options?: browser.windows._GetAllGetInfo,
   sorted?: boolean
 ) => {
-  const windows = await browser.windows.getAll(options)
+  let windows = await browser.windows.getAll(options)
   if (sorted) {
-    const currentWindow = await getCurrentWindow(options)
-    const index = windows.findIndex((w) => isSameWindow(currentWindow, w))
-    windows.splice(index, 1)
-    windows.unshift(currentWindow)
+    windows = await sortWindows(windows, browser.windows.WINDOW_ID_CURRENT)
   }
   return windows
 }
-
-export const getCurrentWindow = (options?: browser.windows.GetInfo) =>
-  browser.windows.getCurrent(options)
 
 export const getTab = (tabId: number) => browser.tabs.get(tabId)
 

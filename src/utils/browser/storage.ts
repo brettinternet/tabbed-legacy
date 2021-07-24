@@ -4,8 +4,9 @@ import { defaultSettings } from 'src/utils/settings'
 
 export const localStorageKeys = {
   SETTINGS: 'settings',
-  PREVIOUS_SESSIONS: 'previous_sessions',
   CURRENT_SESSION: 'current_session',
+  PREVIOUS_SESSIONS: 'previous_sessions',
+  USER_SAVED_SESSIONS: 'user_saved_sessions',
 } as const
 
 export const readSettings = async (): Promise<Settings> => {
@@ -79,6 +80,32 @@ export const deletePreviousSession = async (sessionId: string) => {
   const existingSessions = await readPreviousSessions()
   await browser.storage.local.set({
     [localStorageKeys.PREVIOUS_SESSIONS]: existingSessions.filter(
+      ({ id }) => id !== sessionId
+    ),
+  })
+}
+
+export const readUserSavedSessions = async () => {
+  const res = await (browser.storage.local.get(
+    localStorageKeys.USER_SAVED_SESSIONS
+  ) as Promise<{
+    [localStorageKeys.USER_SAVED_SESSIONS]: Session[] | undefined
+  }>)
+  return res?.[localStorageKeys.USER_SAVED_SESSIONS] || []
+}
+
+export const saveUserSavedSession = async (session: Session) => {
+  session.lastSavedDate = new Date().toJSON()
+  const existingSessions = await readUserSavedSessions()
+  await browser.storage.local.set({
+    [localStorageKeys.USER_SAVED_SESSIONS]: [session, ...existingSessions],
+  })
+}
+
+export const deleteUserSavedSession = async (sessionId: string) => {
+  const existingSessions = await readUserSavedSessions()
+  await browser.storage.local.set({
+    [localStorageKeys.USER_SAVED_SESSIONS]: existingSessions.filter(
       ({ id }) => id !== sessionId
     ),
   })

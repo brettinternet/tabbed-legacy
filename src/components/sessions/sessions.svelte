@@ -17,7 +17,12 @@
     MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
     MESSAGE_TYPE_GET_SESSIONS_LIST,
   } from 'src/utils/messages'
-  import { getActiveTabId, openWindows } from 'src/utils/browser/query'
+  import {
+    getActiveTabId,
+    openWindows,
+    sortWindows,
+    findWindow,
+  } from 'src/utils/browser/query'
   import {
     currentWindowId,
     currentTabId,
@@ -61,7 +66,7 @@
     }
 
     const focusedWindow = $sessionLists?.current?.windows.find(
-      ({ focused }) => focused
+      ({ id, focused }) => focused || id === browser.windows.WINDOW_ID_CURRENT
     )
     $currentWindowId = focusedWindow?.id
     $currentTabId = focusedWindow?.tabs?.find(({ active }) => active)?.id
@@ -130,10 +135,11 @@
     $selectedSessionId = nextId
   }
 
-  const handleActiveTabChange = (info: browser.tabs._OnActivatedActiveInfo) => {
+  const handleActiveTabChange = async (
+    info: browser.tabs._OnActivatedActiveInfo
+  ) => {
     $currentWindowId = info.windowId
     $currentTabId = info.tabId
-    // reorder windows
   }
 
   const handleFocusWindowChange = async (windowId: number) => {
@@ -141,7 +147,24 @@
       const tabId = await getActiveTabId(windowId)
       $currentWindowId = windowId
       $currentTabId = tabId
-      // reorder windows
+
+      if ($sessionLists) {
+        const windows = await sortWindows(
+          $sessionLists.current.windows,
+          windowId
+        )
+        sessionLists.update((state) =>
+          state
+            ? {
+                ...state,
+                current: {
+                  ...state.current,
+                  windows,
+                },
+              }
+            : undefined
+        )
+      }
     } else {
       $currentWindowId = undefined
       $currentTabId = undefined
