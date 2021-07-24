@@ -9,6 +9,7 @@
   import SessionActions from './actions.svelte'
 
   export let onSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
+    onToggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
     selectedSessionId: string | undefined,
     sessionLists: SessionLists,
     currentWindowId: number | undefined,
@@ -31,7 +32,8 @@
   >
     {#each [sessionLists.current, ...sessionLists.previous] as session, i (session.id)}
       <ViewButton
-        onClick={onSelectSession}
+        onClick={onToggleSession}
+        onContextMenu={onSelectSession}
         title={i === 0 ? 'Current' : undefined}
         {session}
         selected={selectedSessionId ? selectedSessionId === session.id : false}
@@ -71,7 +73,8 @@
 
       {#each sessionLists.saved as session}
         <ViewButton
-          onClick={onSelectSession}
+          onClick={onToggleSession}
+          onContextMenu={onSelectSession}
           title="Current"
           {session}
           selected={selectedSessionId

@@ -116,11 +116,18 @@
 
   browser.runtime.onMessage.addListener(updateSessions)
 
-  const handleSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (
+  const handleToggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (
     ev
   ) => {
     const nextId = ev.currentTarget.id
     $selectedSessionId = $selectedSessionId === nextId ? undefined : nextId
+  }
+
+  const handleSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (
+    ev
+  ) => {
+    const nextId = ev.currentTarget.id
+    $selectedSessionId = nextId
   }
 
   const handleActiveTabChange = (info: browser.tabs._OnActivatedActiveInfo) => {
@@ -156,6 +163,7 @@
     <Grid selectedSessionId={$selectedSessionId} />
   {:else}
     <List
+      onToggleSession={handleToggleSession}
       onSelectSession={handleSelectSession}
       selectedSessionId={$selectedSessionId}
       sessionLists={$sessionLists}
