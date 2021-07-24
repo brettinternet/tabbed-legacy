@@ -7,6 +7,7 @@
   import { getDateLocale } from 'src/i18n'
   import type { Session } from 'src/utils/browser/storage'
   import { onInterval } from 'src/components/sessions/timer'
+  import { contextIds } from 'src/components/context-menu/store'
 
   export let session: Session,
     onClick: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
@@ -36,11 +37,12 @@
 
 <button
   id={session.id}
+  data-context-id={contextIds.SESSION}
   aria-expanded={selected}
   on:click={onClick}
   style="height:70px;"
   class={cn(
-    'px-4 py-4 sm:px-10 flex justify-between items-center text-left w-full overflow-hidden whitespace-nowrap lg:rounded-sm lg:px-6',
+    'p-4 xs:px-6 sm:px-10 py-4 flex justify-between items-center text-left w-full overflow-hidden whitespace-nowrap lg:rounded-sm lg:px-6',
     selected
       ? 'bg-blue-600 text-white dark:bg-blue-400 dark:text-gray-900'
       : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-100'

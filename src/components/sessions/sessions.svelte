@@ -25,6 +25,7 @@
     selectedSessionId,
   } from 'src/components/sessions/store'
   import { deletePreviousSession } from 'src/utils/browser/storage'
+  import SessionContext from 'src/components/context-menu/session-context.svelte'
   import List from './list.svelte'
   import Grid from './grid.svelte'
 
@@ -164,4 +165,10 @@
       deleteSession={handleDeleteSession}
     />
   {/if}
+
+  <SessionContext
+    currentSessionId={$sessionLists.current.id}
+    openSession={handleOpenSession}
+    deleteSession={handleDeleteSession}
+  />
 {/if}
