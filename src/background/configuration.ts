@@ -59,6 +59,14 @@ const setupMenus = (popupDisabled?: boolean) => {
     contexts: ['browser_action'],
     onclick: openExtensionPopout,
   })
+
+  // TODO: add icon, save action
+  // browser.contextMenus.create({
+  //   id: 'save-session',
+  //   title: 'Save session',
+  //   contexts: ['all'],
+  //   onclick: saveSession,
+  // })
 }
 
 /**
