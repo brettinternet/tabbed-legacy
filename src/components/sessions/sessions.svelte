@@ -8,29 +8,31 @@
   import { log } from 'src/utils/logger'
   import { layouts } from 'src/utils/settings'
   import type { Layout } from 'src/utils/settings'
-  import type {
-    UpdateSessionsListMessage,
-    GetSessionsListMessage,
-    GetSessionsListResponse,
-  } from 'src/utils/messages'
-  import {
-    MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
-    MESSAGE_TYPE_GET_SESSIONS_LIST,
-  } from 'src/utils/messages'
-  import { getActiveTabId, openWindows } from 'src/utils/browser/query'
+  import type { UpdateSessionsListMessage } from 'src/utils/messages'
+  import { MESSAGE_TYPE_UPDATE_SESSIONS_LIST } from 'src/utils/messages'
+  import { getActiveTabId } from 'src/utils/browser/query'
   import {
     currentWindowId,
     currentTabId,
     sessionLists,
     selectedSessionId,
     sortCurrentSession,
+    getSessions,
+    saveExistingSession,
+    saveWindow,
+    openSession,
+    openWindow,
+    openTab,
+    deleteSession,
+    removeWindow,
+    removeTab,
+    renameSession,
   } from 'src/components/sessions/store'
   import {
     registerSessionsContextMenu,
     registerWindowContextMenu,
   } from 'src/components/sessions/context-menus'
   import { contextIds, contextMenu } from 'src/components/context-menu/store'
-  import { localStorageKeys, deleteSession } from 'src/utils/browser/storage'
   import List from './list.svelte'
   import Grid from './grid.svelte'
 
@@ -39,18 +41,6 @@
   export let currentLayout: Layout
 
   let firstUpdateComplete = false
-
-  const getSessions = async () => {
-    log.debug(logContext, 'getSessions()')
-
-    const message: GetSessionsListMessage = {
-      type: MESSAGE_TYPE_GET_SESSIONS_LIST,
-    }
-
-    return (await browser.runtime.sendMessage(
-      message
-    )) as GetSessionsListResponse
-  }
 
   const fetch = async () => {
     log.debug(logContext, 'fetch()')
@@ -75,46 +65,94 @@
 
   void fetch()
 
-  const handleOpenSession = async (id: string) => {
-    log.debug(logContext, 'handleOpenSession()', id)
+  const handleOpenSession = async (sessionId: string) => {
+    log.debug(logContext, 'handleOpenSession()', sessionId)
 
-    if ($sessionLists) {
-      try {
-        const selectedSession = [
-          $sessionLists?.current,
-          ...$sessionLists?.previous,
-          ...$sessionLists?.saved,
-        ].find((s) => s.id === id)
-        if (selectedSession) {
-          await openWindows(selectedSession.windows)
-        }
-        $sessionLists = await getSessions()
-      } catch (err) {
-        log.error(err)
-      }
+    try {
+      openSession(sessionId)
+      $sessionLists = await getSessions()
+      $selectedSessionId = sessionId
+    } catch (err) {
+      log.error(err)
     }
   }
 
-  const handleSaveSession = console.log
-
-  const handleDeleteSession = async (id: string) => {
-    log.debug(logContext, 'handleDeleteSession()', id)
+  const handleSaveSession = async (sessionId: string) => {
+    log.debug(logContext, 'handleSaveSession()', sessionId)
 
     try {
-      await deleteSession(localStorageKeys.PREVIOUS_SESSIONS, id)
+      await saveExistingSession(sessionId)
+      $sessionLists = await getSessions()
+      $selectedSessionId = sessionId
+    } catch (err) {
+      log.error(err)
+    }
+  }
+
+  const handleDeleteSession = async (sessionId: string) => {
+    log.debug(logContext, 'handleDeleteSession()', sessionId)
+
+    try {
+      await deleteSession(sessionId)
+      $sessionLists = await getSessions()
+      if ($selectedSessionId === sessionId) {
+        $selectedSessionId = undefined
+      }
+    } catch (err) {
+      log.error(err)
+    }
+  }
+
+  const handleRenameSession = async (sessionId: string, name: string) => {
+    log.debug(logContext, 'handleRenameSession()', sessionId)
+
+    try {
+      // TODO: name validation here
+      await renameSession(sessionId, name)
       $sessionLists = await getSessions()
     } catch (err) {
       log.error(err)
     }
+  }
 
-    if ($selectedSessionId === id) {
-      $selectedSessionId = undefined
+  const handleOpenWindow = async (sessionId: string, windowId: number) => {
+    log.debug(logContext, 'handleOpenWindow()', sessionId, windowId)
+
+    try {
+      openWindow(sessionId, windowId)
+      $sessionLists = await getSessions()
+      $selectedSessionId = sessionId
+    } catch (err) {
+      log.error(err)
+    }
+  }
+
+  const handleSaveWindow = async (sessionId: string, windowId: number) => {
+    log.debug(logContext, 'handleSaveWindow()', sessionId)
+
+    try {
+      await saveWindow(sessionId, windowId)
+      $sessionLists = await getSessions()
+      $selectedSessionId = sessionId
+    } catch (err) {
+      log.error(err)
+    }
+  }
+
+  const handleRemoveWindow = async (sessionId: string, windowId: number) => {
+    log.debug(logContext, 'handleRemoveWindow()', sessionId)
+
+    try {
+      await removeWindow(sessionId, windowId)
+      $sessionLists = await getSessions()
+    } catch (err) {
+      log.error(err)
     }
   }
 
   const updateSessions = (message: UpdateSessionsListMessage) => {
     if (message.type === MESSAGE_TYPE_UPDATE_SESSIONS_LIST) {
-      log.debug(logContext, 'updateSessions', message.value)
+      log.debug(logContext, 'updateSessions()', message.value)
 
       $sessionLists = message.value
     }
@@ -133,7 +171,12 @@
       })
     }
 
-    registerWindowContextMenu($sessionLists)
+    registerWindowContextMenu({
+      sessionLists: $sessionLists,
+      openWindow: handleOpenWindow,
+      saveWindow: handleSaveWindow,
+      removeWindow: handleRemoveWindow,
+    })
   }
 
   browser.runtime.onMessage.addListener(updateSessions)
@@ -179,7 +222,7 @@
     browser.windows.onFocusChanged.removeListener(handleFocusWindowChange)
   })
 
-  $: log.debug(logContext, `sessionLists: ${$sessionLists}`)
+  $: log.debug(logContext, `sessionLists:`, $sessionLists)
 </script>
 
 {#if $sessionLists}
@@ -194,7 +237,9 @@
       currentWindowId={$currentWindowId}
       currentTabId={$currentTabId}
       openSession={handleOpenSession}
+      saveSession={handleSaveSession}
       deleteSession={handleDeleteSession}
+      renameSession={handleRenameSession}
     />
   {/if}
 {/if}

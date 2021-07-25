@@ -1,20 +1,15 @@
-import { focusWindow, openWindow, closeWindow } from 'src/utils/browser/query'
 import { contextIds, contextMenu } from 'src/components/context-menu/store'
-import {
-  localStorageKeys,
-  patchSessionInCollection,
-} from 'src/utils/browser/storage'
-import type { LocalStorageKey, SessionLists } from 'src/utils/browser/storage'
-import { parseNum } from 'src/utils/helpers'
+import type { SessionLists } from 'src/utils/browser/storage'
+import { isDefined, parseNum } from 'src/utils/helpers'
 import Window from 'src/components/icons/window.svelte'
 import Save from 'src/components/icons/save.svelte'
 import Bin from 'src/components/icons/bin.svelte'
 
 type RegisterSessionsContextMenuArgs = {
   currentSessionId: string
-  openSession: (id: string) => void
-  saveSession: (id: string) => void
-  deleteSession: (id: string) => void
+  openSession: (sessionId: string) => Promise<void>
+  saveSession: (sessionId: string) => Promise<void>
+  deleteSession: (sessionId: string) => Promise<void>
 }
 
 export const registerSessionsContextMenu = ({
@@ -26,137 +21,94 @@ export const registerSessionsContextMenu = ({
   contextMenu.register(contextIds.SESSION, (target) => {
     const sessionId = target.id
 
-    const handleOpen = () => {
-      if (sessionId) {
+    if (sessionId) {
+      const handleOpen = () => {
         void openSession(sessionId)
       }
-    }
-
-    const handleSave = () => {
-      if (sessionId) {
+      const handleSave = () => {
         void saveSession(sessionId)
       }
-    }
 
-    const handleDelete = () => {
-      if (sessionId) {
+      const handleDelete = () => {
         void deleteSession(sessionId)
       }
+
+      return [
+        {
+          onClick: handleOpen,
+          disabled: sessionId === currentSessionId,
+          Icon: Window,
+          text: 'Open',
+        },
+        {
+          onClick: handleSave,
+          Icon: Save,
+          text: 'Save',
+        },
+        {
+          onClick: handleDelete,
+          disabled: sessionId === currentSessionId,
+          Icon: Bin,
+          text: 'Delete',
+        },
+      ]
     }
 
-    return [
-      {
-        onClick: handleOpen,
-        disabled: target?.id === currentSessionId,
-        Icon: Window,
-        text: 'Open',
-      },
-      {
-        onClick: handleSave,
-        Icon: Save,
-        text: 'Save',
-      },
-      {
-        onClick: handleDelete,
-        disabled: target?.id === currentSessionId,
-        Icon: Bin,
-        text: 'Delete',
-      },
-    ]
+    return []
   })
 }
 
-export const registerWindowContextMenu = (sessionLists: SessionLists) => {
+type RegisterWindowContextMenuArgs = {
+  sessionLists: SessionLists
+  openWindow: (sessionId: string, windowId: number) => Promise<void>
+  saveWindow: (sessionId: string, windowId: number) => Promise<void>
+  removeWindow: (sessionId: string, windowId: number) => Promise<void>
+}
+
+export const registerWindowContextMenu = ({
+  sessionLists,
+  openWindow,
+  saveWindow,
+  removeWindow,
+}: RegisterWindowContextMenuArgs) => {
   if (sessionLists) {
     contextMenu.register(contextIds.WINDOW, (target) => {
       const sessionId = target.dataset.sessionId
       const windowId = parseNum(target.dataset.windowId)
 
-      const saveAction = {
-        onClick: console.log,
-        Icon: Save,
-        text: 'Save',
-      }
-
-      if (sessionLists.current.id === sessionId) {
-        const handleFocus = async () => {
-          if (windowId) {
-            await focusWindow(windowId)
-          }
-        }
-
-        const handleClose = async () => {
-          if (windowId) {
-            await closeWindow(windowId)
-          }
-        }
-
-        return [
-          {
-            onClick: handleFocus,
-            Icon: Window,
-            text: 'Focus',
-          },
-          saveAction,
-          {
-            onClick: handleClose,
-            Icon: Bin,
-            text: 'Close',
-          },
-        ]
-      } else {
+      if (isDefined(sessionId) && isDefined(windowId)) {
         const handleOpen = async () => {
-          if (windowId) {
-            const selectedSession = [
-              ...(sessionLists?.previous || []),
-              ...(sessionLists?.saved || []),
-            ].find((s) => s?.id === sessionId)
-            const selectWindow = selectedSession?.windows.find(
-              (w) => w?.id === windowId
-            )
-            if (selectWindow) {
-              await openWindow(selectWindow)
-            }
-          }
+          void openWindow(sessionId, windowId)
+        }
+
+        const handleSave = async () => {
+          void saveWindow(sessionId, windowId)
         }
 
         const handleDelete = async () => {
-          if (windowId) {
-            let key: LocalStorageKey | undefined
-            let session = sessionLists.previous.find(
-              ({ id }) => id === sessionId
-            )
-            if (session) {
-              key = localStorageKeys.PREVIOUS_SESSIONS
-            } else {
-              session = sessionLists.saved.find(({ id }) => id === sessionId)
-              key = localStorageKeys.USER_SAVED_SESSIONS
-            }
-
-            if (key && session) {
-              const windowIndex = session.windows.findIndex(
-                ({ id }) => id === windowId
-              )
-              session.windows.splice(windowIndex, 1)
-              await patchSessionInCollection(key, session)
-            }
-          }
+          void removeWindow(sessionId, windowId)
         }
 
         return [
           {
             onClick: handleOpen,
             Icon: Window,
-            text: 'Open',
+            text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
           },
-          saveAction,
+          {
+            onClick: handleSave,
+            Icon: Save,
+            text: 'Save',
+          },
           {
             onClick: handleDelete,
             Icon: Bin,
-            text: 'Delete',
+            text: sessionLists.current.id === sessionId ? 'Close' : 'Delete',
           },
         ]
       }
+
+      return []
     })
   }
 }

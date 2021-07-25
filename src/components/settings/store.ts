@@ -10,7 +10,7 @@ import type {
   ReloadActionsMessage,
   ReloadTabListenersMessage,
   UpdateLogLevelMessage,
-  ReloadClosedWindowListener,
+  ReloadClosedWindowListenerMessage,
 } from 'src/utils/messages'
 import {
   MESSAGE_TYPE_RELOAD_ACTIONS,
@@ -161,7 +161,7 @@ const handleSettingsSideEffects = async <K extends keyof Settings>(
     case 'saveClosedWindows': {
       const { saveClosedWindows } = settings
       if (updateBackgroundTasks && isDefined(saveClosedWindows)) {
-        const message: ReloadClosedWindowListener = {
+        const message: ReloadClosedWindowListenerMessage = {
           type: MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
           value: saveClosedWindows,
         }
