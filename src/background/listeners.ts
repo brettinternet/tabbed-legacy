@@ -8,6 +8,16 @@ import {
   MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
   MESSAGE_TYPE_GET_SESSIONS_LIST,
   MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
+  MESSAGE_TYPE_SAVE_EXISTING_SESSION,
+  MESSAGE_TYPE_SAVE_WINDOW,
+  MESSAGE_TYPE_OPEN_SESSION,
+  MESSAGE_TYPE_OPEN_SESSION_WINDOW,
+  MESSAGE_TYPE_OPEN_SESSION_TAB,
+  MESSAGE_TYPE_DELETE_SESSION,
+  MESSAGE_TYPE_REMOVE_SESSION_WINDOW,
+  MESSAGE_TYPE_REMOVE_SESSION_TAB,
+  MESSAGE_TYPE_RENAME_SESSION,
+  RenameSessionMessage,
 } from 'src/utils/messages'
 import type {
   ReloadActionsMessage,
@@ -15,12 +25,32 @@ import type {
   UpdateLogLevelMessage,
   UpdateSessionsListMessage,
   GetSessionsListMessage,
-  ReloadClosedWindowListener,
+  ReloadClosedWindowListenerMessage,
+  SaveExistingSessionMessage,
+  SaveWindowMessage,
+  OpenSessionMessage,
+  OpenSessionWindowMessage,
+  OpenSessionTabMessage,
+  DeleteSessionMessage,
+  RemoveSessionWindowMessage,
+  RemoveSessionTabMessage,
 } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
 import { loadActions } from './configuration'
-import { getSessions, autoSaveSession } from './sessions'
+import {
+  getSessionLists,
+  autoSaveSession,
+  saveExistingSession,
+  saveWindowAsSession,
+  openSession,
+  openSessionWindow,
+  openSessionTab,
+  deleteSession,
+  removeWindow,
+  removeTab,
+  renameSession,
+} from './sessions'
 
 const logContext = 'background/listeners'
 const BADGE_BACKGROUND_COLOR = '#3b82f6'
@@ -38,6 +68,7 @@ const updateSessionMessage = async (
     await browser.runtime.sendMessage(message)
   } catch (_err) {
     const err = browser.runtime.lastError
+    // If client is not merely closed
     if (
       err?.message !==
       'Could not establish connection. Receiving end does not exist.'
@@ -52,7 +83,7 @@ const handleClosedWindow = async (closedWindowId: number) => {
 
   try {
     await autoSaveSession(closedWindowId)
-    const sessions = await getSessions()
+    const sessions = await getSessionLists()
     await updateSessionMessage(sessions)
   } catch (err) {
     log.error(logContext, 'handleClosedWindow', err)
@@ -63,7 +94,7 @@ const updateSession = async () => {
   log.debug(logContext, 'getWindows')
 
   try {
-    const sessions = await getSessions()
+    const sessions = await getSessionLists()
     await updateSessionMessage(sessions)
   } catch (err) {
     log.error(logContext, 'updateSession', err)
@@ -85,8 +116,8 @@ const loadClosedWindowListener = (
   }
 }
 
-const setupWindowListeners = () => {
-  log.debug(logContext, 'setupWindowListeners()')
+const setupSessionListeners = () => {
+  log.debug(logContext, 'setupSessionListeners()')
 
   // Don't auto save unless prod, else live reload clutters the previous sessions
   if (isProd) {
@@ -95,7 +126,83 @@ const setupWindowListeners = () => {
 
   browser.runtime.onMessage.addListener((message: GetSessionsListMessage) => {
     if (message.type === MESSAGE_TYPE_GET_SESSIONS_LIST) {
-      return getSessions()
+      return getSessionLists()
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener(
+    (message: SaveExistingSessionMessage) => {
+      if (message.type === MESSAGE_TYPE_SAVE_EXISTING_SESSION) {
+        return saveExistingSession(message.value.sessionId)
+      }
+
+      return false
+    }
+  )
+
+  browser.runtime.onMessage.addListener((message: SaveWindowMessage) => {
+    if (message.type === MESSAGE_TYPE_SAVE_WINDOW) {
+      return saveWindowAsSession(message.value)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: RenameSessionMessage) => {
+    if (message.type === MESSAGE_TYPE_RENAME_SESSION) {
+      return renameSession(message.value)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: OpenSessionMessage) => {
+    if (message.type === MESSAGE_TYPE_OPEN_SESSION) {
+      return openSession(message.value.sessionId)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: OpenSessionWindowMessage) => {
+    if (message.type === MESSAGE_TYPE_OPEN_SESSION_WINDOW) {
+      return openSessionWindow(message.value)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: OpenSessionTabMessage) => {
+    if (message.type === MESSAGE_TYPE_OPEN_SESSION_TAB) {
+      return openSessionTab(message.value)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: DeleteSessionMessage) => {
+    if (message.type === MESSAGE_TYPE_DELETE_SESSION) {
+      return deleteSession(message.value.sessionId)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener(
+    (message: RemoveSessionWindowMessage) => {
+      if (message.type === MESSAGE_TYPE_REMOVE_SESSION_WINDOW) {
+        return removeWindow(message.value)
+      }
+
+      return false
+    }
+  )
+
+  browser.runtime.onMessage.addListener((message: RemoveSessionTabMessage) => {
+    if (message.type === MESSAGE_TYPE_REMOVE_SESSION_TAB) {
+      return removeTab(message.value)
     }
 
     return false
@@ -154,7 +261,7 @@ export const setupListeners = (settings: Settings) => {
   updateLogLevel(settings.debugMode)
   log.debug(logContext, 'setupListeners()', settings)
 
-  setupWindowListeners()
+  setupSessionListeners()
   loadClosedWindowListener(settings.saveClosedWindows)
   loadTabCountListeners(settings.showTabCountBadge)
 
@@ -185,7 +292,7 @@ export const setupListeners = (settings: Settings) => {
   })
 
   browser.runtime.onMessage.addListener(
-    (message: ReloadClosedWindowListener) => {
+    (message: ReloadClosedWindowListenerMessage) => {
       if (message.type === MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER) {
         void loadClosedWindowListener(message.value)
       }

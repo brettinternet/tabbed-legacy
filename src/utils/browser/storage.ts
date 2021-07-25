@@ -33,12 +33,20 @@ export const writeSetting = async (settings: Partial<Settings>) => {
   })
 }
 
+export const sessionType = {
+  CURRENT: 'current',
+  PREVIOUS: 'previous',
+  SAVED: 'saved',
+}
+export type SessionType = Valueof<typeof sessionType>
+
 export type Session = {
   id: string
   title?: string
-  lastModifiedDate: string
   windows: browser.windows.Window[]
-  lastSavedDate?: string
+  createdDate: string
+  lastModifiedDate: string
+  type: SessionType
 }
 
 export type SessionLists = {
@@ -47,25 +55,98 @@ export type SessionLists = {
   saved: Session[]
 }
 
-export const initSession = (windows: Session['windows']): Session => ({
-  id: uuidv4(),
-  lastModifiedDate: new Date().toJSON(),
-  windows,
-})
-
-export const saveSession = async (key: LocalStorageKey, session: Session) => {
-  if (session.windows.length > 0) {
-    session.lastSavedDate = new Date().toJSON()
-    await browser.storage.local.set({
-      [key]: session,
-    })
+const getSessionType = (key: LocalStorageKey) => {
+  switch (key) {
+    case 'current_session':
+      return sessionType.CURRENT
+    case 'previous_sessions':
+      return sessionType.PREVIOUS
+    case 'user_saved_sessions':
+    default:
+      return sessionType.SAVED
   }
 }
 
+/**
+ * Save a single session
+ */
+const saveSingleSession = async (key: LocalStorageKey, session: Session) => {
+  await browser.storage.local.set({
+    [key]: session,
+  })
+}
+
+export const patchSession = async (key: LocalStorageKey, session: Session) => {
+  if (key === localStorageKeys.CURRENT_SESSION) {
+    session.lastModifiedDate = new Date().toJSON()
+    await saveSingleSession(key, session)
+  } else {
+    await patchSessionInCollection(key, session)
+  }
+}
+
+const saveSessionToCollection = async (
+  key: LocalStorageKey,
+  session: Session
+) => {
+  const existing = await readSessionCollection(key)
+  await browser.storage.local.set({
+    [key]: [session, ...(existing || [])],
+  })
+}
+
+/**
+ * Initialize and save session
+ */
+export const createSessionFromWindows = async (
+  key: LocalStorageKey,
+  windows: Session['windows']
+) => {
+  const now = new Date().toJSON()
+  const session: Session = {
+    id: uuidv4(),
+    windows,
+    createdDate: now,
+    lastModifiedDate: now,
+    type: getSessionType(key),
+  }
+  if (key === localStorageKeys.CURRENT_SESSION) {
+    await saveSingleSession(key, session)
+  } else {
+    await saveSessionToCollection(key, session)
+  }
+  return session
+}
+
+/**
+ * Save an existing session from current/previous session, or copying user saved sessions
+ *
+ * Saving an existing session needs a new ID in order to avoid duplicates
+ */
+export const saveNewSession = async (
+  key: LocalStorageKey,
+  session: Session
+) => {
+  session.id = uuidv4()
+  session.lastModifiedDate = new Date().toJSON()
+  session.type = getSessionType(key)
+  if (key === localStorageKeys.CURRENT_SESSION) {
+    await saveSingleSession(key, session)
+  } else {
+    await saveSessionToCollection(key, session)
+  }
+}
+
+/**
+ * Remove entire session (current session which exists on its own key)
+ */
 export const removeSession = async (key: LocalStorageKey) => {
   await browser.storage.local.remove(key)
 }
 
+/**
+ * Read a session category
+ */
 export const readSession = async <T extends LocalStorageKey, U = Session>(
   key: T
 ): Promise<U | undefined> => {
@@ -75,22 +156,17 @@ export const readSession = async <T extends LocalStorageKey, U = Session>(
   return res?.[key]
 }
 
+/**
+ * Read all session from collection
+ */
 export const readSessionCollection = async <T extends LocalStorageKey>(
   key: T
 ) => (await readSession<T, Session[]>(key)) || []
 
-export const addSessionToCollection = async (
-  key: LocalStorageKey,
-  session: Session
-) => {
-  session.lastSavedDate = new Date().toJSON()
-  const existing = await readSessionCollection(key)
-  await browser.storage.local.set({
-    [key]: [session, ...existing],
-  })
-}
-
-export const deleteSession = async (
+/**
+ * Delete a single session in a collection
+ */
+export const deleteSessionInCollection = async (
   key: LocalStorageKey,
   sessionId: string
 ) => {
@@ -104,16 +180,11 @@ export const patchSessionInCollection = async (
   key: LocalStorageKey,
   session: Session
 ) => {
-  if (session.windows.length > 0) {
-    const existing = await readSessionCollection(key)
-    const updateIndex = existing.findIndex(({ id }) => id === session.id)
-    session.lastModifiedDate = new Date().toJSON()
-    session.lastSavedDate = new Date().toJSON()
-    existing.splice(updateIndex, 1, session)
-    await browser.storage.local.set({
-      [key]: existing,
-    })
-  } else {
-    await deleteSession(key, session.id)
-  }
+  const existing = await readSessionCollection(key)
+  const updateIndex = existing.findIndex(({ id }) => id === session.id)
+  session.lastModifiedDate = new Date().toJSON()
+  existing.splice(updateIndex, 1, session)
+  await browser.storage.local.set({
+    [key]: existing,
+  })
 }
