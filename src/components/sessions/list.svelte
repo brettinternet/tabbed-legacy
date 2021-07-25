@@ -55,6 +55,7 @@
           <WindowList
             current={i === 0}
             windows={session.windows}
+            sessionId={session.id}
             ariaLabelledby={session.id}
             {currentWindowId}
             {currentTabId}
@@ -87,6 +88,7 @@
             <WindowList
               current={false}
               windows={session.windows}
+              sessionId={session.id}
               ariaLabelledby={session.id}
               {currentWindowId}
               {currentTabId}
@@ -115,6 +117,7 @@
       <WindowList
         current={selectedSession.id === sessionLists.current.id}
         windows={selectedSession.windows}
+        sessionId={selectedSession.id}
         ariaLabelledby={selectedSession.id}
         {currentWindowId}
         {currentTabId}

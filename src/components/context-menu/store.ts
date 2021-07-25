@@ -12,6 +12,8 @@ export type DispatchClickContext = {
 
 export const contextIds = {
   SESSION: 'session',
+  WINDOW: 'window',
+  TAB: 'tab',
 } as const
 export type ContextId = Valueof<typeof contextIds>
 

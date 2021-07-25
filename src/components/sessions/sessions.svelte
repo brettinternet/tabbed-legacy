@@ -24,10 +24,13 @@
     sessionLists,
     selectedSessionId,
     sortCurrentSession,
-    registerContextMenu,
   } from 'src/components/sessions/store'
+  import {
+    registerSessionsContextMenu,
+    registerWindowContextMenu,
+  } from 'src/components/sessions/context-menus'
   import { contextIds, contextMenu } from 'src/components/context-menu/store'
-  import { deletePreviousSession } from 'src/utils/browser/storage'
+  import { localStorageKeys, deleteSession } from 'src/utils/browser/storage'
   import List from './list.svelte'
   import Grid from './grid.svelte'
 
@@ -98,7 +101,7 @@
     log.debug(logContext, 'handleDeleteSession()', id)
 
     try {
-      await deletePreviousSession(id)
+      await deleteSession(localStorageKeys.PREVIOUS_SESSIONS, id)
       $sessionLists = await getSessions()
     } catch (err) {
       log.error(err)
@@ -122,13 +125,15 @@
   $: if ($sessionLists) {
     const currentSessionId = $sessionLists.current.id
     if (!(currentSessionId in $contextMenu)) {
-      registerContextMenu({
+      registerSessionsContextMenu({
         currentSessionId,
         openSession: handleOpenSession,
         saveSession: handleSaveSession,
         deleteSession: handleDeleteSession,
       })
     }
+
+    registerWindowContextMenu($sessionLists)
   }
 
   browser.runtime.onMessage.addListener(updateSessions)

@@ -14,10 +14,12 @@
   import Window from 'src/components/icons/window.svelte'
   import { replaceImageError } from 'src/components/sessions/dom'
   import Focused from 'src/components/icons/eye.svelte'
+  import { contextIds } from 'src/components/context-menu/store'
 
   export let windows: browser.windows.Window[],
     current: boolean,
     ariaLabelledby: string,
+    sessionId: string,
     currentWindowId: number | undefined,
     currentTabId: number | undefined
 
@@ -71,13 +73,16 @@
 </script>
 
 <div role="region" aria-labelledby={ariaLabelledby}>
-  {#each windows as { id, tabs }, i}
+  {#each windows as { id: windowId, tabs }, i}
     <div class={cn(i !== 0 && 'mt-4')}>
       <div
         class={cn(
           'flex flex-row items-center justify-between py-3 xl:justify-start',
-          currentWindowId === id && 'text-green-500'
+          currentWindowId === windowId && 'text-green-500'
         )}
+        data-context-id={contextIds.WINDOW}
+        data-session-id={sessionId}
+        data-window-id={windowId}
       >
         <div class="flex flex-row items-center mr-3 leading-5">
           <div class="flex justify-center w-5 mr-3"><Window /></div>
@@ -85,14 +90,14 @@
             class="font-semibold flex items-center overflow-hidden whitespace-pre"
           >
             <button
-              data-window-id={id}
+              data-window-id={windowId}
               on:click={handleWindowClick}
-              aria-disabled={currentWindowId === id}
+              aria-disabled={currentWindowId === windowId}
               class="overflow-ellipsis overflow-hidden m-outline"
             >
-              {#if currentWindowId === id}Current{' '}{/if}Window
+              {#if currentWindowId === windowId}Current{' '}{/if}Window
             </button>
-            {#if currentWindowId === id}
+            {#if currentWindowId === windowId}
               <span class="ml-2"><Focused /></span>
             {/if}
           </h2>
@@ -107,9 +112,16 @@
       </div>
       {#if tabs}
         <ul role="grid" class="overflow-hidden">
-          {#each tabs as { id, windowId, title, url, favIconUrl }}
+          {#each tabs as { id: tabId, windowId, title, url, favIconUrl }}
             {#if title || url}
-              <li role="row" class="flex flex-row">
+              <li
+                role="row"
+                class="flex flex-row"
+                data-context-id={contextIds.TAB}
+                data-session-id={sessionId}
+                data-window-id={windowId}
+                data-tab-id={tabId}
+              >
                 <div class="flex justify-center h-5 w-5 min-w-5 mb-1 mr-3">
                   {#if favIconUrl}
                     <img use:replaceImageError src={favIconUrl} alt={title} />
@@ -120,22 +132,22 @@
                   class={cn(
                     'leading-5 inline-flex items-center',
                     'overflow-hidden whitespace-pre',
-                    id === currentTabId && 'text-green-500'
+                    tabId === currentTabId && 'text-green-500'
                   )}
                 >
                   {#if url}
                     <a
-                      data-tab-id={id}
+                      data-tab-id={tabId}
                       data-window-id={windowId}
                       href={url}
                       on:click={handleTabLinkClick}
                       class={cn(
                         'overflow-ellipsis overflow-hidden mx-outline',
-                        id !== currentTabId && 'hover:underline'
+                        tabId !== currentTabId && 'hover:underline'
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-disabled={id === currentTabId}
+                      aria-disabled={tabId === currentTabId}
                     >
                       {#if title}
                         {title}
@@ -148,7 +160,7 @@
                       {title}
                     </span>
                   {/if}
-                  {#if id === currentTabId}
+                  {#if tabId === currentTabId}
                     <span class="ml-2"><Focused /></span>
                   {/if}
                 </div>

@@ -27,3 +27,9 @@ export const objValue = <T extends Record<string, unknown>>(
     return value as T[keyof T]
   }
 }
+
+/**
+ * Parse value that may be undefined - good for `target.dataset.value`
+ */
+export const parseNum = (str: string | undefined) =>
+  str ? parseInt(str, 10) : undefined
