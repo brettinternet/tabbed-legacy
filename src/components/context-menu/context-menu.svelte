@@ -67,6 +67,7 @@
         window.addEventListener('keydown', handleKeydown)
         window.addEventListener('scroll', handleScroll, {
           once: true,
+          capture: true,
         })
       }
     }
