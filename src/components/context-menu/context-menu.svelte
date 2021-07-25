@@ -55,7 +55,12 @@
         if (contextId) {
           contextMenuOptions = $contextMenu[contextId]
         }
+      } else {
+        contextMenuOptions = null
+        target = clickTarget
+      }
 
+      if (target) {
         ev.preventDefault()
         pos = { x: ev.clientX, y: ev.clientY }
         showMenu = true
@@ -63,9 +68,6 @@
         window.addEventListener('scroll', handleScroll, {
           once: true,
         })
-      } else {
-        contextMenuOptions = null
-        target = clickTarget
       }
     }
   }
