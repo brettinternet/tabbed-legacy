@@ -62,7 +62,7 @@
 
       if (target) {
         ev.preventDefault()
-        pos = { x: ev.clientX, y: ev.clientY }
+        pos = { x: ev.pageX, y: ev.pageY }
         showMenu = true
         window.addEventListener('keydown', handleKeydown)
         window.addEventListener('scroll', handleScroll, {
