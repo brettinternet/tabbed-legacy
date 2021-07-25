@@ -2,11 +2,11 @@
   import { locale } from 'svelte-i18n'
   import cn from 'classnames'
   import { formatDistanceToNow } from 'date-fns'
+  import { onDestroy } from 'svelte'
 
   import Window from 'src/components/icons/window.svelte'
   import { getDateLocale } from 'src/i18n'
   import type { Session } from 'src/utils/browser/storage'
-  import { onInterval } from 'src/components/sessions/timer'
   import { contextIds } from 'src/components/context-menu/store'
 
   export let session: Session,
@@ -17,23 +17,33 @@
     date: OptionalProp<string> = undefined,
     datePrefix: OptionalProp<string> = undefined
 
-  const getDateStr = (date: string | undefined) => {
-    const timeStr = date
-      ? formatDistanceToNow(new Date(date), {
-          locale: getDateLocale($locale),
-          addSuffix: true,
-        })
-      : undefined
-    return timeStr ? `${datePrefix} ${timeStr}` : undefined
+  const getDateStr = (date: Date) => {
+    const timeStr = formatDistanceToNow(date, {
+      locale: getDateLocale($locale),
+      addSuffix: true,
+    })
+    return datePrefix ? `${datePrefix} ${timeStr}` : timeStr
   }
 
-  let timeAgoStr = getDateStr(date)
+  const dateValue = date ? new Date(date) : undefined
+  let timeAgoStr: string | undefined, interval: number | undefined
 
-  const updateTimeAgoStr = () => {
-    timeAgoStr = getDateStr(date)
+  if (dateValue) {
+    const updateTimeAgoStr = () => {
+      timeAgoStr = getDateStr(dateValue)
+    }
+
+    updateTimeAgoStr()
+
+    const ONE_MINUTE = 60 * 1000
+    interval = window.setInterval(updateTimeAgoStr, ONE_MINUTE)
   }
 
-  onInterval(updateTimeAgoStr, 60000)
+  onDestroy(() => {
+    if (interval) {
+      clearInterval(interval)
+    }
+  })
 </script>
 
 <button
