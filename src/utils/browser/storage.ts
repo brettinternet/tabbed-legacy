@@ -1,5 +1,6 @@
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/set
 import type { Settings } from 'src/utils/settings'
+import type { Valueof } from 'src/utils/helpers'
 import { defaultSettings } from 'src/utils/settings'
 
 export const localStorageKeys = {
@@ -8,6 +9,7 @@ export const localStorageKeys = {
   PREVIOUS_SESSIONS: 'previous_sessions',
   USER_SAVED_SESSIONS: 'user_saved_sessions',
 } as const
+export type LocalStorageKey = Valueof<typeof localStorageKeys>
 
 export const readSettings = async (): Promise<Settings> => {
   const { settings } = await (browser.storage.local.get(
@@ -43,70 +45,65 @@ export type SessionLists = {
   saved: Session[]
 }
 
-export const saveCurrentSession = async (session: Session) => {
+export const saveSession = async (key: LocalStorageKey, session: Session) => {
+  if (session.windows.length > 0) {
+    session.lastSavedDate = new Date().toJSON()
+    await browser.storage.local.set({
+      [key]: session,
+    })
+  }
+}
+
+export const removeSession = async (key: LocalStorageKey) => {
+  await browser.storage.local.remove(key)
+}
+
+export const readSession = async <T extends LocalStorageKey, U = Session>(
+  key: T
+): Promise<U | undefined> => {
+  const res = await (browser.storage.local.get(key) as Promise<
+    Record<T, U | undefined>
+  >)
+  return res?.[key]
+}
+
+export const readSessionCollection = async <T extends LocalStorageKey>(
+  key: T
+) => (await readSession<T, Session[]>(key)) || []
+
+export const addSessionToCollection = async (
+  key: LocalStorageKey,
+  session: Session
+) => {
   session.lastSavedDate = new Date().toJSON()
+  const existing = await readSessionCollection(key)
   await browser.storage.local.set({
-    [localStorageKeys.CURRENT_SESSION]: session,
+    [key]: [session, ...existing],
   })
 }
 
-export const removeCurrentSession = async () => {
-  await browser.storage.local.remove(localStorageKeys.CURRENT_SESSION)
-}
-
-export const readCurrentSession = async () => {
-  const res = await (browser.storage.local.get(
-    localStorageKeys.CURRENT_SESSION
-  ) as Promise<{ [localStorageKeys.CURRENT_SESSION]: Session | undefined }>)
-  return res?.[localStorageKeys.CURRENT_SESSION]
-}
-
-export const readPreviousSessions = async () => {
-  const res = await (browser.storage.local.get(
-    localStorageKeys.PREVIOUS_SESSIONS
-  ) as Promise<{ [localStorageKeys.PREVIOUS_SESSIONS]: Session[] | undefined }>)
-  return res?.[localStorageKeys.PREVIOUS_SESSIONS] || []
-}
-
-export const savePreviousSession = async (session: Session) => {
-  session.lastSavedDate = new Date().toJSON()
-  const existingSessions = await readPreviousSessions()
+export const deleteSession = async (
+  key: LocalStorageKey,
+  sessionId: string
+) => {
+  const existing = await readSessionCollection(key)
   await browser.storage.local.set({
-    [localStorageKeys.PREVIOUS_SESSIONS]: [session, ...existingSessions],
+    [key]: existing.filter(({ id }) => id !== sessionId),
   })
 }
 
-export const deletePreviousSession = async (sessionId: string) => {
-  const existingSessions = await readPreviousSessions()
-  await browser.storage.local.set({
-    [localStorageKeys.PREVIOUS_SESSIONS]: existingSessions.filter(
-      ({ id }) => id !== sessionId
-    ),
-  })
-}
-
-export const readUserSavedSessions = async () => {
-  const res = await (browser.storage.local.get(
-    localStorageKeys.USER_SAVED_SESSIONS
-  ) as Promise<{
-    [localStorageKeys.USER_SAVED_SESSIONS]: Session[] | undefined
-  }>)
-  return res?.[localStorageKeys.USER_SAVED_SESSIONS] || []
-}
-
-export const saveUserSavedSession = async (session: Session) => {
-  session.lastSavedDate = new Date().toJSON()
-  const existingSessions = await readUserSavedSessions()
-  await browser.storage.local.set({
-    [localStorageKeys.USER_SAVED_SESSIONS]: [session, ...existingSessions],
-  })
-}
-
-export const deleteUserSavedSession = async (sessionId: string) => {
-  const existingSessions = await readUserSavedSessions()
-  await browser.storage.local.set({
-    [localStorageKeys.USER_SAVED_SESSIONS]: existingSessions.filter(
-      ({ id }) => id !== sessionId
-    ),
-  })
+export const patchSessionInCollection = async (
+  key: LocalStorageKey,
+  session: Session
+) => {
+  if (session.windows.length > 0) {
+    const existing = await readSessionCollection(key)
+    const updateIndex = existing.findIndex(({ id }) => id === session.id)
+    existing.splice(updateIndex, 1, session)
+    await browser.storage.local.set({
+      [key]: existing,
+    })
+  } else {
+    await deleteSession(key, session.id)
+  }
 }

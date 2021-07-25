@@ -2,11 +2,12 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { getAllWindows } from 'src/utils/browser/query'
 import {
-  saveCurrentSession,
-  readCurrentSession,
-  removeCurrentSession,
-  savePreviousSession,
-  readPreviousSessions,
+  localStorageKeys,
+  saveSession,
+  readSession,
+  removeSession,
+  addSessionToCollection,
+  readSessionCollection,
 } from 'src/utils/browser/storage'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
 import { log } from 'src/utils/logger'
@@ -28,15 +29,15 @@ const getCurrentSession = async (): Promise<Session> => {
   log.debug(logContext, 'getCurrentSession()')
 
   const windows = await getAllWindows({ populate: true }, true)
-  const session = await readCurrentSession()
+  const session = await readSession(localStorageKeys.CURRENT_SESSION)
   if (!session) {
     const newSession = createSession(windows)
-    await saveCurrentSession(newSession)
+    await saveSession(localStorageKeys.CURRENT_SESSION, newSession)
     return newSession
   } else {
     session.windows = windows
     session.lastModifiedDate = new Date().toJSON()
-    await saveCurrentSession(session)
+    await saveSession(localStorageKeys.CURRENT_SESSION, session)
     return session
   }
 }
@@ -46,7 +47,7 @@ export const getSessions = async (): Promise<SessionLists> => {
 
   return {
     current: await getCurrentSession(),
-    previous: await readPreviousSessions(),
+    previous: await readSessionCollection(localStorageKeys.PREVIOUS_SESSIONS),
     saved: [],
   }
 }
@@ -58,7 +59,7 @@ export const getSessions = async (): Promise<SessionLists> => {
 export const autoSaveSession = async (closedWindowId?: number) => {
   log.debug(logContext, 'autoSaveSession()', closedWindowId)
 
-  let currentSession = await readCurrentSession()
+  let currentSession = await readSession(localStorageKeys.CURRENT_SESSION)
 
   if (closedWindowId !== undefined) {
     if (!currentSession) {
@@ -71,7 +72,7 @@ export const autoSaveSession = async (closedWindowId?: number) => {
     )
 
     if (closedWindow) {
-      // if matching window from cached current session in `readCurrentSession`
+      // if matching window from cached current session in `readSession`
       const tabIds = (await browser.tabs.query({}))?.map(({ id }) => id)
 
       // filter by newtab or if tab exists elsewhere now then it was only moved
@@ -91,7 +92,10 @@ export const autoSaveSession = async (closedWindowId?: number) => {
       }
 
       const closedWindowSession = createSession([closedWindow])
-      await savePreviousSession(closedWindowSession)
+      await addSessionToCollection(
+        localStorageKeys.PREVIOUS_SESSIONS,
+        closedWindowSession
+      )
       return
     }
   }
@@ -99,7 +103,10 @@ export const autoSaveSession = async (closedWindowId?: number) => {
   if (currentSession) {
     // otherwise save the entire session
     // TODO: possibly compare current session to be saved with most recent to determine if session is unique enough to be saved?
-    await savePreviousSession(currentSession)
-    await removeCurrentSession()
+    await addSessionToCollection(
+      localStorageKeys.PREVIOUS_SESSIONS,
+      currentSession
+    )
+    await removeSession(localStorageKeys.CURRENT_SESSION)
   }
 }
