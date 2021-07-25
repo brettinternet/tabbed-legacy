@@ -1,4 +1,6 @@
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/set
+import { v4 as uuidv4 } from 'uuid'
+
 import type { Settings } from 'src/utils/settings'
 import type { Valueof } from 'src/utils/helpers'
 import { defaultSettings } from 'src/utils/settings'
@@ -44,6 +46,12 @@ export type SessionLists = {
   previous: Session[]
   saved: Session[]
 }
+
+export const initSession = (windows: Session['windows']): Session => ({
+  id: uuidv4(),
+  lastModifiedDate: new Date().toJSON(),
+  windows,
+})
 
 export const saveSession = async (key: LocalStorageKey, session: Session) => {
   if (session.windows.length > 0) {
@@ -99,6 +107,8 @@ export const patchSessionInCollection = async (
   if (session.windows.length > 0) {
     const existing = await readSessionCollection(key)
     const updateIndex = existing.findIndex(({ id }) => id === session.id)
+    session.lastModifiedDate = new Date().toJSON()
+    session.lastSavedDate = new Date().toJSON()
     existing.splice(updateIndex, 1, session)
     await browser.storage.local.set({
       [key]: existing,

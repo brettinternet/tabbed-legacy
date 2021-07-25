@@ -1,7 +1,6 @@
-import { v4 as uuidv4 } from 'uuid'
-
 import { getAllWindows } from 'src/utils/browser/query'
 import {
+  initSession,
   localStorageKeys,
   saveSession,
   readSession,
@@ -15,23 +14,13 @@ import { isNewTab } from 'src/utils/browser/query'
 
 const logContext = 'background/sessions'
 
-const createSession = (windows: Session['windows']) => {
-  log.debug(logContext, 'createSession()', windows)
-
-  return {
-    id: uuidv4(),
-    lastModifiedDate: new Date().toJSON(),
-    windows,
-  }
-}
-
 const getCurrentSession = async (): Promise<Session> => {
   log.debug(logContext, 'getCurrentSession()')
 
   const windows = await getAllWindows({ populate: true }, true)
   const session = await readSession(localStorageKeys.CURRENT_SESSION)
   if (!session) {
-    const newSession = createSession(windows)
+    const newSession = initSession(windows)
     await saveSession(localStorageKeys.CURRENT_SESSION, newSession)
     return newSession
   } else {
@@ -48,7 +37,7 @@ export const getSessions = async (): Promise<SessionLists> => {
   return {
     current: await getCurrentSession(),
     previous: await readSessionCollection(localStorageKeys.PREVIOUS_SESSIONS),
-    saved: [],
+    saved: await readSessionCollection(localStorageKeys.USER_SAVED_SESSIONS),
   }
 }
 
