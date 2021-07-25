@@ -22,10 +22,10 @@
     saveWindow,
     openSession,
     openWindow,
-    openTab,
+    // openTab,
     deleteSession,
     removeWindow,
-    removeTab,
+    // removeTab,
     renameSession,
   } from 'src/components/sessions/store'
   import {
@@ -69,7 +69,7 @@
     log.debug(logContext, 'handleOpenSession()', sessionId)
 
     try {
-      openSession(sessionId)
+      await openSession(sessionId)
       $sessionLists = await getSessions()
       $selectedSessionId = sessionId
     } catch (err) {
@@ -119,7 +119,7 @@
     log.debug(logContext, 'handleOpenWindow()', sessionId, windowId)
 
     try {
-      openWindow(sessionId, windowId)
+      await openWindow(sessionId, windowId)
       $sessionLists = await getSessions()
       $selectedSessionId = sessionId
     } catch (err) {

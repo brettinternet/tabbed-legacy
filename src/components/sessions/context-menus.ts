@@ -77,15 +77,15 @@ export const registerWindowContextMenu = ({
       const windowId = parseNum(target.dataset.windowId)
 
       if (isDefined(sessionId) && isDefined(windowId)) {
-        const handleOpen = async () => {
+        const handleOpen = () => {
           void openWindow(sessionId, windowId)
         }
 
-        const handleSave = async () => {
+        const handleSave = () => {
           void saveWindow(sessionId, windowId)
         }
 
-        const handleDelete = async () => {
+        const handleDelete = () => {
           void removeWindow(sessionId, windowId)
         }
 
