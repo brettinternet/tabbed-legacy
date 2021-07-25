@@ -27,7 +27,7 @@
 <section class="w-full lg:grid lg:gap-10 lg:grid-cols-12 lg:px-4">
   <menu
     id="menu"
-    class="relative p-0 m-0 lg:col-span-4 xl:col-span-3 z-menu-accordion"
+    class="scroll relative p-0 m-0 lg:col-span-4 xl:col-span-3 z-menu-accordion lg:h-main lg:overflow-y-auto"
   >
     {#each [sessionLists.current, ...sessionLists.previous] as session, i (session.id)}
       <ViewButton
