@@ -1,6 +1,5 @@
 import { focusWindow, openWindow, closeWindow } from 'src/utils/browser/query'
 import { contextIds, contextMenu } from 'src/components/context-menu/store'
-import type { ClickOptionEventHandler } from 'src/components/context-menu/store'
 import {
   localStorageKeys,
   patchSessionInCollection,
@@ -27,19 +26,19 @@ export const registerSessionsContextMenu = ({
   contextMenu.register(contextIds.SESSION, (target) => {
     const sessionId = target.id
 
-    const handleOpen: ClickOptionEventHandler = () => {
+    const handleOpen = () => {
       if (sessionId) {
         void openSession(sessionId)
       }
     }
 
-    const handleSave: ClickOptionEventHandler = () => {
+    const handleSave = () => {
       if (sessionId) {
         void saveSession(sessionId)
       }
     }
 
-    const handleDelete: ClickOptionEventHandler = () => {
+    const handleDelete = () => {
       if (sessionId) {
         void deleteSession(sessionId)
       }
@@ -139,7 +138,7 @@ export const registerWindowContextMenu = (sessionLists: SessionLists) => {
                 ({ id }) => id === windowId
               )
               session.windows.splice(windowIndex, 1)
-              patchSessionInCollection(key, session)
+              await patchSessionInCollection(key, session)
             }
           }
         }
