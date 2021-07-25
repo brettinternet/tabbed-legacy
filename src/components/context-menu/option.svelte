@@ -16,11 +16,11 @@
     text: OptionalProp<string> = undefined
 
   const dispatch = createEventDispatcher()
-  const { dispatchClick, target } = getContext<DispatchClickContext>(key)
+  const { dispatchClick } = getContext<DispatchClickContext>(key)
 
   const handleClick = () => {
     if (!disabled) {
-      dispatch('click', { target })
+      dispatch('click')
       dispatchClick()
     }
   }

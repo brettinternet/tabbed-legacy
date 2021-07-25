@@ -24,15 +24,17 @@
     sessionLists,
     selectedSessionId,
     sortCurrentSession,
+    registerContextMenu,
   } from 'src/components/sessions/store'
+  import { contextIds, contextMenu } from 'src/components/context-menu/store'
   import { deletePreviousSession } from 'src/utils/browser/storage'
-  import SessionContext from 'src/components/context-menu/session-context.svelte'
   import List from './list.svelte'
   import Grid from './grid.svelte'
 
+  const logContext = 'components/sessions/sessions.svelte'
+
   export let currentLayout: Layout
 
-  const logContext = 'components/sessions/sessions.svelte'
   let firstUpdateComplete = false
 
   const getSessions = async () => {
@@ -90,6 +92,8 @@
     }
   }
 
+  const handleSaveSession = console.log
+
   const handleDeleteSession = async (id: string) => {
     log.debug(logContext, 'handleDeleteSession()', id)
 
@@ -113,6 +117,18 @@
     }
 
     return false // no reply
+  }
+
+  $: if ($sessionLists) {
+    const currentSessionId = $sessionLists.current.id
+    if (!(currentSessionId in $contextMenu)) {
+      registerContextMenu({
+        currentSessionId,
+        openSession: handleOpenSession,
+        saveSession: handleSaveSession,
+        deleteSession: handleDeleteSession,
+      })
+    }
   }
 
   browser.runtime.onMessage.addListener(updateSessions)
@@ -152,10 +168,13 @@
   browser.windows.onFocusChanged.addListener(handleFocusWindowChange)
 
   onDestroy(() => {
+    contextMenu.unregister(contextIds.SESSION)
     browser.runtime.onMessage.removeListener(updateSessions)
     browser.tabs.onActivated.removeListener(handleActiveTabChange)
     browser.windows.onFocusChanged.removeListener(handleFocusWindowChange)
   })
+
+  $: log.debug(logContext, `sessionLists: ${$sessionLists}`)
 </script>
 
 {#if $sessionLists}
@@ -173,10 +192,4 @@
       deleteSession={handleDeleteSession}
     />
   {/if}
-
-  <SessionContext
-    currentSessionId={$sessionLists.current.id}
-    openSession={handleOpenSession}
-    deleteSession={handleDeleteSession}
-  />
 {/if}

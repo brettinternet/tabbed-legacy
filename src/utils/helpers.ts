@@ -1,3 +1,5 @@
+export type Valueof<T> = T[keyof T]
+
 /**
  * Determine if a value is defined
  */
@@ -20,10 +22,8 @@ export const concatTruthy = <T>(val: T | unknown, insert?: T) =>
 export const objValue = <T extends Record<string, unknown>>(
   value: unknown,
   obj: T
-): T[keyof T] | undefined => {
+): Valueof<T> | undefined => {
   if (Object.values(obj).includes(value)) {
     return value as T[keyof T]
   }
 }
-
-export type Valueof<T> = T[keyof T]

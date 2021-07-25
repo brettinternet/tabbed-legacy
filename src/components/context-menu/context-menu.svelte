@@ -6,17 +6,20 @@
   import { onDestroy, onMount } from 'svelte'
 
   import { objValue } from 'src/utils/helpers'
-  import { contextIds } from 'src/components/context-menu/store'
-  import type { ContextId } from 'src/components/context-menu/store'
+  import { contextIds, contextMenu } from 'src/components/context-menu/store'
+  import type { RegisteredContextMenus } from 'src/components/context-menu/store'
   import Menu from './menu.svelte'
   import GlobalContextOptions from './global-context-options.svelte'
   import Divider from './divider.svelte'
-
-  export let id: string
+  import MenuOption from './option.svelte'
 
   let pos = { x: 0, y: 0 },
     showMenu = false,
-    target: HTMLElement | null
+    target: HTMLElement | null,
+    contextMenuOptions:
+      | RegisteredContextMenus[keyof RegisteredContextMenus]
+      | undefined
+      | null
 
   const closeMenu = () => {
     showMenu = false
@@ -29,43 +32,41 @@
     }
   }
 
-  const handleRightClick = (ev: MouseEvent) => {
-    const clickTarget = ev.target as HTMLElement
-    // Search closest ancestor for match in case inner element is clicked, also searches self
-    target = clickTarget.closest(`[data-context-id="${id}"]`)
-
-    let contextId: ContextId | undefined
-    const displayGlobal = id === contextIds.GLOBAL
-    if (
-      // Match global context menu
-      displayGlobal &&
-      // When no data-context-id is match
-      !clickTarget.closest('[data-context-id]') &&
-      // Except when context menu disabled in some ancestor
-      !clickTarget.closest('[data-no-context-menu]')
-    ) {
-      target = clickTarget
-    } else {
-      contextId = objValue<typeof contextIds>(
-        target?.dataset.contextId,
-        contextIds
-      )
-    }
-
-    if (target && (displayGlobal || id === contextId)) {
-      ev.preventDefault()
-      pos = { x: ev.clientX, y: ev.clientY }
-      showMenu = true
-      window.addEventListener('scroll', handleScroll, {
-        once: true,
-      })
-    }
-  }
-
-  const handleKeydown: svelte.JSX.KeyboardEventHandler<Window> = (ev) => {
+  const handleKeydown = (ev: KeyboardEvent) => {
     if (ev.key === 'Escape') {
       ev.preventDefault()
       closeMenu()
+    }
+  }
+
+  const handleRightClick = (ev: MouseEvent) => {
+    const clickTarget = ev.target as HTMLElement
+
+    // Don't run if context menu disabled in some ancestor
+    if (!clickTarget.closest('[data-no-context-menu]')) {
+      // Search closest ancestor for match in case inner element is clicked, also searches self
+      target = clickTarget.closest(`[data-context-id]`)
+
+      if (target) {
+        const contextId = objValue<typeof contextIds>(
+          target?.dataset.contextId,
+          contextIds
+        )
+        if (contextId) {
+          contextMenuOptions = $contextMenu[contextId]
+        }
+
+        ev.preventDefault()
+        pos = { x: ev.clientX, y: ev.clientY }
+        showMenu = true
+        window.addEventListener('keydown', handleKeydown)
+        window.addEventListener('scroll', handleScroll, {
+          once: true,
+        })
+      } else {
+        contextMenuOptions = null
+        target = clickTarget
+      }
     }
   }
 
@@ -75,17 +76,17 @@
 
   onDestroy(() => {
     document.removeEventListener('contextmenu', handleRightClick)
+    window.removeEventListener('keydown', handleKeydown)
     closeMenu()
   })
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
-
 {#if showMenu && target}
-  <Menu {...pos} on:click={closeMenu} on:clickoutside={closeMenu} {target}>
-    <!-- https://svelte.dev/docs#slots_object -->
-    {#if $$slots.default}
-      <slot {target} />
+  <Menu {...pos} on:click={closeMenu} on:clickoutside={closeMenu}>
+    {#if contextMenuOptions}
+      {#each contextMenuOptions(target) as { onClick, ...props }}
+        <MenuOption on:click={onClick} {...props} />
+      {/each}
       <Divider />
     {/if}
     <GlobalContextOptions />

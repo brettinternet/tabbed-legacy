@@ -11,7 +11,7 @@
   import type { DispatchClickContext } from 'src/components/context-menu/store'
   import { key } from 'src/components/context-menu/store'
 
-  export let x: number, y: number, target: HTMLElement
+  export let x: number, y: number
 
   let menu: HTMLDivElement | undefined, trap: FocusTrap
 
@@ -50,7 +50,6 @@
 
   setContext<DispatchClickContext>(key, {
     dispatchClick: click,
-    target,
   })
 
   const clickOutside = () => {

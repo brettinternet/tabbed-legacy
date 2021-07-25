@@ -22,7 +22,6 @@
     ...sessionLists.previous,
     ...sessionLists.saved,
   ].find(({ id }) => id === selectedSessionId)
-  $: console.log('sessionLists', sessionLists)
 </script>
 
 <section class="w-full lg:grid lg:gap-10 lg:grid-cols-12 lg:px-4">
