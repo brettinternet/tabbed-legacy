@@ -380,7 +380,7 @@ export const patchWindow = async ({
 
   if (key && session) {
     if (key === localStorageKeys.CURRENT_SESSION) {
-      browser.windows.update(windowId, options)
+      await browser.windows.update(windowId, options)
     } else {
       const windowIndex = session.windows.findIndex((w) => w.id === windowId)
       if (windowIndex > -1) {
@@ -416,7 +416,7 @@ export const patchTab = async ({
 
   if (key && session) {
     if (key === localStorageKeys.CURRENT_SESSION) {
-      browser.tabs.update(windowId, options)
+      await browser.tabs.update(windowId, options)
     } else {
       const windowIndex = session.windows.findIndex((w) => w.id === windowId)
       if (windowIndex > -1) {

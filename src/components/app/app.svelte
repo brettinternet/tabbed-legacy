@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { _, isLoading } from 'svelte-i18n'
+  import { isLoading } from 'svelte-i18n'
 
   import './scrollbar.css'
   import { isPopup } from 'src/components/app/store'
