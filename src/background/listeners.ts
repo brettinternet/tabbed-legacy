@@ -21,6 +21,7 @@ import {
   MESSAGE_TYPE_PATCH_WINDOW,
   MESSAGE_TYPE_DISCARD_TABS,
   MESSAGE_TYPE_MOVE_TABS,
+  MESSAGE_TYPE_DOWNLOAD_SESSIONS,
 } from 'src/utils/messages'
 import type {
   ReloadActionsMessage,
@@ -42,6 +43,7 @@ import type {
   PatchTabMessage,
   DiscardTabsMessage,
   MoveTabsMessage,
+  DownloadSessionsMessage,
 } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
@@ -62,6 +64,7 @@ import {
   patchTab,
   discardTabs,
   moveTabs,
+  downloadSessions,
 } from './sessions'
 
 const logContext = 'background/listeners'
@@ -247,6 +250,14 @@ const setupSessionListeners = () => {
   browser.runtime.onMessage.addListener((message: MoveTabsMessage) => {
     if (message.type === MESSAGE_TYPE_MOVE_TABS) {
       return moveTabs(message.value)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: DownloadSessionsMessage) => {
+    if (message.type === MESSAGE_TYPE_DOWNLOAD_SESSIONS) {
+      return downloadSessions(message.value)
     }
 
     return false

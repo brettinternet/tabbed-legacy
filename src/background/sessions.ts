@@ -1,3 +1,5 @@
+import { lightFormat } from 'date-fns'
+
 import {
   closeTab,
   closeWindow,
@@ -20,10 +22,15 @@ import {
   patchSessionInCollection,
   deleteSessionInCollection,
 } from 'src/utils/browser/storage'
-import type { PatchWindowOptions, PatchTabOptions } from 'src/utils/messages'
+import type {
+  PatchWindowOptions,
+  PatchTabOptions,
+  DownloadSessionOptions,
+} from 'src/utils/messages'
 import { isDefined } from 'src/utils/helpers'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
 import { log } from 'src/utils/logger'
+import { appName } from 'src/utils/env'
 
 const logContext = 'background/sessions'
 
@@ -454,4 +461,49 @@ export const moveTabs = async ({
   log.debug(logContext, 'moveTab()', { tabIds, options })
 
   await browser.tabs.move(tabIds, options)
+}
+
+export const downloadSessions = async ({
+  sessionIds,
+}: DownloadSessionOptions) => {
+  log.debug(logContext, 'downloadSession()', { sessionIds })
+
+  let data: unknown
+  let title = appName
+  if (isDefined(sessionIds) && !Array.isArray(sessionIds)) {
+    const sessionId = sessionIds
+    const session = await findSession(sessionId)
+    if (session) {
+      data = session
+      if (session.title) {
+        title = appName
+      }
+    } else {
+      throwSessionId(sessionId)
+    }
+  } else {
+    let sessions = await getSessions()
+    if (sessionIds) {
+      sessions = sessions.filter((s) => sessionIds.includes(s.id))
+    }
+    data = sessions
+  }
+
+  if (data) {
+    const downloadUrl = URL.createObjectURL(
+      new Blob([JSON.stringify(data, null, '    ')], {
+        type: 'application/json',
+      })
+    )
+
+    const timestamp = lightFormat(new Date(), 'yyyy-MM-dd-hh-mm-ss-SS')
+    await browser.downloads.download({
+      url: downloadUrl,
+      filename: `${title}_${timestamp}.json`,
+      conflictAction: 'uniquify',
+      saveAs: false,
+    })
+  } else {
+    throw Error('Unable to read sessions')
+  }
 }
