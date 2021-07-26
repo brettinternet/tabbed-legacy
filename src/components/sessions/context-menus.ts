@@ -99,6 +99,43 @@ export const registerWindowContextMenu = ({
             onClick: handleSave,
             Icon: Save,
             text: 'Save',
+
+type RegisterTabContextMenuArgs = {
+  sessionLists: SessionLists
+  openTab: (sessionId: string, windowId: number, tabId: number) => Promise<void>
+  removeTab: (
+    sessionId: string,
+    windowId: number,
+    tabId: number
+  ) => Promise<void>
+}
+
+export const registerTabContextMenu = ({
+  sessionLists,
+  openTab,
+  removeTab,
+}: RegisterTabContextMenuArgs) => {
+  if (sessionLists) {
+    contextMenu.register(contextIds.TAB, (target) => {
+      target.classList.add('underline')
+      const sessionId = target.dataset.sessionId
+      const windowId = parseNum(target.dataset.windowId)
+      const tabId = parseNum(target.dataset.tabId)
+
+      if (isDefined(sessionId) && isDefined(windowId) && isDefined(tabId)) {
+        const handleOpen = () => {
+          void openTab(sessionId, windowId, tabId)
+        }
+
+        const handleDelete = () => {
+          void removeTab(sessionId, windowId, tabId)
+        }
+
+        return [
+          {
+            onClick: handleOpen,
+            Icon: Window,
+            text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
           },
           {
             onClick: handleDelete,

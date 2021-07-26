@@ -22,15 +22,16 @@
     saveWindow,
     openSession,
     openWindow,
-    // openTab,
+    openTab,
     deleteSession,
     removeWindow,
-    // removeTab,
+    removeTab,
     renameSession,
   } from 'src/components/sessions/store'
   import {
     registerSessionsContextMenu,
     registerWindowContextMenu,
+    registerTabContextMenu,
   } from 'src/components/sessions/context-menus'
   import { contextIds, contextMenu } from 'src/components/context-menu/store'
   import List from './list.svelte'
@@ -150,6 +151,32 @@
     }
   }
 
+  const handleOpenTab = async (
+    sessionId: string,
+    windowId: number,
+    tabId: number
+  ) => {
+    try {
+      await openTab(sessionId, windowId, tabId)
+      $sessionLists = await getSessions()
+    } catch (err) {
+      log.error(err)
+    }
+  }
+
+  const handleCloseTab = async (
+    sessionId: string,
+    windowId: number,
+    tabId: number
+  ) => {
+    try {
+      await removeTab(sessionId, windowId, tabId)
+      $sessionLists = await getSessions()
+    } catch (err) {
+      log.error(err)
+    }
+  }
+
   const updateSessions = (message: UpdateSessionsListMessage) => {
     if (message.type === MESSAGE_TYPE_UPDATE_SESSIONS_LIST) {
       log.debug(logContext, 'updateSessions()', message.value)
@@ -176,6 +203,12 @@
       openWindow: handleOpenWindow,
       saveWindow: handleSaveWindow,
       removeWindow: handleRemoveWindow,
+    })
+
+    registerTabContextMenu({
+      sessionLists: $sessionLists,
+      openTab: handleOpenTab,
+      removeTab: handleCloseTab,
     })
   }
 
