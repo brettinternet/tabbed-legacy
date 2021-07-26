@@ -6,7 +6,7 @@
   import { locale } from 'svelte-i18n'
   import { formatDistanceToNow, isSameMinute } from 'date-fns'
 
-  import Window from 'src/components/icons/window.svelte'
+  import Open from 'src/components/icons/open.svelte'
   import Save from 'src/components/icons/save.svelte'
   import Bin from 'src/components/icons/bin.svelte'
   import type { Session } from 'src/utils/browser/storage'
@@ -65,7 +65,7 @@
           }
         }}
       >
-        <Window />
+        <Open />
       </button>
     {/if}
     {#if saveSession}

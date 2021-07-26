@@ -1,7 +1,7 @@
 import { contextIds, contextMenu } from 'src/components/context-menu/store'
 import type { SessionLists } from 'src/utils/browser/storage'
 import { isDefined, parseNum } from 'src/utils/helpers'
-import Window from 'src/components/icons/window.svelte'
+import Open from 'src/components/icons/open.svelte'
 import Save from 'src/components/icons/save.svelte'
 import Bin from 'src/components/icons/bin.svelte'
 
@@ -38,7 +38,7 @@ export const registerSessionsContextMenu = ({
           {
             onClick: handleOpen,
             disabled: sessionId === currentSessionId,
-            Icon: Window,
+            Icon: Open,
             text: 'Open',
           },
           {
@@ -95,7 +95,7 @@ export const registerWindowContextMenu = ({
           return [
             {
               onClick: handleOpen,
-              Icon: Window,
+              Icon: Open,
               text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
             },
             {
@@ -155,7 +155,7 @@ export const registerTabContextMenu = ({
           return [
             {
               onClick: handleOpen,
-              Icon: Window,
+              Icon: Open,
               text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
             },
             {
