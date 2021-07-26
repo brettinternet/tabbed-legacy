@@ -24,6 +24,10 @@
   const closeMenu = () => {
     showMenu = false
     window.removeEventListener('scroll', handleScroll)
+    if (target && contextMenuOptions?.onClose) {
+      contextMenuOptions.onClose(target)
+    }
+    target = null
   }
 
   const handleScroll = () => {
@@ -40,6 +44,11 @@
   }
 
   const handleRightClick = (ev: MouseEvent) => {
+    // if context menu wasn't closed, but was invoked immediately elsewhere
+    if (target && contextMenuOptions?.onClose) {
+      contextMenuOptions.onClose(target)
+    }
+
     const clickTarget = ev.target as HTMLElement
 
     // Don't run if context menu disabled in some ancestor
@@ -87,7 +96,7 @@
 {#if showMenu && target}
   <Menu {...pos} on:click={closeMenu} on:clickoutside={closeMenu}>
     {#if contextMenuOptions}
-      {#each contextMenuOptions(target) as { onClick, ...props }}
+      {#each contextMenuOptions.items(target) as { onClick, ...props }}
         <MenuOption on:click={onClick} {...props} />
       {/each}
       <Divider />

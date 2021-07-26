@@ -43,8 +43,13 @@ export const globalContextMenuOptions: ContextMenuOption[] = [
   },
 ]
 
+type RegisterContextMenuOptions = {
+  items: (target: HTMLElement) => ContextMenuOption[]
+  onClose?: (target: HTMLElement) => void
+}
+
 export type RegisteredContextMenus = Partial<
-  Record<ContextId, (target: HTMLElement) => ContextMenuOption[]>
+  Record<ContextId, RegisterContextMenuOptions>
 >
 
 const createContextMenuStore = () => {
@@ -52,13 +57,10 @@ const createContextMenuStore = () => {
 
   return {
     subscribe,
-    register: (
-      contextId: ContextId,
-      callback: (target: HTMLElement) => ContextMenuOption[]
-    ) =>
+    register: (contextId: ContextId, options: RegisterContextMenuOptions) =>
       update((existing) => ({
         ...existing,
-        [contextId]: callback,
+        [contextId]: options,
       })),
     unregister: (contextId: ContextId) =>
       update((existing) => {

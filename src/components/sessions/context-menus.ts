@@ -18,43 +18,45 @@ export const registerSessionsContextMenu = ({
   saveSession,
   deleteSession,
 }: RegisterSessionsContextMenuArgs) => {
-  contextMenu.register(contextIds.SESSION, (target) => {
-    const sessionId = target.id
+  contextMenu.register(contextIds.SESSION, {
+    items: (target) => {
+      const sessionId = target.id
 
-    if (sessionId) {
-      const handleOpen = () => {
-        void openSession(sessionId)
+      if (sessionId) {
+        const handleOpen = () => {
+          void openSession(sessionId)
+        }
+        const handleSave = () => {
+          void saveSession(sessionId)
+        }
+
+        const handleDelete = () => {
+          void deleteSession(sessionId)
+        }
+
+        return [
+          {
+            onClick: handleOpen,
+            disabled: sessionId === currentSessionId,
+            Icon: Window,
+            text: 'Open',
+          },
+          {
+            onClick: handleSave,
+            Icon: Save,
+            text: 'Save',
+          },
+          {
+            onClick: handleDelete,
+            disabled: sessionId === currentSessionId,
+            Icon: Bin,
+            text: 'Delete',
+          },
+        ]
       }
-      const handleSave = () => {
-        void saveSession(sessionId)
-      }
 
-      const handleDelete = () => {
-        void deleteSession(sessionId)
-      }
-
-      return [
-        {
-          onClick: handleOpen,
-          disabled: sessionId === currentSessionId,
-          Icon: Window,
-          text: 'Open',
-        },
-        {
-          onClick: handleSave,
-          Icon: Save,
-          text: 'Save',
-        },
-        {
-          onClick: handleDelete,
-          disabled: sessionId === currentSessionId,
-          Icon: Bin,
-          text: 'Delete',
-        },
-      ]
-    }
-
-    return []
+      return []
+    },
   })
 }
 
@@ -72,33 +74,48 @@ export const registerWindowContextMenu = ({
   removeWindow,
 }: RegisterWindowContextMenuArgs) => {
   if (sessionLists) {
-    contextMenu.register(contextIds.WINDOW, (target) => {
-      const sessionId = target.dataset.sessionId
-      const windowId = parseNum(target.dataset.windowId)
+    contextMenu.register(contextIds.WINDOW, {
+      items: (target) => {
+        const sessionId = target.dataset.sessionId
+        const windowId = parseNum(target.dataset.windowId)
 
-      if (isDefined(sessionId) && isDefined(windowId)) {
-        const handleOpen = () => {
-          void openWindow(sessionId, windowId)
+        if (isDefined(sessionId) && isDefined(windowId)) {
+          const handleOpen = () => {
+            void openWindow(sessionId, windowId)
+          }
+
+          const handleSave = () => {
+            void saveWindow(sessionId, windowId)
+          }
+
+          const handleDelete = () => {
+            void removeWindow(sessionId, windowId)
+          }
+
+          return [
+            {
+              onClick: handleOpen,
+              Icon: Window,
+              text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
+            },
+            {
+              onClick: handleSave,
+              Icon: Save,
+              text: 'Save',
+            },
+            {
+              onClick: handleDelete,
+              Icon: Bin,
+              text: sessionLists.current.id === sessionId ? 'Close' : 'Delete',
+            },
+          ]
         }
 
-        const handleSave = () => {
-          void saveWindow(sessionId, windowId)
-        }
-
-        const handleDelete = () => {
-          void removeWindow(sessionId, windowId)
-        }
-
-        return [
-          {
-            onClick: handleOpen,
-            Icon: Window,
-            text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
-          },
-          {
-            onClick: handleSave,
-            Icon: Save,
-            text: 'Save',
+        return []
+      },
+    })
+  }
+}
 
 type RegisterTabContextMenuArgs = {
   sessionLists: SessionLists
@@ -116,36 +133,41 @@ export const registerTabContextMenu = ({
   removeTab,
 }: RegisterTabContextMenuArgs) => {
   if (sessionLists) {
-    contextMenu.register(contextIds.TAB, (target) => {
-      target.classList.add('underline')
-      const sessionId = target.dataset.sessionId
-      const windowId = parseNum(target.dataset.windowId)
-      const tabId = parseNum(target.dataset.tabId)
+    contextMenu.register(contextIds.TAB, {
+      onClose: (target) => {
+        target.classList.remove('underline')
+      },
+      items: (target) => {
+        target.classList.add('underline')
+        const sessionId = target.dataset.sessionId
+        const windowId = parseNum(target.dataset.windowId)
+        const tabId = parseNum(target.dataset.tabId)
 
-      if (isDefined(sessionId) && isDefined(windowId) && isDefined(tabId)) {
-        const handleOpen = () => {
-          void openTab(sessionId, windowId, tabId)
+        if (isDefined(sessionId) && isDefined(windowId) && isDefined(tabId)) {
+          const handleOpen = () => {
+            void openTab(sessionId, windowId, tabId)
+          }
+
+          const handleDelete = () => {
+            void removeTab(sessionId, windowId, tabId)
+          }
+
+          return [
+            {
+              onClick: handleOpen,
+              Icon: Window,
+              text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
+            },
+            {
+              onClick: handleDelete,
+              Icon: Bin,
+              text: sessionLists.current.id === sessionId ? 'Close' : 'Delete',
+            },
+          ]
         }
 
-        const handleDelete = () => {
-          void removeTab(sessionId, windowId, tabId)
-        }
-
-        return [
-          {
-            onClick: handleOpen,
-            Icon: Window,
-            text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
-          },
-          {
-            onClick: handleDelete,
-            Icon: Bin,
-            text: sessionLists.current.id === sessionId ? 'Close' : 'Delete',
-          },
-        ]
-      }
-
-      return []
+        return []
+      },
     })
   }
 }
