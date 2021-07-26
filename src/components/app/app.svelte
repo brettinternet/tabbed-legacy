@@ -34,7 +34,6 @@
   <PageLoader hideLabel />
 {:else if $settings}
   <AppLayout
-    pageTitle={$_('popup.page_title', { default: 'Options' })}
     onClickSettings={openSettings}
     currentLayout={$settings.layout}
     {onSubmitSearch}
