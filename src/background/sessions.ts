@@ -19,6 +19,7 @@ import {
   patchSessionInCollection,
   deleteSessionInCollection,
 } from 'src/utils/browser/storage'
+import { isDefined } from 'src/utils/helpers'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
 import { log } from 'src/utils/logger'
 
@@ -132,6 +133,8 @@ const throwTabId = (tabId: number) => {
 }
 
 export const saveExistingSession = async (sessionId: string) => {
+  log.debug(logContext, 'saveExistingSession()', sessionId)
+
   const session = await findSession(sessionId)
   if (session) {
     await saveNewSession(localStorageKeys.USER_SAVED_SESSIONS, session)
@@ -147,6 +150,8 @@ export const saveWindowAsSession = async ({
   sessionId: string
   windowId: number
 }) => {
+  log.debug(logContext, 'saveWindowAsSession()', { sessionId, windowId })
+
   const session = await findSession(sessionId)
   if (session) {
     const win = findWindow(windowId, session)
@@ -163,6 +168,8 @@ export const saveWindowAsSession = async ({
 }
 
 export const openSession = async (sessionId: string) => {
+  log.debug(logContext, 'openSession()', sessionId)
+
   const session = await findSession(sessionId)
   if (session) {
     await openWindows(session.windows)
@@ -181,6 +188,8 @@ export const openSessionWindow = async ({
   sessionId: string
   windowId: number
 }) => {
+  log.debug(logContext, 'openSessionWindow()', { sessionId, windowId })
+
   const currentSession = await getCurrentSession()
   if (sessionId === currentSession?.id) {
     await focusWindow(windowId)
@@ -208,6 +217,8 @@ export const openSessionTab = async ({
   windowId: number
   tabId: number
 }) => {
+  log.debug(logContext, 'openSessionTab()', { sessionId, windowId, tabId })
+
   const session = await findSession(sessionId)
   if (session) {
     const win = findWindow(windowId, session)
@@ -265,6 +276,8 @@ export const renameSession = async ({
   sessionId: string
   name: string
 }) => {
+  log.debug(logContext, 'renameSession()', { sessionId, name })
+
   const { key, session } = await findSessionWithKey(sessionId)
   if (key && session) {
     session.title = name
@@ -275,6 +288,8 @@ export const renameSession = async ({
 }
 
 export const deleteSession = async (sessionId: string) => {
+  log.debug(logContext, 'deleteSession()', sessionId)
+
   const { key, session } = await findSessionWithKey(sessionId)
   if (key && session) {
     await deleteSessionInCollection(key, session.id)
@@ -290,6 +305,8 @@ export const removeWindow = async ({
   sessionId: string
   windowId: number
 }) => {
+  log.debug(logContext, 'removeWindow()', { sessionId, windowId })
+
   const { key, session } = await findSessionWithKey(sessionId)
 
   if (key && session) {
@@ -297,8 +314,12 @@ export const removeWindow = async ({
       await closeWindow(windowId)
     } else {
       const windowIndex = session.windows.findIndex(({ id }) => id === windowId)
-      session.windows.splice(windowIndex, 1)
-      await patchSessionInCollection(key, session)
+      if (windowIndex > -1) {
+        session.windows.splice(windowIndex, 1)
+        await patchSessionInCollection(key, session)
+      } else {
+        throwWindowId(windowId)
+      }
     }
   } else {
     throwSessionId(sessionId)
@@ -314,19 +335,27 @@ export const removeTab = async ({
   windowId: number
   tabId: number
 }) => {
+  log.debug(logContext, 'removeTab()', { sessionId, windowId, tabId })
+
   const { key, session } = await findSessionWithKey(sessionId)
 
   if (key && session) {
     if (key === localStorageKeys.CURRENT_SESSION) {
       await closeTab(tabId)
     } else {
-      const windowIndex = session.windows.findIndex(({ id }) => id === windowId)
-      const tabIndex = session.windows[windowIndex].tabs?.findIndex(
-        (t) => t.id === tabId
-      )
-      if (tabIndex && tabIndex > -1) {
-        session.windows[windowIndex].tabs?.splice(tabIndex, 1)
-        await patchSessionInCollection(key, session)
+      const windowIndex = session.windows.findIndex((w) => w.id === windowId)
+      if (windowIndex > -1) {
+        const tabIndex = session.windows[windowIndex].tabs?.findIndex(
+          (t) => t.id === tabId
+        )
+        if (isDefined(tabIndex) && tabIndex > -1) {
+          session.windows[windowIndex].tabs?.splice(tabIndex, 1)
+          await patchSessionInCollection(key, session)
+        } else {
+          throwTabId(tabId)
+        }
+      } else {
+        throwWindowId(windowId)
       }
     }
   } else {
