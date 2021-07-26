@@ -3,6 +3,7 @@ import {
   closeWindow,
   focusWindow,
   getAllWindows,
+  getTabUrl,
   isNewTab,
   openTab,
   openWindow,
@@ -227,7 +228,7 @@ export const openSessionTab = async ({
       if (tab) {
         await openTab(
           {
-            url: tab.url,
+            url: getTabUrl(tab),
             pinned: tab.pinned,
           },
           win.incognito

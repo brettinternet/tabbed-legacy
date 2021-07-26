@@ -134,8 +134,8 @@
       </div>
       {#if tabs}
         <ol role="grid" class="overflow-hidden">
-          {#each tabs as { id: tabId, windowId, title, url, favIconUrl, pinned, active }}
-            {#if title || url}
+          {#each tabs as { id: tabId, windowId, title, pendingUrl, url, favIconUrl, pinned, active }}
+            {#if title || url || pendingUrl}
               <li role="row" class="flex flex-row">
                 <div
                   class="flex justify-center items-center h-5 w-5 min-w-5 mb-1 mr-3"
@@ -152,13 +152,13 @@
                     tabId === currentTabId && 'text-green-500'
                   )}
                 >
-                  {#if url}
+                  {#if url || pendingUrl}
                     <a
                       data-context-id={contextIds.TAB}
                       data-session-id={sessionId}
                       data-window-id={windowId}
                       data-tab-id={tabId}
-                      href={url}
+                      href={url || pendingUrl}
                       on:click={handleTabLinkClick}
                       class={cn(
                         'overflow-ellipsis overflow-hidden mx-outline',
@@ -171,7 +171,7 @@
                       {#if title}
                         {title}
                       {:else}
-                        {url}
+                        {url || pendingUrl}
                       {/if}
                     </a>
                   {:else}
