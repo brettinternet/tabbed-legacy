@@ -20,6 +20,7 @@ import {
   patchSessionInCollection,
   deleteSessionInCollection,
 } from 'src/utils/browser/storage'
+import type { PatchWindowOptions, PatchTabOptions } from 'src/utils/messages'
 import { isDefined } from 'src/utils/helpers'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
 import { log } from 'src/utils/logger'
@@ -270,24 +271,6 @@ const findSessionWithKey = async (sessionId: string) => {
   return {}
 }
 
-export const renameSession = async ({
-  sessionId,
-  name,
-}: {
-  sessionId: string
-  name: string
-}) => {
-  log.debug(logContext, 'renameSession()', { sessionId, name })
-
-  const { key, session } = await findSessionWithKey(sessionId)
-  if (key && session) {
-    session.title = name
-    await patchSession(key, session)
-  } else {
-    throwSessionId(sessionId)
-  }
-}
-
 export const deleteSession = async (sessionId: string) => {
   log.debug(logContext, 'deleteSession()', sessionId)
 
@@ -362,4 +345,99 @@ export const removeTab = async ({
   } else {
     throwSessionId(sessionId)
   }
+}
+
+export const renameSession = async ({
+  sessionId,
+  name,
+}: {
+  sessionId: string
+  name: string
+}) => {
+  log.debug(logContext, 'renameSession()', { sessionId, name })
+
+  const { key, session } = await findSessionWithKey(sessionId)
+  if (key && session) {
+    session.title = name
+    await patchSession(key, session)
+  } else {
+    throwSessionId(sessionId)
+  }
+}
+
+export const patchWindow = async ({
+  sessionId,
+  windowId,
+  options,
+}: {
+  sessionId: string
+  windowId: number
+  options: PatchWindowOptions
+}) => {
+  log.debug(logContext, 'patchWindow()', { sessionId, windowId, options })
+
+  const { key, session } = await findSessionWithKey(sessionId)
+
+  if (key && session) {
+    if (key === localStorageKeys.CURRENT_SESSION) {
+      browser.windows.update(windowId, options)
+    } else {
+      const windowIndex = session.windows.findIndex((w) => w.id === windowId)
+      if (windowIndex > -1) {
+        const newWindow: browser.windows.Window = {
+          ...session.windows[windowIndex],
+          ...options,
+        }
+        session.windows.splice(windowIndex, 1, newWindow)
+        await patchSessionInCollection(key, session)
+      } else {
+        throwWindowId(windowId)
+      }
+    }
+  } else {
+    throwSessionId(sessionId)
+  }
+}
+
+export const patchTab = async ({
+  sessionId,
+  windowId,
+  tabId,
+  options,
+}: {
+  sessionId: string
+  windowId: number
+  tabId: number
+  options: PatchTabOptions
+}) => {
+  log.debug(logContext, 'patchTab()', { sessionId, windowId, options })
+
+  const { key, session } = await findSessionWithKey(sessionId)
+
+  if (key && session) {
+    if (key === localStorageKeys.CURRENT_SESSION) {
+      browser.tabs.update(windowId, options)
+    } else {
+      const windowIndex = session.windows.findIndex((w) => w.id === windowId)
+      if (windowIndex > -1) {
+        const tabIndex = session.windows[windowIndex].tabs?.findIndex(
+          (t) => t.id === tabId
+        )
+        if (isDefined(tabIndex) && tabIndex > -1) {
+          session.windows[windowIndex].tabs?.splice(tabIndex, 1)
+          await patchSessionInCollection(key, session)
+        } else {
+          throwTabId(tabId)
+        }
+      } else {
+        throwWindowId(windowId)
+      }
+    }
+  } else {
+    throwSessionId(sessionId)
+  }
+}
+
+export const discardTabs = (tabIds: number | number[]) => {
+  browser.tabs.discard(tabIds)
 }

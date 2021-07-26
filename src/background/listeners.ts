@@ -17,7 +17,10 @@ import {
   MESSAGE_TYPE_REMOVE_SESSION_WINDOW,
   MESSAGE_TYPE_REMOVE_SESSION_TAB,
   MESSAGE_TYPE_RENAME_SESSION,
-  RenameSessionMessage,
+  MESSAGE_TYPE_PATCH_TAB,
+  MESSAGE_TYPE_PATCH_WINDOW,
+  DiscardTabsMessage,
+  MESSAGE_TYPE_DISCARD_TABS,
 } from 'src/utils/messages'
 import type {
   ReloadActionsMessage,
@@ -34,6 +37,9 @@ import type {
   DeleteSessionMessage,
   RemoveSessionWindowMessage,
   RemoveSessionTabMessage,
+  RenameSessionMessage,
+  PatchWindowMessage,
+  PatchTabMessage,
 } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
@@ -50,6 +56,9 @@ import {
   removeWindow,
   removeTab,
   renameSession,
+  patchWindow,
+  patchTab,
+  discardTabs,
 } from './sessions'
 
 const logContext = 'background/listeners'
@@ -203,6 +212,30 @@ const setupSessionListeners = () => {
   browser.runtime.onMessage.addListener((message: RemoveSessionTabMessage) => {
     if (message.type === MESSAGE_TYPE_REMOVE_SESSION_TAB) {
       return removeTab(message.value)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: PatchWindowMessage) => {
+    if (message.type === MESSAGE_TYPE_PATCH_WINDOW) {
+      return patchWindow(message.value)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: PatchTabMessage) => {
+    if (message.type === MESSAGE_TYPE_PATCH_TAB) {
+      return patchTab(message.value)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: DiscardTabsMessage) => {
+    if (message.type === MESSAGE_TYPE_DISCARD_TABS) {
+      return discardTabs(message.value.tabIds)
     }
 
     return false

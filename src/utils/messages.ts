@@ -108,3 +108,34 @@ export type RenameSessionMessage = MessageWithValue<
   typeof MESSAGE_TYPE_RENAME_SESSION,
   { sessionId: string; name: string }
 >
+
+export type PatchWindowOptions = Pick<
+  browser.windows._UpdateUpdateInfo,
+  'drawAttention' | 'focused' | 'state' | 'left' | 'top'
+>
+export const MESSAGE_TYPE_PATCH_WINDOW = 'patch_window'
+export type PatchWindowMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_PATCH_WINDOW,
+  { sessionId: string; windowId: number; options: PatchWindowOptions }
+>
+
+export type PatchTabOptions = Pick<
+  browser.tabs._UpdateUpdateProperties,
+  'url' | 'active' | 'highlighted' | 'pinned' | 'muted'
+>
+export const MESSAGE_TYPE_PATCH_TAB = 'patch_tab'
+export type PatchTabMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_PATCH_TAB,
+  {
+    sessionId: string
+    windowId: number
+    tabId: number
+    options: PatchTabOptions
+  }
+>
+
+export const MESSAGE_TYPE_DISCARD_TABS = 'discard_tabs'
+export type DiscardTabsMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_DISCARD_TABS,
+  { tabIds: number | number[] }
+>
