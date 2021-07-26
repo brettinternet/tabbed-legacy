@@ -1,14 +1,14 @@
 <script lang="ts">
   import Cog from 'src/components/icons/cog.svelte'
   import MenuOption from './option.svelte'
-  import { showSettings, showShortcuts } from 'src/components/app/store'
+  import { modal } from 'src/components/modal/store'
 
   const handleClickShortcuts = () => {
-    $showShortcuts = true
+    modal.shortcuts.set(true)
   }
 
   const handleClickSettings = () => {
-    $showSettings = true
+    modal.settings.set(true)
   }
 </script>
 

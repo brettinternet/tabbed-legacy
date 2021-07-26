@@ -1,6 +1,6 @@
 import type { SvelteComponent } from 'svelte'
 import { writable } from 'svelte/store'
-import { showSettings, showShortcuts } from 'src/components/app/store'
+import { modal } from 'src/components/modal/store'
 import type { Valueof } from 'src/utils/helpers'
 import Cog from 'src/components/icons/cog.svelte'
 
@@ -29,14 +29,14 @@ export type ContextMenuOption = {
 export const globalContextMenuOptions: ContextMenuOption[] = [
   {
     onClick: () => {
-      showShortcuts.set(true)
+      modal.shortcuts.set(true)
     },
     Icon: null,
     text: 'Shortcuts',
   },
   {
     onClick: () => {
-      showSettings.set(true)
+      modal.settings.set(true)
     },
     Icon: Cog,
     text: 'Settings',
@@ -57,18 +57,20 @@ const createContextMenuStore = () => {
 
   return {
     subscribe,
-    register: (contextId: ContextId, options: RegisterContextMenuOptions) =>
+    register: (contextId: ContextId, options: RegisterContextMenuOptions) => {
       update((existing) => ({
         ...existing,
         [contextId]: options,
-      })),
-    unregister: (contextId: ContextId) =>
+      }))
+    },
+    unregister: (contextId: ContextId) => {
       update((existing) => {
         if (contextId in existing) {
           delete existing[contextId]
         }
         return existing
-      }),
+      })
+    },
   }
 }
 

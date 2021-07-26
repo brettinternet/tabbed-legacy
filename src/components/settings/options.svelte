@@ -14,6 +14,7 @@
   import type { Theme, ExtensionClickAction, Layout } from 'src/utils/settings'
   import { updateSettings, settings } from 'src/components/settings/store'
   import { isSidebarSupported } from 'src/components/app/store'
+  import { modal } from 'src/components/modal/store'
   import Description from './description.svelte'
   import SectionTitle from './section-title.svelte'
 
@@ -101,6 +102,11 @@
       await updateSettings({
         sortFocusedWindowFirst: ev.currentTarget.checked,
       })
+    }
+
+  const handleOpenShortcuts: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
+    () => {
+      modal.shortcuts.set(true)
     }
 </script>
 
@@ -191,7 +197,12 @@
         />
       </div>
       <Description id="shortcuts-description">
-        Enables extension shortcuts. Use <Kbd>?</Kbd> when enabled to view shortcuts.
+        Enables extension shortcuts. Use <Kbd>?</Kbd> when enabled to
+        <button
+          on:click={handleOpenShortcuts}
+          class="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500"
+          >view shortcuts</button
+        >.
       </Description>
     </div>
 

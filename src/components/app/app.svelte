@@ -2,11 +2,8 @@
   import { _, isLoading } from 'svelte-i18n'
 
   import './scrollbar.css'
-  import {
-    showSettings,
-    showShortcuts,
-    isPopup,
-  } from 'src/components/app/store'
+  import { isPopup } from 'src/components/app/store'
+  import { modal, someModal } from 'src/components/modal/store'
   import { settings } from 'src/components/settings/store'
   import { log } from 'src/utils/logger'
   import AppLayout from 'src/components/layout/layout.svelte'
@@ -20,13 +17,7 @@
   const logContext = 'components/app/app.svelte'
 
   const openSettings = () => {
-    showSettings.set(true)
-  }
-  const closeSettings = () => {
-    showSettings.set(false)
-  }
-  const closeShortcuts = () => {
-    showShortcuts.set(false)
+    modal.settings.set(true)
   }
 
   const onSubmitSearch: svelte.JSX.FormEventHandler<HTMLFormElement> = (ev) => {
@@ -36,7 +27,7 @@
     console.log(search?.value)
   }
 
-  $: log.debug(logContext, $settings)
+  $: log.debug(logContext, $settings, 'some', $someModal)
 </script>
 
 {#if $isLoading}
@@ -51,13 +42,13 @@
   >
     <Sessions currentLayout={$settings.layout} />
   </AppLayout>
-  {#if $showSettings}
-    <SettingsModal close={closeSettings} />
+  {#if $modal.settings}
+    <SettingsModal close={modal.off} />
   {/if}
-  {#if $showShortcuts}
-    <ShortcutsModal close={closeShortcuts} />
+  {#if $modal.shortcuts}
+    <ShortcutsModal close={modal.off} />
   {/if}
-  {#if $showShortcuts || $showSettings}
+  {#if $someModal}
     <Overlay />
   {/if}
   <ContextMenu />

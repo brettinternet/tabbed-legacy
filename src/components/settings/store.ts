@@ -19,7 +19,8 @@ import {
   MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
 } from 'src/utils/messages'
 import { readSettings, writeSetting } from 'src/utils/browser/storage'
-import { isPopup, showSettings, showShortcuts } from 'src/components/app/store'
+import { isPopup } from 'src/components/app/store'
+import { modal, someModal } from 'src/components/modal/store'
 import { updateLogLevel, log } from 'src/utils/logger'
 import { sortCurrentSession } from 'src/components/sessions/store'
 
@@ -38,20 +39,17 @@ const setupShortcuts = (enabled: boolean) => {
         event.preventDefault()
         switch (handler.key) {
           case 'shift+/': // `?` mark
-            showShortcuts.update((value) => !value)
-            showSettings.set(false)
+            modal.shortcuts.toggle()
             break
           case 'esc':
-            if (get(showShortcuts) || get(showSettings)) {
-              showShortcuts.set(false)
-              showSettings.set(false)
+            if (get(someModal)) {
+              modal.off()
             } else if (isPopup) {
               window.close()
             }
             break
           case '/': {
-            showShortcuts.set(false)
-            showSettings.set(false)
+            modal.off()
             const search = document.getElementById('search')
             void tick().then(() => {
               search?.focus()
@@ -59,8 +57,7 @@ const setupShortcuts = (enabled: boolean) => {
             break
           }
           case '`':
-            showSettings.update((value) => !value)
-            showShortcuts.set(false)
+            modal.settings.toggle()
             break
         }
       }
