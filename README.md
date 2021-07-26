@@ -48,23 +48,22 @@ npm test
 
 - [ ] Window titles based on predominant hostnames and language like "& 4 more"
 - [ ] Window actions: focus/minimize, close - focused/minimized indicators
-- [ ] Tab actions: close, pin, deactivate?, middle click create new tab - pinned/active indicators
+- [ ] Tab actions: pin, deactivate?, middle click create new tab - pinned/active indicators
 - [ ] multi-select tabs and windows, shift click
-- [ ] Add focus/active listeners to background, refresh window/tab list on window/tab changes
 - [ ] save tab groups
 - [ ] select box (left) - also move active indicator, context menu for tab actions
 
 #### Sessions
 
-- [ ] Save session (window or entire group of windows), restore sessions (with incognito state intact)
-- [ ] Automatically save sessions (on window close, regular save)
+- [ ] Test session restore with incognito state intact
+  - [ ] Show incognito indicator to saved incognito windows (eye-closed icon)
+- [ ] Add rename modal and form
 
 #### Layouts
 
-- [ ] list layout - add accessible rows for tab/arrows
 - [ ] Grid layout ([1](https://github.com/isaacHagoel/svelte-dnd-action), [2](https://github.com/vaheqelyan/svelte-grid))
-- [ ] resize boxes
-- [ ] zones to move window groups to? current/minimized/saved
+  - [ ] resize boxes
+  - [ ] zones to move window groups to? current/minimized/saved
 
 #### Search
 
@@ -77,7 +76,7 @@ npm test
 #### App
 
 - [ ] highlight duplicate tabs
-- [ ] save last selected session
+- [ ] save last selected session (?)
 - [ ] allow to optionally save private windows
 - [ ] implement undo stack
 
