@@ -7,9 +7,17 @@
    */
   import type { SvelteComponent } from 'svelte'
 
-  export let component: SvelteComponent, text: string, props: unknown
+  export let component: SvelteComponent,
+    text: OptionalProp<string> = undefined,
+    props: OptionalProp<unknown> = undefined,
+    child: OptionalProp<SvelteComponent> = undefined,
+    childProps: OptionalProp<Record<string, unknown>> = undefined
 </script>
 
 <svelte:component this={component} {...props}>
-  {text}
+  {#if child}
+    <svelte:component this={child} {...childProps} />
+  {:else}
+    {text}
+  {/if}
 </svelte:component>
