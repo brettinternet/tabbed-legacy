@@ -4,7 +4,7 @@
    * https://www.deque.com/blog/text-links-practices-screen-readers/
    */
   import { locale } from 'svelte-i18n'
-  import { formatDistanceToNow } from 'date-fns'
+  import { formatDistanceToNow, isSameMinute } from 'date-fns'
 
   import Window from 'src/components/icons/window.svelte'
   import Save from 'src/components/icons/save.svelte'
@@ -27,10 +27,13 @@
     return prefix ? `${prefix} ${timeStr}` : timeStr
   }
 
+  const lastModifiedDate = new Date(session.lastModifiedDate)
+  const createdDate = new Date(session.createdDate)
+
   const buttonClassName = 'px-3 py-2'
 </script>
 
-<div class="flex justify-between items-center">
+<div class="flex justify-between items-center h-9 bg-gray-100 dark:bg-gray-800">
   <div class="flex items-center space-x-2">
     {#if renameSession}
       <button
@@ -47,7 +50,7 @@
         {#if session.title}
           {session.title}
         {:else}
-          <span class="text-gray-400 dark:text-gray-600 text-xxs">name</span>
+          <span class="text-gray-400 dark:text-gray-500 text-xxs">name</span>
         {/if}
       </button>
     {/if}
@@ -93,14 +96,14 @@
         <Bin />
       </button>
     {/if}
-    {#if session.lastModifiedDate !== session.createdDate}
-      <div class="text-gray-400 dark:text-gray-600">
-        <time>{getDateStr(new Date(session.lastModifiedDate), 'updated')}</time>
+    {#if !isSameMinute(lastModifiedDate, createdDate)}
+      <div class="text-gray-400 dark:text-gray-500">
+        <time>{getDateStr(lastModifiedDate, 'updated')}</time>
       </div>
     {/if}
   </div>
 
-  <div class="text-gray-400 dark:text-gray-600">
-    <time>{getDateStr(new Date(session.createdDate), 'created')}</time>
+  <div class="text-gray-400 dark:text-gray-500 pr-3">
+    <time>{getDateStr(createdDate, 'created')}</time>
   </div>
 </div>

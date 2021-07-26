@@ -8,6 +8,7 @@
   import ViewButton from './view-button.svelte'
   import WindowList from './window-list.svelte'
   import SessionControl from './control.svelte'
+  import Meta from './meta.svelte'
 
   export let onSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
     onToggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
@@ -84,7 +85,7 @@
     {#if sessionLists.previous.length > 4}
       <div class="flex justify-end px-2 xs:px-4 sm:px-8">
         <button
-          class="p-2 flex items-center text-gray-400 dark:text-gray-600"
+          class="p-2 flex items-center text-gray-400 dark:text-gray-500"
           on:click={toggleViewAll}
           >view {viewAllPrevious
             ? 'less'
@@ -109,7 +110,7 @@
           datePrefix="created"
         />
         {#if selectedSessionId === session.id}
-          <div class="lg:hidden px-4 xs:px-10 py-4">
+          <div class="lg:hidden p-4 xs:px-6 sm:px-10 py-4">
             <SessionControl
               {session}
               {openSession}
@@ -156,6 +157,9 @@
         {currentWindowId}
         {currentTabId}
       />
+      <div class="mt-8">
+        <Meta session={selectedSession} />
+      </div>
     </article>
   {/if}
 </section>

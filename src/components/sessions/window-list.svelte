@@ -80,9 +80,6 @@
           'flex flex-row items-center justify-between py-3 xl:justify-start',
           currentWindowId === windowId && 'text-green-500'
         )}
-        data-context-id={contextIds.WINDOW}
-        data-session-id={sessionId}
-        data-window-id={windowId}
       >
         <div class="flex flex-row items-center mr-3 leading-5">
           <div class="flex justify-center w-5 mr-3"><Window /></div>
@@ -90,6 +87,8 @@
             class="font-semibold flex items-center overflow-hidden whitespace-pre"
           >
             <button
+              data-context-id={contextIds.WINDOW}
+              data-session-id={sessionId}
               data-window-id={windowId}
               on:click={handleWindowClick}
               aria-disabled={currentWindowId === windowId}
@@ -111,17 +110,10 @@
         {/if}
       </div>
       {#if tabs}
-        <ul role="grid" class="overflow-hidden">
+        <ol role="grid" class="overflow-hidden">
           {#each tabs as { id: tabId, windowId, title, url, favIconUrl }}
             {#if title || url}
-              <li
-                role="row"
-                class="flex flex-row"
-                data-context-id={contextIds.TAB}
-                data-session-id={sessionId}
-                data-window-id={windowId}
-                data-tab-id={tabId}
-              >
+              <li role="row" class="flex flex-row">
                 <div class="flex justify-center h-5 w-5 min-w-5 mb-1 mr-3">
                   {#if favIconUrl}
                     <img use:replaceImageError src={favIconUrl} alt={title} />
@@ -137,8 +129,10 @@
                 >
                   {#if url}
                     <a
-                      data-tab-id={tabId}
+                      data-context-id={contextIds.TAB}
+                      data-session-id={sessionId}
                       data-window-id={windowId}
+                      data-tab-id={tabId}
                       href={url}
                       on:click={handleTabLinkClick}
                       class={cn(
@@ -167,7 +161,7 @@
               </li>
             {/if}
           {/each}
-        </ul>
+        </ol>
       {/if}
     </div>
   {/each}
