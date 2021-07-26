@@ -3,8 +3,11 @@
    * @accessibility Use accordion accessibility
    * https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html
    */
+  import cn from 'classnames'
+
   import type { SessionLists } from 'src/utils/browser/storage'
   import { sessionType } from 'src/utils/browser/storage'
+  import Down from 'src/components/icons/down.svelte'
   import ViewButton from './view-button.svelte'
   import WindowList from './window-list.svelte'
   import SessionControl from './control.svelte'
@@ -36,7 +39,7 @@
 
   $: unsavedSessions = [sessionLists.current, ...sessionLists.previous].slice(
     0,
-    viewAllPrevious ? sessionLists.previous.length : limit
+    viewAllPrevious ? sessionLists.previous.length + 1 : limit
   )
 </script>
 
@@ -78,19 +81,22 @@
         </div>
       {/if}
 
-      {#if i === 0 && sessionLists.previous.length - 1 > limit}
+      {#if i === 0 && sessionLists.previous.length > 0}
         <h2 class="p-4 xs:px-6 sm:px-10 pt-8 pb-4 lg:px-6">Previous</h2>
       {/if}
     {/each}
-    {#if sessionLists.previous.length > 4}
+    {#if sessionLists.previous.length - 1 > limit}
       <div class="flex justify-end px-2 xs:px-4 sm:px-8">
         <button
           class="p-2 flex items-center text-gray-400 dark:text-gray-500"
           on:click={toggleViewAll}
-          >view {viewAllPrevious
+          >{viewAllPrevious
             ? 'less'
-            : `${sessionLists.previous.length - 1 - limit} more`}</button
-        >
+            : `${sessionLists.previous.length + 1 - limit} more`}
+          <span class={cn('ml-1', viewAllPrevious && 'transform rotate-180')}
+            ><Down /></span
+          >
+        </button>
       </div>
     {/if}
 
