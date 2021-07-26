@@ -12,6 +12,9 @@
     openWindow,
   } from 'src/utils/browser/query'
   import Window from 'src/components/icons/window.svelte'
+  import Pin from 'src/components/icons/pin.svelte'
+  import Incognito from 'src/components/icons/eye-closed.svelte'
+  import Minimized from 'src/components/icons/minimized.svelte'
   import { replaceImageError } from 'src/components/sessions/dom'
   import Focused from 'src/components/icons/eye.svelte'
   import { contextIds } from 'src/components/context-menu/store'
@@ -73,7 +76,7 @@
 </script>
 
 <div role="region" aria-labelledby={ariaLabelledby}>
-  {#each windows as { id: windowId, tabs }, i}
+  {#each windows as { id: windowId, tabs, incognito, state }, i}
     <div class={cn(i !== 0 && 'mt-4')}>
       <div
         class={cn(
@@ -97,24 +100,46 @@
               {#if currentWindowId === windowId}Current{' '}{/if}Window
             </button>
             {#if currentWindowId === windowId}
-              <span class="ml-2"><Focused /></span>
+              <span class="ml-2" aria-label="active" title="active"
+                ><Focused /></span
+              >
             {/if}
           </h2>
         </div>
         {#if tabs}
           <div
-            class="text-gray-500 font-extralight whitespace-nowrap overflow-ellipsis overflow-hidden"
+            class="flex items-center text-gray-500 font-extralight whitespace-nowrap overflow-ellipsis overflow-hidden"
           >
+            {#if incognito}
+              <span
+                class="mr-2 text-black"
+                title="incognito"
+                aria-label="incognito"
+              >
+                <Incognito />
+              </span>
+            {/if}
+            {#if state === 'minimized'}
+              <span
+                class="mr-2 text-yellow-400"
+                title="minimized"
+                aria-label="minimized"
+              >
+                <Minimized />
+              </span>
+            {/if}
             {tabs.length} tabs
           </div>
         {/if}
       </div>
       {#if tabs}
         <ol role="grid" class="overflow-hidden">
-          {#each tabs as { id: tabId, windowId, title, url, favIconUrl }}
+          {#each tabs as { id: tabId, windowId, title, url, favIconUrl, pinned, active }}
             {#if title || url}
               <li role="row" class="flex flex-row">
-                <div class="flex justify-center h-5 w-5 min-w-5 mb-1 mr-3">
+                <div
+                  class="flex justify-center items-center h-5 w-5 min-w-5 mb-1 mr-3"
+                >
                   {#if favIconUrl}
                     <img use:replaceImageError src={favIconUrl} alt={title} />
                   {/if}
@@ -154,8 +179,22 @@
                       {title}
                     </span>
                   {/if}
-                  {#if tabId === currentTabId}
-                    <span class="ml-2"><Focused /></span>
+                  {#if pinned}
+                    <span
+                      class="ml-2 text-red-400"
+                      aria-label="pinned"
+                      title="pinned"><Pin /></span
+                    >
+                  {/if}
+                  {#if tabId === currentTabId || (active && tabs.length > 1)}
+                    <span
+                      class={cn(
+                        'ml-2',
+                        active && tabId !== currentTabId && 'text-gray-400'
+                      )}
+                      aria-label="active"
+                      title="active"><Focused /></span
+                    >
                   {/if}
                 </div>
               </li>

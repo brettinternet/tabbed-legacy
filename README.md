@@ -46,8 +46,7 @@ npm test
 
 #### Windows & tabs
 
-- [ ] Window titles based on predominant hostnames and language like "& 4 more"
-- [ ] Window actions: focus/minimize, close - focused/minimized indicators
+- [ ] Window actions: minimize
 - [ ] Tab actions: pin, deactivate?, middle click create new tab - pinned/active indicators
 - [ ] multi-select tabs and windows, shift click
 - [ ] save tab groups
@@ -55,9 +54,10 @@ npm test
 
 #### Sessions
 
-- [ ] Test session restore with incognito state intact
-  - [ ] Show incognito indicator to saved incognito windows (eye-closed icon)
 - [ ] Add rename modal and form
+- [ ] Give previous sessions a name with predominant tabs, like "& 4 more"
+- [ ] merge multiple sessions
+- [ ] merge multiple windows
 
 #### Layouts
 
@@ -79,6 +79,7 @@ npm test
 - [ ] save last selected session (?)
 - [ ] allow to optionally save private windows
 - [ ] implement undo stack
+- [ ] export/import & backup (download export onclick)
 
 #### Related issues
 
