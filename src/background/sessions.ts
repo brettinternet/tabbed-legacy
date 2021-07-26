@@ -438,6 +438,20 @@ export const patchTab = async ({
   }
 }
 
-export const discardTabs = (tabIds: number | number[]) => {
-  browser.tabs.discard(tabIds)
+export const discardTabs = async (tabIds: number | number[]) => {
+  log.debug(logContext, 'discardTabs()', tabIds)
+
+  await browser.tabs.discard(tabIds)
+}
+
+export const moveTabs = async ({
+  tabIds,
+  options,
+}: {
+  tabIds: number | number[]
+  options: browser.tabs._MoveMoveProperties
+}) => {
+  log.debug(logContext, 'moveTab()', { tabIds, options })
+
+  await browser.tabs.move(tabIds, options)
 }

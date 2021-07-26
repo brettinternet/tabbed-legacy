@@ -19,8 +19,8 @@ import {
   MESSAGE_TYPE_RENAME_SESSION,
   MESSAGE_TYPE_PATCH_TAB,
   MESSAGE_TYPE_PATCH_WINDOW,
-  DiscardTabsMessage,
   MESSAGE_TYPE_DISCARD_TABS,
+  MESSAGE_TYPE_MOVE_TABS,
 } from 'src/utils/messages'
 import type {
   ReloadActionsMessage,
@@ -40,6 +40,8 @@ import type {
   RenameSessionMessage,
   PatchWindowMessage,
   PatchTabMessage,
+  DiscardTabsMessage,
+  MoveTabsMessage,
 } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
@@ -59,6 +61,7 @@ import {
   patchWindow,
   patchTab,
   discardTabs,
+  moveTabs,
 } from './sessions'
 
 const logContext = 'background/listeners'
@@ -236,6 +239,14 @@ const setupSessionListeners = () => {
   browser.runtime.onMessage.addListener((message: DiscardTabsMessage) => {
     if (message.type === MESSAGE_TYPE_DISCARD_TABS) {
       return discardTabs(message.value.tabIds)
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: MoveTabsMessage) => {
+    if (message.type === MESSAGE_TYPE_MOVE_TABS) {
+      return moveTabs(message.value)
     }
 
     return false

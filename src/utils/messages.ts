@@ -103,6 +103,7 @@ export type RemoveSessionTabMessage = MessageWithValue<
   { sessionId: string; windowId: number; tabId: number }
 >
 
+// update
 export const MESSAGE_TYPE_RENAME_SESSION = 'rename_session'
 export type RenameSessionMessage = MessageWithValue<
   typeof MESSAGE_TYPE_RENAME_SESSION,
@@ -138,4 +139,10 @@ export const MESSAGE_TYPE_DISCARD_TABS = 'discard_tabs'
 export type DiscardTabsMessage = MessageWithValue<
   typeof MESSAGE_TYPE_DISCARD_TABS,
   { tabIds: number | number[] }
+>
+
+export const MESSAGE_TYPE_MOVE_TABS = 'move_tabs'
+export type MoveTabsMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_MOVE_TABS,
+  { tabIds: number | number[]; options: browser.tabs._MoveMoveProperties }
 >
