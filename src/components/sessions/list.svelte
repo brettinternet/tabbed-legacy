@@ -140,29 +140,31 @@
 
   {#if selectedSession && selectedSession.id === selectedSessionId}
     <article
-      class="scroll hidden lg:block lg:col-span-8 xl:col-span-9 pb-10 h-main overflow-y-auto"
+      class="scroll hidden lg:col-span-8 xl:col-span-9 pb-10 h-main overflow-y-auto lg:flex lg:flex-col"
     >
-      <SessionControl
-        session={selectedSession}
-        openSession={selectedSession.id !== sessionLists.current.id
-          ? openSession
-          : undefined}
-        {saveSession}
-        deleteSession={selectedSession.id !== sessionLists.current.id
-          ? deleteSession
-          : undefined}
-        renameSession={selectedSession.type === sessionType.SAVED
-          ? renameSession
-          : undefined}
-      />
-      <WindowList
-        current={selectedSession.id === sessionLists.current.id}
-        windows={selectedSession.windows}
-        sessionId={selectedSession.id}
-        ariaLabelledby={selectedSession.id}
-        {currentWindowId}
-        {currentTabId}
-      />
+      <div class="flex-1">
+        <SessionControl
+          session={selectedSession}
+          openSession={selectedSession.id !== sessionLists.current.id
+            ? openSession
+            : undefined}
+          {saveSession}
+          deleteSession={selectedSession.id !== sessionLists.current.id
+            ? deleteSession
+            : undefined}
+          renameSession={selectedSession.type === sessionType.SAVED
+            ? renameSession
+            : undefined}
+        />
+        <WindowList
+          current={selectedSession.id === sessionLists.current.id}
+          windows={selectedSession.windows}
+          sessionId={selectedSession.id}
+          ariaLabelledby={selectedSession.id}
+          {currentWindowId}
+          {currentTabId}
+        />
+      </div>
       <div class="mt-8">
         <Meta session={selectedSession} />
       </div>
