@@ -46,8 +46,6 @@ npm test
 
 #### Windows & tabs
 
-- [ ] Window actions: minimize
-- [ ] Tab actions: pin, deactivate?, middle click create new tab - pinned/active indicators
 - [ ] multi-select tabs and windows, shift click
 - [ ] save tab groups
 - [ ] select box (left) - also move active indicator, context menu for tab actions
@@ -55,6 +53,7 @@ npm test
 #### Sessions
 
 - [ ] Add rename modal and form
+- [ ] Get recently closed sessions and consolidate with previous?
 - [ ] Give previous sessions a name with predominant tabs, like "& 4 more"
 - [ ] merge multiple sessions
 - [ ] merge multiple windows
