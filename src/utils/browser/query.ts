@@ -213,7 +213,7 @@ export const focusWindowTab = async (windowId: number, tabId: number) => {
  */
 export const openTab = async (
   query: browser.tabs._QueryQueryInfo,
-  incognito = false
+  { incognito = false, noFocus = false }
 ) => {
   const _url = Array.isArray(query.url) ? query.url[0] : query.url
   // hashes cause queries to return empty
@@ -239,16 +239,33 @@ export const openTab = async (
     throw Error('No incognito access allowed')
   }
 
-  const { url, pinned } = query
-  if (tab?.id && tab?.windowId) {
+  if (!noFocus && tab?.id && tab?.windowId) {
     await focusWindowTab(tab.windowId, tab.id)
-  } else if (
-    (!incognito && browser.extension.inIncognitoContext) ||
-    (incognito && !browser.extension.inIncognitoContext)
-  ) {
-    await browser.windows.create({ ...(tab || { url }), incognito })
   } else {
-    await browser.tabs.create(tab || { url, pinned })
+    let options:
+      | browser.tabs._CreateCreateProperties
+      | browser.windows._CreateCreateData
+    if (tab) {
+      options = {
+        url: getTabUrl(tab),
+        pinned: tab.pinned,
+      }
+    } else {
+      const { url, pinned } = query
+      options = {
+        url,
+        pinned,
+      }
+    }
+
+    if (
+      (!incognito && browser.extension.inIncognitoContext) ||
+      (incognito && !browser.extension.inIncognitoContext)
+    ) {
+      await browser.windows.create({ ...options, incognito })
+    } else {
+      await browser.tabs.create(options)
+    }
   }
 }
 
