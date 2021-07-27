@@ -52,7 +52,6 @@ npm test
 
 #### Sessions
 
-- [ ] Add rename modal and form
 - [ ] Get recently closed sessions and consolidate with previous?
 - [ ] Give previous sessions a name with predominant tabs, like "& 4 more"
 - [ ] merge multiple sessions
