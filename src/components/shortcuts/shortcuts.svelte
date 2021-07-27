@@ -1,5 +1,5 @@
 <script lang="ts">
-  import X from 'src/components/icons/x.svelte'
+  import Header from 'src/components/modal/header.svelte'
   import Modal from 'src/components/modal/modal.svelte'
   import Kbd from 'src/components/kbd/kbd.svelte'
 
@@ -11,23 +11,13 @@
   const td = 'text-gray-600 dark:text-gray-300'
 </script>
 
-<Modal {close} ariaLabelledby={headerId}>
-  <header
-    class="flex flex-row justify-between items-baseline p-5"
-    style={`height:${headerHeight}px`}
-  >
-    <h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">
-      Shortcuts
-    </h1>
-    <button
-      on:click={close}
-      class="py-2 px-3 rounded-sm"
-      title="Close shortcuts"
-      aria-label="Close shortcuts"
-    >
-      <X />
-    </button>
-  </header>
+<Modal {close} ariaLabelledby={headerId} stretch>
+  <Header
+    headerStyle={`height:${headerHeight}px`}
+    onClickClose={close}
+    title="Shortcuts"
+    {headerId}
+  />
   <div
     class="px-7 pb-7 overflow-y-auto scroll"
     style={`height:calc(100% - ${headerHeight}px);`}

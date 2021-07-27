@@ -1,14 +1,19 @@
 <script lang="ts">
-  import cn from 'classnames'
+  import cn, { Argument as ClassnamesArgument } from 'classnames'
   import { createFocusTrap } from 'focus-trap'
   import type { FocusTrap } from 'focus-trap'
   import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock'
   import { onMount, onDestroy } from 'svelte'
 
+  import { log } from 'src/utils/logger'
   import { isPopup } from 'src/components/app/store'
   import { clickAway } from 'src/utils/click-away'
+  import { portal } from 'src/utils/portal'
 
-  export let close: () => void, ariaLabelledby: string
+  export let close: () => void,
+    ariaLabelledby: string,
+    stretch = false,
+    classNames: OptionalProp<ClassnamesArgument> = undefined
 
   let trap: FocusTrap, modal: HTMLElement | null, main: HTMLElement | null
 
@@ -20,22 +25,28 @@
         main.style.display = 'none'
       }
       if (modal) {
-        disableBodyScroll(modal)
-        trap = createFocusTrap(modal, {
-          clickOutsideDeactivates: true,
-        })
-        trap.activate()
+        try {
+          disableBodyScroll(modal)
+          trap = createFocusTrap(modal)
+          trap.activate()
+        } catch (err) {
+          log.error(err)
+        }
       }
     }
   })
 
   onDestroy(() => {
     if (modal) {
-      enableBodyScroll(modal)
-      if (trap) {
-        trap.deactivate({
-          returnFocus: true,
-        })
+      try {
+        enableBodyScroll(modal)
+        if (trap) {
+          trap.deactivate({
+            returnFocus: true,
+          })
+        }
+      } catch (err) {
+        log.error(err)
       }
     }
     if (isPopup && main) {
@@ -52,8 +63,13 @@
   class={cn(
     'modal bg-white dark:bg-gray-900 dark:text-white',
     'fixed z-modal top-0 left-0 right-0 bottom-0 overflow-hidden',
-    'lg:top-20 lg:left-1/2 lg:right-auto lg:bottom-auto lg:transform lg:-translate-x-1/2 lg:w-full lg:max-w-screen-sm lg:border lg:border-gray-400 lg:shadow-lg lg:h-full lg:max-h-modal'
+    'lg:top-20 lg:left-1/2 lg:right-auto lg:bottom-auto lg:transform lg:-translate-x-1/2 lg:border lg:border-gray-400 lg:shadow-lg',
+    stretch
+      ? 'lg:w-full lg:max-w-screen-sm lg:h-full lg:max-h-modal'
+      : 'lg:w-full lg:max-w-screen-xxs lg:h-auto',
+    classNames
   )}
+  use:portal
   use:clickAway
   on:clickAway={close}
 >
