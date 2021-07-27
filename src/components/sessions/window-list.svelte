@@ -5,12 +5,6 @@
    */
   import cn from 'classnames'
 
-  import {
-    focusWindowTab,
-    focusWindow,
-    openTab,
-    openWindow,
-  } from 'src/utils/browser/query'
   import Window from 'src/components/icons/window.svelte'
   import Pin from 'src/components/icons/pin.svelte'
   import Incognito from 'src/components/icons/eye-closed.svelte'
@@ -20,30 +14,29 @@
   import { contextIds } from 'src/components/context-menu/store'
 
   export let windows: browser.windows.Window[],
-    current: boolean,
     ariaLabelledby: string,
     sessionId: string,
     currentWindowId: number | undefined,
-    currentTabId: number | undefined
+    currentTabId: number | undefined,
+    openWindow: (sessionId: string, windowId: number) => Promise<void>,
+    openTab: (
+      sessionId: string,
+      windowId: number,
+      tabId: number
+    ) => Promise<void>
 
-  const handleWindowClick: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
-    async (ev) => {
-      const button = ev.currentTarget
-      if (button.dataset.windowId) {
-        const windowId: number | undefined = parseInt(button.dataset.windowId)
-        const ariaDisabled = button.getAttribute('aria-disabled') === 'true'
-        if (windowId && !ariaDisabled) {
-          if (current) {
-            await focusWindow(windowId)
-          } else {
-            const selectedWindow = windows.find(({ id }) => id === windowId)
-            if (selectedWindow) {
-              await openWindow(selectedWindow)
-            }
-          }
-        }
+  const handleWindowClick: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (
+    ev
+  ) => {
+    const button = ev.currentTarget
+    if (button.dataset.windowId) {
+      const windowId: number | undefined = parseInt(button.dataset.windowId)
+      const ariaDisabled = button.getAttribute('aria-disabled') === 'true'
+      if (windowId && !ariaDisabled) {
+        openWindow(sessionId, windowId)
       }
     }
+  }
 
   const handleTabLinkClick: svelte.JSX.MouseEventHandler<HTMLAnchorElement> =
     async (ev) => {
@@ -53,22 +46,9 @@
         const windowId: number | undefined = parseInt(anchor.dataset.windowId)
         if (tabId && windowId) {
           ev.preventDefault()
-          if (current) {
-            const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
-            if (!ariaDisabled) {
-              await focusWindowTab(windowId, tabId)
-              currentWindowId = windowId
-              currentTabId = tabId
-            }
-          } else {
-            const selectedWindow = windows.find(({ id }) => id === windowId)
-            const selectedTab = selectedWindow?.tabs?.find(
-              ({ id }) => id === tabId
-            )
-            if (selectedTab) {
-              const { url, pinned } = selectedTab
-              await openTab({ url, pinned }, selectedWindow?.incognito)
-            }
+          const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
+          if (!ariaDisabled) {
+            openTab(sessionId, windowId, tabId)
           }
         }
       }

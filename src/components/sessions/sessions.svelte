@@ -273,6 +273,8 @@
       saveSession={handleSaveSession}
       deleteSession={handleDeleteSession}
       renameSession={handleRenameSession}
+      openTab={handleOpenTab}
+      openWindow={handleOpenWindow}
     />
   {/if}
 {/if}

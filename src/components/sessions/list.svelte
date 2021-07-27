@@ -19,10 +19,16 @@
     sessionLists: SessionLists,
     currentWindowId: number | undefined,
     currentTabId: number | undefined,
-    openSession: (sessionId: string) => void,
-    saveSession: (sessionId: string) => void,
-    deleteSession: (sessionId: string) => void,
-    renameSession: (sessionId: string, name: string) => void
+    openSession: (sessionId: string) => Promise<void>,
+    saveSession: (sessionId: string) => Promise<void>,
+    deleteSession: (sessionId: string) => Promise<void>,
+    renameSession: (sessionId: string, name: string) => Promise<void>,
+    openWindow: (sessionId: string, windowId: number) => Promise<void>,
+    openTab: (
+      sessionId: string,
+      windowId: number,
+      tabId: number
+    ) => Promise<void>
 
   $: selectedSession = [
     sessionLists.current,
@@ -71,12 +77,13 @@
             deleteSession={i !== 0 ? deleteSession : undefined}
           />
           <WindowList
-            current={i === 0}
             windows={session.windows}
             sessionId={session.id}
             ariaLabelledby={session.id}
             {currentWindowId}
             {currentTabId}
+            {openWindow}
+            {openTab}
           />
         </div>
       {/if}
@@ -125,12 +132,13 @@
               {renameSession}
             />
             <WindowList
-              current={false}
               windows={session.windows}
               sessionId={session.id}
               ariaLabelledby={session.id}
               {currentWindowId}
               {currentTabId}
+              {openWindow}
+              {openTab}
             />
           </div>
         {/if}
@@ -157,12 +165,13 @@
             : undefined}
         />
         <WindowList
-          current={selectedSession.id === sessionLists.current.id}
           windows={selectedSession.windows}
           sessionId={selectedSession.id}
           ariaLabelledby={selectedSession.id}
           {currentWindowId}
           {currentTabId}
+          {openWindow}
+          {openTab}
         />
       </div>
       <div class="mt-8">
