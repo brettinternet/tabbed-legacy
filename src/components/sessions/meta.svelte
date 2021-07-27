@@ -5,7 +5,7 @@
 </script>
 
 <table class="font-light text-gray-400 dark:text-gray-500">
-  <caption class="text-left mb-1">Session information:</caption>
+  <caption class="text-left mb-1">Session:</caption>
   <tbody>
     <tr>
       <th class="pr-2">ID</th>

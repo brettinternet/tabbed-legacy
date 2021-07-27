@@ -16,6 +16,8 @@
   import { isSidebarSupported } from 'src/components/app/store'
   import { modal } from 'src/components/modal/store'
   import { getBrowser, browsers } from 'src/utils/browser/query'
+  import { purgeAllStorage } from 'src/utils/browser/storage'
+  import { isProd } from 'src/utils/env'
   import Description from './description.svelte'
   import SectionTitle from './section-title.svelte'
 
@@ -105,6 +107,11 @@
   const handleClickReset: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
     async () => {
       await updateSettings(defaultSettings)
+    }
+
+  const handlePurgeAllStorage: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
+    async () => {
+      await purgeAllStorage()
     }
 
   const handleChangeSortFocusedWindowFirst: svelte.JSX.FormEventHandler<HTMLInputElement> =
@@ -404,5 +411,17 @@
         Restores all settings to default values.
       </Description>
     </div>
+
+    {#if !isProd}
+      <div class="mb-6">
+        <h3 class="text-red-600 mb-3">** INTENDED FOR DEV ONLY **</h3>
+        <div class="mb-3">
+          <Button onClick={handlePurgeAllStorage}>Purge all storage</Button>
+        </div>
+        <Description id="debug-mode-description">
+          Purges all storage and resets the local storage state.
+        </Description>
+      </div>
+    {/if}
   </div>
 {/if}

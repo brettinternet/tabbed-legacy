@@ -6,6 +6,11 @@ declare namespace browser.tabs {
      * @source https://developer.chrome.com/docs/extensions/reference/tabs/
      */
     pendingUrl?: string
+
+    /**
+     * value is `-1` if tab is not assigned to a group, not supported by the polyfill yet
+     */
+    groupId: number
   }
 }
 

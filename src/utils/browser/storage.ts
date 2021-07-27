@@ -1,6 +1,7 @@
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/set
 import { v4 as uuidv4 } from 'uuid'
 
+import { isProd } from 'src/utils/env'
 import type { Settings } from 'src/utils/settings'
 import type { Valueof } from 'src/utils/helpers'
 import { defaultSettings } from 'src/utils/settings'
@@ -187,4 +188,13 @@ export const patchSessionInCollection = async (
   await browser.storage.local.set({
     [key]: existing,
   })
+}
+
+/**
+ * @WARNING destructive, only use in dev
+ */
+export const purgeAllStorage = async () => {
+  if (!isProd) {
+    await browser.storage.local.clear()
+  }
 }
