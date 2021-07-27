@@ -23,7 +23,6 @@
     openSession: (sessionId: string) => Promise<void>,
     saveSession: (sessionId: string) => Promise<void>,
     deleteSession: (sessionId: string) => Promise<void>,
-    renameSession: (sessionId: string, name: string) => Promise<void>,
     openWindow: (
       sessionId: string,
       windowId: number,
@@ -34,7 +33,8 @@
       windowId: number,
       tabId: number,
       options?: OpenTabOptions
-    ) => Promise<void>
+    ) => Promise<void>,
+    openSessionEditor: OptionalProp<() => void> = undefined
 
   $: selectedSession = [
     sessionLists.current,
@@ -135,7 +135,7 @@
               {openSession}
               {saveSession}
               {deleteSession}
-              {renameSession}
+              {openSessionEditor}
             />
             <WindowList
               windows={session.windows}
@@ -166,8 +166,8 @@
           deleteSession={selectedSession.id !== sessionLists.current.id
             ? deleteSession
             : undefined}
-          renameSession={selectedSession.type === sessionType.SAVED
-            ? renameSession
+          openSessionEditor={selectedSession.type === sessionType.SAVED
+            ? openSessionEditor
             : undefined}
         />
         <WindowList

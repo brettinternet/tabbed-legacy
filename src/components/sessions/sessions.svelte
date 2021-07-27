@@ -20,6 +20,7 @@
     currentTabId,
     sessionLists,
     selectedSessionId,
+    editSession,
     sortCurrentSession,
     getSessions,
     saveExistingSession,
@@ -40,6 +41,7 @@
     registerTabContextMenu,
   } from 'src/components/sessions/context-menus'
   import { contextIds, contextMenu } from 'src/components/context-menu/store'
+  import EditModal from './edit-modal.svelte'
   import List from './list.svelte'
   import Grid from './grid.svelte'
 
@@ -218,6 +220,16 @@
     }
   }
 
+  let showEditSessionModal = false
+  const openSessionEditor = () => {
+    showEditSessionModal = true
+  }
+
+  const closeSessionEditor = () => {
+    showEditSessionModal = false
+    $editSession = undefined
+  }
+
   $: if ($sessionLists) {
     const currentSessionId = $sessionLists.current.id
     if (!(currentSessionId in $contextMenu)) {
@@ -315,9 +327,17 @@
       openSession={handleOpenSession}
       saveSession={handleSaveSession}
       deleteSession={handleDeleteSession}
-      renameSession={handleRenameSession}
       openTab={handleOpenTab}
       openWindow={handleOpenWindow}
+      {openSessionEditor}
+    />
+  {/if}
+
+  {#if showEditSessionModal && $editSession}
+    <EditModal
+      close={closeSessionEditor}
+      session={$editSession}
+      onSubmit={handleRenameSession}
     />
   {/if}
 {/if}

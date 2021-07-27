@@ -4,20 +4,30 @@
    * https://www.deque.com/blog/text-links-practices-screen-readers/
    */
   import { locale } from 'svelte-i18n'
-  import { formatDistanceToNow, isSameMinute } from 'date-fns'
+  import { formatDistanceToNow } from 'date-fns'
+  import cn from 'classnames'
 
+  import { getDateLocale } from 'src/i18n'
+  import { editSession } from 'src/components/sessions/store'
+  import type { Session } from 'src/utils/browser/storage'
   import Open from 'src/components/icons/open.svelte'
   import Save from 'src/components/icons/save.svelte'
   import Bin from 'src/components/icons/bin.svelte'
-  import type { Session } from 'src/utils/browser/storage'
-  import { getDateLocale } from 'src/i18n'
+  import Edit from 'src/components/icons/edit.svelte'
 
   export let session: Session,
-    deleteSession: OptionalProp<(sessionId: string) => void> = undefined,
-    saveSession: OptionalProp<(sessionId: string) => void> = undefined,
-    openSession: OptionalProp<(sessionId: string) => void> = undefined,
-    renameSession: OptionalProp<(sessionId: string, name: string) => void> =
-      undefined
+    deleteSession: OptionalProp<(sessionId: string) => Promise<void>> =
+      undefined,
+    saveSession: OptionalProp<(sessionId: string) => Promise<void>> = undefined,
+    openSession: OptionalProp<(sessionId: string) => Promise<void>> = undefined,
+    openSessionEditor: OptionalProp<() => void> = undefined
+
+  const handleOpenSessionEditor = () => {
+    $editSession = session
+    if (openSessionEditor) {
+      openSessionEditor()
+    }
+  }
 
   const getDateStr = (date: Date, prefix?: string) => {
     const timeStr = formatDistanceToNow(date, {
@@ -27,33 +37,14 @@
     return prefix ? `${prefix} ${timeStr}` : timeStr
   }
 
-  const lastModifiedDate = new Date(session.lastModifiedDate)
   const createdDate = new Date(session.createdDate)
-
   const buttonClassName = 'px-3 py-2'
 </script>
 
-<div class="flex justify-between items-center h-9 bg-gray-100 dark:bg-gray-800">
-  <div class="flex items-center space-x-2">
-    {#if renameSession}
-      <button
-        class={buttonClassName}
-        aria-label="Rename session"
-        title="Rename session"
-        on:click={() => {
-          console.log('renameSession: ', renameSession)
-          if (renameSession) {
-            void renameSession(session.id, 'test')
-          }
-        }}
-      >
-        {#if session.title}
-          {session.title}
-        {:else}
-          <span class="text-gray-400 dark:text-gray-500 text-xxs">name</span>
-        {/if}
-      </button>
-    {/if}
+<div
+  class="flex justify-between items-center h-9 bg-gray-100 dark:bg-gray-800 mx-0.5"
+>
+  <div class="flex items-center">
     {#if openSession}
       <button
         class={buttonClassName}
@@ -96,10 +87,18 @@
         <Bin />
       </button>
     {/if}
-    {#if !isSameMinute(lastModifiedDate, createdDate)}
-      <div class="text-gray-400 dark:text-gray-500">
-        <time>{getDateStr(lastModifiedDate, 'updated')}</time>
-      </div>
+    {#if openSessionEditor}
+      <button
+        class={cn('flex flex-row items-center', buttonClassName)}
+        aria-label="Edit session"
+        title="Edit session"
+        on:click={handleOpenSessionEditor}
+      >
+        <span class={cn(session.title && 'mr-2')}><Edit /></span>
+        {#if session.title}
+          {session.title}
+        {/if}
+      </button>
     {/if}
   </div>
 

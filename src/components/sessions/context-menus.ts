@@ -5,6 +5,7 @@ import type { OpenTabOptions, OpenWindowOptions } from 'src/utils/messages'
 import Open from 'src/components/icons/open.svelte'
 import Save from 'src/components/icons/save.svelte'
 import Bin from 'src/components/icons/bin.svelte'
+import X from 'src/components/icons/x.svelte'
 import Minimize from 'src/components/icons/minimize.svelte'
 import Expand from 'src/components/icons/expand.svelte'
 import Pin from 'src/components/icons/pin.svelte'
@@ -93,6 +94,7 @@ export const registerWindowContextMenu = ({
         const sessionId = target.dataset.sessionId
         const windowId = parseNum(target.dataset.windowId)
         const minimized = target.dataset.minimized === 'true'
+        const isActive = sessionLists.current.id === sessionId
 
         if (isDefined(sessionId) && isDefined(windowId)) {
           const handleOpen = () => {
@@ -119,9 +121,9 @@ export const registerWindowContextMenu = ({
             {
               onClick: handleOpen,
               Icon: Open,
-              text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
+              text: isActive ? 'Focus' : 'Open',
             },
-            ...(sessionLists.current.id === sessionId
+            ...(isActive
               ? [
                   {
                     onClick: handleOpenNew,
@@ -142,8 +144,8 @@ export const registerWindowContextMenu = ({
             },
             {
               onClick: handleDelete,
-              Icon: Bin,
-              text: sessionLists.current.id === sessionId ? 'Close' : 'Delete',
+              Icon: isActive ? X : Bin,
+              text: isActive ? 'Close' : 'Delete',
             },
           ]
         }
@@ -192,6 +194,7 @@ export const registerTabContextMenu = ({
         const windowId = parseNum(target.dataset.windowId)
         const tabId = parseNum(target.dataset.tabId)
         const pinned = target.dataset.pinned === 'true'
+        const isActive = sessionLists.current.id === sessionId
 
         if (isDefined(sessionId) && isDefined(windowId) && isDefined(tabId)) {
           const handleOpen = () => {
@@ -214,9 +217,9 @@ export const registerTabContextMenu = ({
             {
               onClick: handleOpen,
               Icon: Open,
-              text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
+              text: isActive ? 'Focus' : 'Open',
             },
-            ...(sessionLists.current.id === sessionId
+            ...(isActive
               ? [
                   {
                     onClick: handleOpenNew,
@@ -232,8 +235,8 @@ export const registerTabContextMenu = ({
             },
             {
               onClick: handleDelete,
-              Icon: Bin,
-              text: sessionLists.current.id === sessionId ? 'Close' : 'Delete',
+              Icon: isActive ? X : Bin,
+              text: isActive ? 'Close' : 'Delete',
             },
           ]
         }

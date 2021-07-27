@@ -2,7 +2,7 @@ import { writable, get } from 'svelte/store'
 
 import { log } from 'src/utils/logger'
 import { sortWindows } from 'src/utils/browser/query'
-import type { SessionLists } from 'src/utils/browser/storage'
+import type { SessionLists, Session } from 'src/utils/browser/storage'
 import {
   MESSAGE_TYPE_GET_SESSIONS_LIST,
   MESSAGE_TYPE_SAVE_EXISTING_SESSION,
@@ -50,6 +50,7 @@ export const currentWindowId = writable<number | undefined>()
 export const currentTabId = writable<number | undefined>()
 export const sessionLists = writable<SessionLists | undefined>()
 export const selectedSessionId = writable<string | undefined>()
+export const editSession = writable<Session | undefined>()
 
 export const sortCurrentSession = async (activeWindowId?: number) => {
   const session = get(sessionLists)

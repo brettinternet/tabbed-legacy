@@ -4,6 +4,7 @@ const createModalWritable = () => {
   const initial = {
     settings: false,
     shortcuts: false,
+    sessionEdit: false,
   }
   const { subscribe, set, update } = writable(initial)
   const setter = (key: keyof typeof initial) => (value: boolean) => {
@@ -28,6 +29,10 @@ const createModalWritable = () => {
     shortcuts: {
       set: setter('shortcuts'),
       toggle: toggler('shortcuts'),
+    },
+    sessionEdit: {
+      set: setter('sessionEdit'),
+      toggle: toggler('sessionEdit'),
     },
     off: () => {
       set(initial)
