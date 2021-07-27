@@ -130,7 +130,7 @@
       </div>
       {#if tabs}
         <ol role="grid" class="overflow-hidden">
-          {#each tabs as { id: tabId, windowId, title, pendingUrl, url, favIconUrl, pinned, active }}
+          {#each tabs as { id: tabId, windowId, title, pendingUrl, url, favIconUrl, pinned }}
             {#if title || url || pendingUrl}
               <li role="row" class="flex flex-row">
                 <div
@@ -183,14 +183,9 @@
                       title="pinned"><Pin /></span
                     >
                   {/if}
-                  {#if tabId === currentTabId || (active && tabs.length > 1)}
-                    <span
-                      class={cn(
-                        'ml-2',
-                        active && tabId !== currentTabId && 'text-gray-400'
-                      )}
-                      aria-label="active"
-                      title="active"><Focused /></span
+                  {#if tabId === currentTabId}
+                    <span class="ml-2" aria-label="active" title="active"
+                      ><Focused /></span
                     >
                   {/if}
                 </div>
