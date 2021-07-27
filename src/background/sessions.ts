@@ -25,7 +25,7 @@ import {
 import type {
   PatchWindowOptions,
   PatchTabOptions,
-  DownloadSessionOptions,
+  DownloadSessionsOptions,
 } from 'src/utils/messages'
 import { isDefined } from 'src/utils/helpers'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
@@ -465,7 +465,7 @@ export const moveTabs = async ({
 
 export const downloadSessions = async ({
   sessionIds,
-}: DownloadSessionOptions) => {
+}: DownloadSessionsOptions) => {
   log.debug(logContext, 'downloadSession()', { sessionIds })
 
   let data: unknown
@@ -474,7 +474,7 @@ export const downloadSessions = async ({
     const sessionId = sessionIds
     const session = await findSession(sessionId)
     if (session) {
-      data = session
+      data = [session]
       if (session.title) {
         title = appName
       }
