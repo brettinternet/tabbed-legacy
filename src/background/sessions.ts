@@ -513,7 +513,9 @@ export const downloadSessions = async ({
     if (session) {
       data = [session]
       if (session.title) {
-        title = appName
+        title = session.title
+          .replace(/\\|\/|:|\?|\.|"|<|>|\|/g, '-')
+          .replace(/^( )+/, '')
       }
     } else {
       throwSessionId(sessionId)
@@ -527,19 +529,23 @@ export const downloadSessions = async ({
   }
 
   if (data) {
-    const downloadUrl = URL.createObjectURL(
-      new Blob([JSON.stringify(data, null, '    ')], {
+    const timestamp = lightFormat(new Date(), 'yyyy-MM-dd-hh-mm-ss-SS')
+    const filename = `${title}-${timestamp}.json`
+    const url = window.URL.createObjectURL(
+      new Blob([JSON.stringify(data, null, '\t')], {
         type: 'application/json',
       })
     )
 
-    const timestamp = lightFormat(new Date(), 'yyyy-MM-dd-hh-mm-ss-SS')
-    await browser.downloads.download({
-      url: downloadUrl,
-      filename: `${title}_${timestamp}.json`,
-      conflictAction: 'uniquify',
-      saveAs: false,
-    })
+    // https://stackoverflow.com/a/19328891
+    const anchor = document.createElement('a')
+    anchor.style.display = 'none'
+    anchor.setAttribute('href', url)
+    anchor.setAttribute('download', filename)
+    document.body.append(anchor)
+    anchor.click()
+    window.URL.revokeObjectURL(url)
+    anchor.remove()
   } else {
     throw Error('Unable to read sessions')
   }

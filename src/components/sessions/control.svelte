@@ -10,17 +10,20 @@
   import { getDateLocale } from 'src/i18n'
   import { editSession } from 'src/components/sessions/store'
   import type { Session } from 'src/utils/browser/storage'
+  import type { DownloadSessionsOptions } from 'src/utils/messages'
   import Open from 'src/components/icons/open.svelte'
   import Save from 'src/components/icons/save.svelte'
   import Bin from 'src/components/icons/bin.svelte'
   import Edit from 'src/components/icons/edit.svelte'
+  import Download from 'src/components/icons/download.svelte'
 
   export let session: Session,
     deleteSession: OptionalProp<(sessionId: string) => Promise<void>> =
       undefined,
     saveSession: OptionalProp<(sessionId: string) => Promise<void>> = undefined,
     openSession: OptionalProp<(sessionId: string) => Promise<void>> = undefined,
-    openSessionEditor: OptionalProp<() => void> = undefined
+    openSessionEditor: OptionalProp<() => void> = undefined,
+    downloadSessions: (options: DownloadSessionsOptions) => Promise<void>
 
   const handleOpenSessionEditor = () => {
     $editSession = session
@@ -87,6 +90,17 @@
         <Bin />
       </button>
     {/if}
+    <button
+      class={buttonClassName}
+      aria-label="Download session"
+      title="Download session"
+      on:click={() => {
+        void downloadSessions({ sessionIds: session.id })
+      }}
+    >
+      <Download />
+    </button>
+
     {#if openSessionEditor}
       <button
         class={cn('flex flex-row items-center', buttonClassName)}

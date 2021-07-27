@@ -8,7 +8,11 @@
   import type { SessionLists } from 'src/utils/browser/storage'
   import { sessionType } from 'src/utils/browser/storage'
   import Down from 'src/components/icons/down.svelte'
-  import type { OpenTabOptions, OpenWindowOptions } from 'src/utils/messages'
+  import type {
+    OpenTabOptions,
+    OpenWindowOptions,
+    DownloadSessionsOptions,
+  } from 'src/utils/messages'
   import ViewButton from './view-button.svelte'
   import WindowList from './window-list.svelte'
   import SessionControl from './control.svelte'
@@ -34,7 +38,8 @@
       tabId: number,
       options?: OpenTabOptions
     ) => Promise<void>,
-    openSessionEditor: OptionalProp<() => void> = undefined
+    openSessionEditor: () => void,
+    downloadSessions: (options: DownloadSessionsOptions) => Promise<void>
 
   $: selectedSession = [
     sessionLists.current,
@@ -81,6 +86,7 @@
             openSession={i !== 0 ? openSession : undefined}
             {saveSession}
             deleteSession={i !== 0 ? deleteSession : undefined}
+            {downloadSessions}
           />
           <WindowList
             windows={session.windows}
@@ -136,6 +142,7 @@
               {saveSession}
               {deleteSession}
               {openSessionEditor}
+              {downloadSessions}
             />
             <WindowList
               windows={session.windows}
@@ -169,6 +176,7 @@
           openSessionEditor={selectedSession.type === sessionType.SAVED
             ? openSessionEditor
             : undefined}
+          {downloadSessions}
         />
         <WindowList
           windows={selectedSession.windows}

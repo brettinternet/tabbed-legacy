@@ -12,6 +12,7 @@
     UpdateSessionsListMessage,
     OpenTabOptions,
     OpenWindowOptions,
+    DownloadSessionsOptions,
   } from 'src/utils/messages'
   import { MESSAGE_TYPE_UPDATE_SESSIONS_LIST } from 'src/utils/messages'
   import { getActiveTabId } from 'src/utils/browser/query'
@@ -34,6 +35,7 @@
     renameSession,
     patchWindow,
     patchTab,
+    downloadSessions,
   } from 'src/components/sessions/store'
   import {
     registerSessionsContextMenu,
@@ -220,6 +222,14 @@
     }
   }
 
+  const handleDownloadSessions = async (options: DownloadSessionsOptions) => {
+    try {
+      await downloadSessions(options)
+    } catch (err) {
+      log.error(err)
+    }
+  }
+
   let showEditSessionModal = false
   const openSessionEditor = () => {
     showEditSessionModal = true
@@ -330,6 +340,7 @@
       openTab={handleOpenTab}
       openWindow={handleOpenWindow}
       {openSessionEditor}
+      downloadSessions={handleDownloadSessions}
     />
   {/if}
 
