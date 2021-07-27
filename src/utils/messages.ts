@@ -147,16 +147,16 @@ export type PatchTabMessage = MessageWithValue<
 >
 
 // extra tab actions
-export const MESSAGE_TYPE_DISCARD_TABS = 'discard_tabs'
-export type DiscardTabsMessage = MessageWithValue<
-  typeof MESSAGE_TYPE_DISCARD_TABS,
-  { tabIds: number | number[] }
->
-
 export const MESSAGE_TYPE_MOVE_TABS = 'move_tabs'
 export type MoveTabsMessage = MessageWithValue<
   typeof MESSAGE_TYPE_MOVE_TABS,
   { tabIds: number | number[]; options: browser.tabs._MoveMoveProperties }
+>
+
+export const MESSAGE_TYPE_DISCARD_TABS = 'discard_tabs'
+export type DiscardTabsMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_DISCARD_TABS,
+  { tabIds: number | number[] }
 >
 
 // download/backup

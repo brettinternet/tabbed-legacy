@@ -8,7 +8,7 @@
   import Window from 'src/components/icons/window.svelte'
   import Pin from 'src/components/icons/pin.svelte'
   import Incognito from 'src/components/icons/eye-closed.svelte'
-  import Minimized from 'src/components/icons/minimized.svelte'
+  import Minimize from 'src/components/icons/minimize.svelte'
   import { replaceImageError } from 'src/components/sessions/dom'
   import Focused from 'src/components/icons/eye.svelte'
   import { contextIds } from 'src/components/context-menu/store'
@@ -66,8 +66,8 @@
 </script>
 
 <div role="region" aria-labelledby={ariaLabelledby}>
-  {#each windows as { id: windowId, tabs, incognito, state }, i}
-    <div class={cn(i !== 0 && 'mt-4')}>
+  {#each windows as { id: windowId, tabs, incognito, state }, windowIndex}
+    <div class={cn(windowIndex !== 0 && 'mt-4')}>
       <div
         class={cn(
           'flex flex-row items-center justify-between py-3 xl:justify-start',
@@ -87,6 +87,7 @@
               data-context-id={contextIds.WINDOW}
               data-session-id={sessionId}
               data-window-id={windowId}
+              data-minimized={state === 'minimized'}
               on:click={handleWindowClick}
               on:auxclick={handleWindowClick}
               aria-disabled={currentWindowId === windowId}
@@ -120,7 +121,7 @@
                 title="minimized"
                 aria-label="minimized"
               >
-                <Minimized />
+                <Minimize />
               </span>
             {/if}
             {tabs.length} tabs
@@ -153,6 +154,7 @@
                       data-session-id={sessionId}
                       data-window-id={windowId}
                       data-tab-id={tabId}
+                      data-pinned={pinned}
                       href={url || pendingUrl}
                       on:click={handleTabLinkClick}
                       class={cn(

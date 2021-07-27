@@ -453,7 +453,7 @@ export const patchTab = async ({
 
   if (key && session) {
     if (key === localStorageKeys.CURRENT_SESSION) {
-      await browser.tabs.update(windowId, options)
+      await browser.tabs.update(tabId, options)
     } else {
       const windowIndex = session.windows.findIndex((w) => w.id === windowId)
       if (windowIndex > -1) {

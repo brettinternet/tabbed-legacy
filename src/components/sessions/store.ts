@@ -14,7 +14,11 @@ import {
   MESSAGE_TYPE_REMOVE_SESSION_WINDOW,
   MESSAGE_TYPE_REMOVE_SESSION_TAB,
   MESSAGE_TYPE_RENAME_SESSION,
-  RenameSessionMessage,
+  MESSAGE_TYPE_PATCH_WINDOW,
+  MESSAGE_TYPE_PATCH_TAB,
+  MESSAGE_TYPE_DISCARD_TABS,
+  MESSAGE_TYPE_MOVE_TABS,
+  MESSAGE_TYPE_DOWNLOAD_SESSIONS,
 } from 'src/utils/messages'
 import type {
   GetSessionsListMessage,
@@ -29,6 +33,15 @@ import type {
   RemoveSessionTabMessage,
   OpenWindowOptions,
   OpenTabOptions,
+  RenameSessionMessage,
+  PatchWindowOptions,
+  PatchWindowMessage,
+  PatchTabOptions,
+  PatchTabMessage,
+  DiscardTabsMessage,
+  MoveTabsMessage,
+  DownloadSessionsMessage,
+  DownloadSessionsOptions,
 } from 'src/utils/messages'
 
 const logContext = 'components/sessions/store'
@@ -146,6 +159,58 @@ export const renameSession = async (sessionId: string, name: string) => {
   const message: RenameSessionMessage = {
     type: MESSAGE_TYPE_RENAME_SESSION,
     value: { sessionId, name },
+  }
+  await browser.runtime.sendMessage(message)
+}
+
+export const patchWindow = async (
+  sessionId: string,
+  windowId: number,
+  options: PatchWindowOptions
+) => {
+  const message: PatchWindowMessage = {
+    type: MESSAGE_TYPE_PATCH_WINDOW,
+    value: { sessionId, windowId, options },
+  }
+  await browser.runtime.sendMessage(message)
+}
+
+export const patchTab = async (
+  sessionId: string,
+  windowId: number,
+  tabId: number,
+  options: PatchTabOptions
+) => {
+  const message: PatchTabMessage = {
+    type: MESSAGE_TYPE_PATCH_TAB,
+    value: { sessionId, windowId, tabId, options },
+  }
+  await browser.runtime.sendMessage(message)
+}
+
+export const moveTabs = async (
+  tabIds: number | number[],
+  options: browser.tabs._MoveMoveProperties
+) => {
+  const message: MoveTabsMessage = {
+    type: MESSAGE_TYPE_MOVE_TABS,
+    value: { tabIds, options },
+  }
+  await browser.runtime.sendMessage(message)
+}
+
+export const discardTabs = async (tabIds: number | number[]) => {
+  const message: DiscardTabsMessage = {
+    type: MESSAGE_TYPE_DISCARD_TABS,
+    value: { tabIds },
+  }
+  await browser.runtime.sendMessage(message)
+}
+
+export const downloadSessions = async (options: DownloadSessionsOptions) => {
+  const message: DownloadSessionsMessage = {
+    type: MESSAGE_TYPE_DOWNLOAD_SESSIONS,
+    value: options,
   }
   await browser.runtime.sendMessage(message)
 }

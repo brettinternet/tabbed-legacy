@@ -5,6 +5,9 @@ import type { OpenTabOptions, OpenWindowOptions } from 'src/utils/messages'
 import Open from 'src/components/icons/open.svelte'
 import Save from 'src/components/icons/save.svelte'
 import Bin from 'src/components/icons/bin.svelte'
+import Minimize from 'src/components/icons/minimize.svelte'
+import Expand from 'src/components/icons/expand.svelte'
+import Pin from 'src/components/icons/pin.svelte'
 
 type RegisterSessionsContextMenuArgs = {
   currentSessionId: string
@@ -70,6 +73,11 @@ type RegisterWindowContextMenuArgs = {
   ) => Promise<void>
   saveWindow: (sessionId: string, windowId: number) => Promise<void>
   removeWindow: (sessionId: string, windowId: number) => Promise<void>
+  minimizeWindow: (
+    sessionId: string,
+    windowId: number,
+    minimized: boolean
+  ) => Promise<void>
 }
 
 export const registerWindowContextMenu = ({
@@ -77,12 +85,14 @@ export const registerWindowContextMenu = ({
   openWindow,
   saveWindow,
   removeWindow,
+  minimizeWindow,
 }: RegisterWindowContextMenuArgs) => {
   if (sessionLists) {
     contextMenu.register(contextIds.WINDOW, {
       items: (target) => {
         const sessionId = target.dataset.sessionId
         const windowId = parseNum(target.dataset.windowId)
+        const minimized = target.dataset.minimized === 'true'
 
         if (isDefined(sessionId) && isDefined(windowId)) {
           const handleOpen = () => {
@@ -95,6 +105,10 @@ export const registerWindowContextMenu = ({
 
           const handleSave = () => {
             void saveWindow(sessionId, windowId)
+          }
+
+          const handleMinimize = () => {
+            void minimizeWindow(sessionId, windowId, !minimized)
           }
 
           const handleDelete = () => {
@@ -120,6 +134,11 @@ export const registerWindowContextMenu = ({
               onClick: handleSave,
               Icon: Save,
               text: 'Save',
+            },
+            {
+              onClick: handleMinimize,
+              Icon: minimized ? Expand : Minimize,
+              text: minimized ? 'Expand' : 'Minimize',
             },
             {
               onClick: handleDelete,
@@ -148,12 +167,19 @@ type RegisterTabContextMenuArgs = {
     windowId: number,
     tabId: number
   ) => Promise<void>
+  pinTab: (
+    sessionId: string,
+    windowId: number,
+    tabId: number,
+    pinned: boolean
+  ) => Promise<void>
 }
 
 export const registerTabContextMenu = ({
   sessionLists,
   openTab,
   removeTab,
+  pinTab,
 }: RegisterTabContextMenuArgs) => {
   if (sessionLists) {
     contextMenu.register(contextIds.TAB, {
@@ -165,6 +191,7 @@ export const registerTabContextMenu = ({
         const sessionId = target.dataset.sessionId
         const windowId = parseNum(target.dataset.windowId)
         const tabId = parseNum(target.dataset.tabId)
+        const pinned = target.dataset.pinned === 'true'
 
         if (isDefined(sessionId) && isDefined(windowId) && isDefined(tabId)) {
           const handleOpen = () => {
@@ -173,6 +200,10 @@ export const registerTabContextMenu = ({
 
           const handleOpenNew = () => {
             void openTab(sessionId, windowId, tabId, { noFocus: true })
+          }
+
+          const handlePin = () => {
+            void pinTab(sessionId, windowId, tabId, !pinned)
           }
 
           const handleDelete = () => {
@@ -194,6 +225,11 @@ export const registerTabContextMenu = ({
                   },
                 ]
               : []),
+            {
+              onClick: handlePin,
+              Icon: Pin,
+              text: pinned ? 'Unpin' : 'Pin',
+            },
             {
               onClick: handleDelete,
               Icon: Bin,

@@ -8,7 +8,11 @@
   import { log } from 'src/utils/logger'
   import { layouts } from 'src/utils/settings'
   import type { Layout } from 'src/utils/settings'
-  import type { UpdateSessionsListMessage } from 'src/utils/messages'
+  import type {
+    UpdateSessionsListMessage,
+    OpenTabOptions,
+    OpenWindowOptions,
+  } from 'src/utils/messages'
   import { MESSAGE_TYPE_UPDATE_SESSIONS_LIST } from 'src/utils/messages'
   import { getActiveTabId } from 'src/utils/browser/query'
   import {
@@ -27,6 +31,8 @@
     removeWindow,
     removeTab,
     renameSession,
+    patchWindow,
+    patchTab,
   } from 'src/components/sessions/store'
   import {
     registerSessionsContextMenu,
@@ -34,7 +40,6 @@
     registerTabContextMenu,
   } from 'src/components/sessions/context-menus'
   import { contextIds, contextMenu } from 'src/components/context-menu/store'
-  import type { OpenTabOptions, OpenWindowOptions } from 'src/utils/messages'
   import List from './list.svelte'
   import Grid from './grid.svelte'
 
@@ -183,14 +188,34 @@
     }
   }
 
-  const updateSessions = (message: UpdateSessionsListMessage) => {
-    if (message.type === MESSAGE_TYPE_UPDATE_SESSIONS_LIST) {
-      log.debug(logContext, 'updateSessions()', message.value)
-
-      $sessionLists = message.value
+  const handleMinimizeWindow = async (
+    sessionId: string,
+    windowId: number,
+    minimized: boolean
+  ) => {
+    try {
+      await patchWindow(sessionId, windowId, {
+        state: minimized ? 'minimized' : 'normal',
+      })
+      // TODO: push update from backend only if action isn't on current session
+      $sessionLists = await getSessions()
+    } catch (err) {
+      log.error(err)
     }
+  }
 
-    return false // no reply
+  const handlePinTab = async (
+    sessionId: string,
+    windowId: number,
+    tabId: number,
+    pinned: boolean
+  ) => {
+    try {
+      await patchTab(sessionId, windowId, tabId, { pinned })
+      $sessionLists = await getSessions()
+    } catch (err) {
+      log.error(err)
+    }
   }
 
   $: if ($sessionLists) {
@@ -209,13 +234,25 @@
       openWindow: handleOpenWindow,
       saveWindow: handleSaveWindow,
       removeWindow: handleRemoveWindow,
+      minimizeWindow: handleMinimizeWindow,
     })
 
     registerTabContextMenu({
       sessionLists: $sessionLists,
       openTab: handleOpenTab,
       removeTab: handleCloseTab,
+      pinTab: handlePinTab,
     })
+  }
+
+  const updateSessions = (message: UpdateSessionsListMessage) => {
+    if (message.type === MESSAGE_TYPE_UPDATE_SESSIONS_LIST) {
+      log.debug(logContext, 'updateSessions()', message.value)
+
+      $sessionLists = message.value
+    }
+
+    return false // no reply
   }
 
   browser.runtime.onMessage.addListener(updateSessions)
