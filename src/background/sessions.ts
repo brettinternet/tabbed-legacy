@@ -4,6 +4,7 @@ import {
   closeTab,
   closeWindow,
   focusWindow,
+  focusWindowTab,
   getAllWindows,
   getTabUrl,
   isNewTab,
@@ -27,6 +28,8 @@ import type {
   PatchWindowOptions,
   PatchTabOptions,
   DownloadSessionsOptions,
+  OpenWindowOptions,
+  OpenTabOptions,
 } from 'src/utils/messages'
 import { isDefined } from 'src/utils/helpers'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
@@ -195,71 +198,6 @@ export const openSession = async (sessionId: string) => {
   }
 }
 
-/**
- * If available, focus the window; Otherwise, open the window anew
- */
-export const openSessionWindow = async ({
-  sessionId,
-  windowId,
-}: {
-  sessionId: string
-  windowId: number
-}) => {
-  log.debug(logContext, 'openSessionWindow()', { sessionId, windowId })
-
-  const currentSession = await getCurrentSession()
-  if (sessionId === currentSession?.id) {
-    await focusWindow(windowId)
-  } else {
-    const session = await findSession(sessionId)
-    if (session) {
-      const win = findWindow(windowId, session)
-      if (win) {
-        await openWindow(win)
-      } else {
-        throwWindowId(windowId)
-      }
-    } else {
-      throwSessionId(sessionId)
-    }
-  }
-}
-
-export const openSessionTab = async ({
-  sessionId,
-  windowId,
-  tabId,
-}: {
-  sessionId: string
-  windowId: number
-  tabId: number
-}) => {
-  log.debug(logContext, 'openSessionTab()', { sessionId, windowId, tabId })
-
-  const session = await findSession(sessionId)
-  if (session) {
-    const win = findWindow(windowId, session)
-    if (win) {
-      const tab = win.tabs?.find((t) => t.id === tabId)
-      if (tab) {
-        await openTab(
-          {
-            url: getTabUrl(tab),
-            pinned: tab.pinned,
-          },
-          win.incognito
-        )
-      } else {
-        throwTabId(tabId)
-      }
-    } else {
-      throwWindowId(windowId)
-    }
-  } else {
-    throwSessionId(sessionId)
-  }
-}
-
 const findSessionWithKey = async (sessionId: string) => {
   const sessionLists = await getSessionLists()
   if (sessionId === sessionLists.current.id) {
@@ -284,6 +222,90 @@ const findSessionWithKey = async (sessionId: string) => {
   }
 
   return {}
+}
+
+/**
+ * If available, focus the window; Otherwise, open the window anew
+ */
+export const openSessionWindow = async ({
+  sessionId,
+  windowId,
+  options,
+}: {
+  sessionId: string
+  windowId: number
+  options?: OpenWindowOptions
+}) => {
+  log.debug(logContext, 'openSessionWindow()', { sessionId, windowId, options })
+
+  const currentSession = await getCurrentSession()
+  if (!options?.noFocus && sessionId === currentSession?.id) {
+    await focusWindow(windowId)
+  } else {
+    const session = await findSession(sessionId)
+    if (session) {
+      const win = findWindow(windowId, session)
+      if (win) {
+        await openWindow(win)
+      } else {
+        throwWindowId(windowId)
+      }
+    } else {
+      throwSessionId(sessionId)
+    }
+  }
+}
+
+export const openSessionTab = async ({
+  sessionId,
+  windowId,
+  tabId,
+  options,
+}: {
+  sessionId: string
+  windowId: number
+  tabId: number
+  options?: OpenTabOptions
+}) => {
+  log.debug(logContext, 'openSessionTab()', {
+    sessionId,
+    windowId,
+    tabId,
+    options,
+  })
+
+  const { key, session } = await findSessionWithKey(sessionId)
+
+  if (key && session) {
+    if (!options?.noFocus && key === localStorageKeys.CURRENT_SESSION) {
+      await focusWindowTab(windowId, tabId)
+    } else {
+      const win = findWindow(windowId, session)
+      if (win) {
+        const tab = win.tabs?.find((t) => t.id === tabId)
+        if (tab) {
+          const url = getTabUrl(tab)
+          if (url) {
+            await openTab(
+              {
+                url,
+                pinned: tab.pinned,
+              },
+              win.incognito
+            )
+          } else {
+            throw Error(`No tab url found for tab ID ${tabId}`)
+          }
+        } else {
+          throwTabId(tabId)
+        }
+      } else {
+        throwWindowId(windowId)
+      }
+    }
+  } else {
+    throwSessionId(sessionId)
+  }
 }
 
 export const deleteSession = async (sessionId: string) => {
@@ -438,8 +460,15 @@ export const patchTab = async ({
         const tabIndex = session.windows[windowIndex].tabs?.findIndex(
           (t) => t.id === tabId
         )
-        if (isDefined(tabIndex) && tabIndex > -1) {
-          session.windows[windowIndex].tabs?.splice(tabIndex, 1)
+        const tabs = session.windows[windowIndex].tabs
+        if (isDefined(tabIndex) && tabIndex > -1 && tabs?.[tabIndex]) {
+          const newTabFields: Partial<browser.tabs.Tab> = options
+          const updatedTab = Object.assign(
+            {},
+            session.windows[windowIndex].tabs?.[tabIndex],
+            newTabFields
+          )
+          session.windows[windowIndex].tabs?.splice(tabIndex, 1, updatedTab)
           await patchSessionInCollection(key, session)
         } else {
           throwTabId(tabId)

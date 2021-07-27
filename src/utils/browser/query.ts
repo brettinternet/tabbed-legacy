@@ -1,4 +1,3 @@
-import { log } from 'src/utils/logger'
 import { readSettings } from 'src/utils/browser/storage'
 
 /**
@@ -207,28 +206,20 @@ export const focusWindowTab = async (windowId: number, tabId: number) => {
   await activateTab(tabId)
 }
 
+type OpenTabOptions = {
+  url: string
+  pinned?: boolean
+}
+
 /**
  * Find existing tab with matching query, otherwise
  * open with matching incognito state
  */
-export const openTab = async (
-  query: browser.tabs._QueryQueryInfo,
-  { incognito = false, noFocus = false }
-) => {
-  const _url = Array.isArray(query.url) ? query.url[0] : query.url
+export const openTab = async (options: OpenTabOptions, incognito?: boolean) => {
+  const url = options.url
   // hashes cause queries to return empty
-  const hashIndex = _url?.indexOf('#') ?? -1
-  query.url = _url && hashIndex > -1 ? _url.substr(0, hashIndex) : _url
-
-  let tab: browser.tabs.Tab | undefined
-  try {
-    const matches = await browser.tabs.query(query)
-    if (matches.length >= 1) {
-      tab = matches[0]
-    }
-  } catch (err) {
-    log.error(err)
-  }
+  const hashIndex = options.url.indexOf('#') ?? -1
+  options.url = url && hashIndex > -1 ? url.substr(0, hashIndex) : url
 
   const allowed = await browser.extension.isAllowedIncognitoAccess()
   if (incognito && !allowed) {
@@ -239,33 +230,18 @@ export const openTab = async (
     throw Error('No incognito access allowed')
   }
 
-  if (!noFocus && tab?.id && tab?.windowId) {
-    await focusWindowTab(tab.windowId, tab.id)
+  const { pinned } = options
+  if (
+    (!incognito && browser.extension.inIncognitoContext) ||
+    (incognito && !browser.extension.inIncognitoContext)
+  ) {
+    const newWindow = await browser.windows.create({ url, incognito })
+    const newTabId = newWindow.tabs?.[0].id
+    if (pinned && newTabId) {
+      await browser.tabs.update(newTabId, { pinned })
+    }
   } else {
-    let options:
-      | browser.tabs._CreateCreateProperties
-      | browser.windows._CreateCreateData
-    if (tab) {
-      options = {
-        url: getTabUrl(tab),
-        pinned: tab.pinned,
-      }
-    } else {
-      const { url, pinned } = query
-      options = {
-        url,
-        pinned,
-      }
-    }
-
-    if (
-      (!incognito && browser.extension.inIncognitoContext) ||
-      (incognito && !browser.extension.inIncognitoContext)
-    ) {
-      await browser.windows.create({ ...options, incognito })
-    } else {
-      await browser.tabs.create(options)
-    }
+    await browser.tabs.create({ url, pinned })
   }
 }
 

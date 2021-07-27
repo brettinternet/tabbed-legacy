@@ -34,6 +34,7 @@
     registerTabContextMenu,
   } from 'src/components/sessions/context-menus'
   import { contextIds, contextMenu } from 'src/components/context-menu/store'
+  import type { OpenTabOptions, OpenWindowOptions } from 'src/utils/messages'
   import List from './list.svelte'
   import Grid from './grid.svelte'
 
@@ -116,11 +117,15 @@
     }
   }
 
-  const handleOpenWindow = async (sessionId: string, windowId: number) => {
+  const handleOpenWindow = async (
+    sessionId: string,
+    windowId: number,
+    options?: OpenWindowOptions
+  ) => {
     log.debug(logContext, 'handleOpenWindow()', sessionId, windowId)
 
     try {
-      await openWindow(sessionId, windowId)
+      await openWindow(sessionId, windowId, options)
       $sessionLists = await getSessions()
       $selectedSessionId = sessionId
     } catch (err) {
@@ -154,10 +159,11 @@
   const handleOpenTab = async (
     sessionId: string,
     windowId: number,
-    tabId: number
+    tabId: number,
+    options?: OpenTabOptions
   ) => {
     try {
-      await openTab(sessionId, windowId, tabId)
+      await openTab(sessionId, windowId, tabId, options)
       $sessionLists = await getSessions()
     } catch (err) {
       log.error(err)

@@ -12,31 +12,41 @@
   import { replaceImageError } from 'src/components/sessions/dom'
   import Focused from 'src/components/icons/eye.svelte'
   import { contextIds } from 'src/components/context-menu/store'
+  import type { OpenTabOptions, OpenWindowOptions } from 'src/utils/messages'
 
   export let windows: browser.windows.Window[],
     ariaLabelledby: string,
     sessionId: string,
     currentWindowId: number | undefined,
     currentTabId: number | undefined,
-    openWindow: (sessionId: string, windowId: number) => Promise<void>,
+    openWindow: (
+      sessionId: string,
+      windowId: number,
+      options?: OpenWindowOptions
+    ) => Promise<void>,
     openTab: (
       sessionId: string,
       windowId: number,
-      tabId: number
+      tabId: number,
+      options?: OpenTabOptions
     ) => Promise<void>
 
-  const handleWindowClick: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (
-    ev
-  ) => {
-    const button = ev.currentTarget
-    if (button.dataset.windowId) {
-      const windowId: number | undefined = parseInt(button.dataset.windowId)
-      const ariaDisabled = button.getAttribute('aria-disabled') === 'true'
-      if (windowId && !ariaDisabled) {
-        openWindow(sessionId, windowId)
+  const handleWindowClick: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
+    async (ev) => {
+      const button = ev.currentTarget
+      if (button.dataset.windowId) {
+        const windowId: number | undefined = parseInt(button.dataset.windowId)
+        const ariaDisabled = button.getAttribute('aria-disabled') === 'true'
+        if (windowId && !ariaDisabled) {
+          await openWindow(
+            sessionId,
+            windowId,
+            // middle-click
+            { noFocus: ev.button === 1 }
+          )
+        }
       }
     }
-  }
 
   const handleTabLinkClick: svelte.JSX.MouseEventHandler<HTMLAnchorElement> =
     async (ev) => {
@@ -48,7 +58,7 @@
           ev.preventDefault()
           const ariaDisabled = anchor.getAttribute('aria-disabled') === 'true'
           if (!ariaDisabled) {
-            openTab(sessionId, windowId, tabId)
+            await openTab(sessionId, windowId, tabId)
           }
         }
       }
@@ -74,6 +84,7 @@
               data-session-id={sessionId}
               data-window-id={windowId}
               on:click={handleWindowClick}
+              on:auxclick={handleWindowClick}
               aria-disabled={currentWindowId === windowId}
               class="overflow-ellipsis overflow-hidden m-outline"
             >

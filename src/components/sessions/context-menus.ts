@@ -1,6 +1,7 @@
 import { contextIds, contextMenu } from 'src/components/context-menu/store'
 import type { SessionLists } from 'src/utils/browser/storage'
 import { isDefined, parseNum } from 'src/utils/helpers'
+import type { OpenTabOptions, OpenWindowOptions } from 'src/utils/messages'
 import Open from 'src/components/icons/open.svelte'
 import Save from 'src/components/icons/save.svelte'
 import Bin from 'src/components/icons/bin.svelte'
@@ -62,7 +63,11 @@ export const registerSessionsContextMenu = ({
 
 type RegisterWindowContextMenuArgs = {
   sessionLists: SessionLists
-  openWindow: (sessionId: string, windowId: number) => Promise<void>
+  openWindow: (
+    sessionId: string,
+    windowId: number,
+    options?: OpenWindowOptions
+  ) => Promise<void>
   saveWindow: (sessionId: string, windowId: number) => Promise<void>
   removeWindow: (sessionId: string, windowId: number) => Promise<void>
 }
@@ -84,6 +89,10 @@ export const registerWindowContextMenu = ({
             void openWindow(sessionId, windowId)
           }
 
+          const handleOpenNew = () => {
+            void openWindow(sessionId, windowId, { noFocus: true })
+          }
+
           const handleSave = () => {
             void saveWindow(sessionId, windowId)
           }
@@ -98,6 +107,15 @@ export const registerWindowContextMenu = ({
               Icon: Open,
               text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
             },
+            ...(sessionLists.current.id === sessionId
+              ? [
+                  {
+                    onClick: handleOpenNew,
+                    Icon: Open,
+                    text: 'Open new window',
+                  },
+                ]
+              : []),
             {
               onClick: handleSave,
               Icon: Save,
@@ -119,7 +137,12 @@ export const registerWindowContextMenu = ({
 
 type RegisterTabContextMenuArgs = {
   sessionLists: SessionLists
-  openTab: (sessionId: string, windowId: number, tabId: number) => Promise<void>
+  openTab: (
+    sessionId: string,
+    windowId: number,
+    tabId: number,
+    options?: OpenTabOptions
+  ) => Promise<void>
   removeTab: (
     sessionId: string,
     windowId: number,
@@ -148,6 +171,10 @@ export const registerTabContextMenu = ({
             void openTab(sessionId, windowId, tabId)
           }
 
+          const handleOpenNew = () => {
+            void openTab(sessionId, windowId, tabId, { noFocus: true })
+          }
+
           const handleDelete = () => {
             void removeTab(sessionId, windowId, tabId)
           }
@@ -158,6 +185,15 @@ export const registerTabContextMenu = ({
               Icon: Open,
               text: sessionLists.current.id === sessionId ? 'Focus' : 'Open',
             },
+            ...(sessionLists.current.id === sessionId
+              ? [
+                  {
+                    onClick: handleOpenNew,
+                    Icon: Open,
+                    text: 'Open in new tab',
+                  },
+                ]
+              : []),
             {
               onClick: handleDelete,
               Icon: Bin,

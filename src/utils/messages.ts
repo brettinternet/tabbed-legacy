@@ -72,16 +72,27 @@ export type OpenSessionMessage = MessageWithValue<
   { sessionId: string }
 >
 
+export type OpenWindowOptions = {
+  noFocus?: boolean
+}
 export const MESSAGE_TYPE_OPEN_SESSION_WINDOW = 'open_session_window'
 export type OpenSessionWindowMessage = MessageWithValue<
   typeof MESSAGE_TYPE_OPEN_SESSION_WINDOW,
-  { sessionId: string; windowId: number }
+  { sessionId: string; windowId: number; options?: OpenWindowOptions }
 >
 
+export type OpenTabOptions = {
+  noFocus?: boolean
+}
 export const MESSAGE_TYPE_OPEN_SESSION_TAB = 'open_session_tab'
 export type OpenSessionTabMessage = MessageWithValue<
   typeof MESSAGE_TYPE_OPEN_SESSION_TAB,
-  { sessionId: string; windowId: number; tabId: number }
+  {
+    sessionId: string
+    windowId: number
+    tabId: number
+    options?: OpenTabOptions
+  }
 >
 
 // remove

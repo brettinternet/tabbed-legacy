@@ -8,6 +8,7 @@
   import type { SessionLists } from 'src/utils/browser/storage'
   import { sessionType } from 'src/utils/browser/storage'
   import Down from 'src/components/icons/down.svelte'
+  import type { OpenTabOptions, OpenWindowOptions } from 'src/utils/messages'
   import ViewButton from './view-button.svelte'
   import WindowList from './window-list.svelte'
   import SessionControl from './control.svelte'
@@ -23,11 +24,16 @@
     saveSession: (sessionId: string) => Promise<void>,
     deleteSession: (sessionId: string) => Promise<void>,
     renameSession: (sessionId: string, name: string) => Promise<void>,
-    openWindow: (sessionId: string, windowId: number) => Promise<void>,
+    openWindow: (
+      sessionId: string,
+      windowId: number,
+      options?: OpenWindowOptions
+    ) => Promise<void>,
     openTab: (
       sessionId: string,
       windowId: number,
-      tabId: number
+      tabId: number,
+      options?: OpenTabOptions
     ) => Promise<void>
 
   $: selectedSession = [

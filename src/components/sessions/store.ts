@@ -27,6 +27,8 @@ import type {
   DeleteSessionMessage,
   RemoveSessionWindowMessage,
   RemoveSessionTabMessage,
+  OpenWindowOptions,
+  OpenTabOptions,
 } from 'src/utils/messages'
 
 const logContext = 'components/sessions/store'
@@ -87,10 +89,14 @@ export const openSession = async (sessionId: string) => {
   await browser.runtime.sendMessage(message)
 }
 
-export const openWindow = async (sessionId: string, windowId: number) => {
+export const openWindow = async (
+  sessionId: string,
+  windowId: number,
+  options?: OpenWindowOptions
+) => {
   const message: OpenSessionWindowMessage = {
     type: MESSAGE_TYPE_OPEN_SESSION_WINDOW,
-    value: { sessionId, windowId },
+    value: { sessionId, windowId, options },
   }
   await browser.runtime.sendMessage(message)
 }
@@ -98,11 +104,12 @@ export const openWindow = async (sessionId: string, windowId: number) => {
 export const openTab = async (
   sessionId: string,
   windowId: number,
-  tabId: number
+  tabId: number,
+  options?: OpenTabOptions
 ) => {
   const message: OpenSessionTabMessage = {
     type: MESSAGE_TYPE_OPEN_SESSION_TAB,
-    value: { sessionId, windowId, tabId },
+    value: { sessionId, windowId, tabId, options },
   }
   await browser.runtime.sendMessage(message)
 }
