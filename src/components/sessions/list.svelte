@@ -116,7 +116,7 @@
     {#if sessionLists.saved.length > 0}
       <h2 class="p-4 xs:px-6 sm:px-10 pt-8 pb-4 lg:px-6">Saved</h2>
 
-      {#each sessionLists.saved as session}
+      {#each sessionLists.saved as session (session.id)}
         <ViewButton
           onClick={onToggleSession}
           onContextMenu={onSelectSession}
@@ -125,8 +125,8 @@
           selected={selectedSessionId
             ? selectedSessionId === session.id
             : false}
-          date={session.createdDate}
-          datePrefix="created"
+          date={session.userSavedDate || session.lastModifiedDate}
+          datePrefix="saved"
         />
         {#if selectedSessionId === session.id}
           <div class="lg:hidden p-4 xs:px-6 sm:px-10 py-4">

@@ -47,6 +47,7 @@ export type Session = {
   windows: browser.windows.Window[]
   createdDate: string
   lastModifiedDate: string
+  userSavedDate?: string
   type: SessionType
 }
 
@@ -128,12 +129,16 @@ export const saveNewSession = async (
   key: LocalStorageKey,
   session: Session
 ) => {
+  const now = new Date().toJSON()
   session.id = uuidv4()
-  session.lastModifiedDate = new Date().toJSON()
+  session.lastModifiedDate = now
   session.type = getSessionType(key)
   if (key === localStorageKeys.CURRENT_SESSION) {
     await saveSingleSession(key, session)
   } else {
+    if (key === localStorageKeys.USER_SAVED_SESSIONS) {
+      session.userSavedDate = now
+    }
     await saveSessionToCollection(key, session)
   }
 }

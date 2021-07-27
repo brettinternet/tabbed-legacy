@@ -66,7 +66,7 @@
 </script>
 
 <div role="region" aria-labelledby={ariaLabelledby}>
-  {#each windows as { id: windowId, tabs, incognito, state }, windowIndex}
+  {#each windows as { id: windowId, tabs, incognito, state }, windowIndex (windowId)}
     <div class={cn(windowIndex !== 0 && 'mt-4')}>
       <div
         class={cn(
@@ -130,7 +130,7 @@
       </div>
       {#if tabs}
         <ol role="grid" class="overflow-hidden">
-          {#each tabs as { id: tabId, windowId, title, pendingUrl, url, favIconUrl, pinned }}
+          {#each tabs as { id: tabId, windowId, title, pendingUrl, url, favIconUrl, pinned } (tabId)}
             {#if title || url || pendingUrl}
               <li role="row" class="flex flex-row">
                 <div

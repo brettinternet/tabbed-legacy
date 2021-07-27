@@ -96,7 +96,7 @@
 {#if showMenu && target}
   <Menu {...pos} on:click={closeMenu} on:clickoutside={closeMenu}>
     {#if contextMenuOptions}
-      {#each contextMenuOptions.items(target) as { onClick, ...props }}
+      {#each contextMenuOptions.items(target) as { onClick, ...props } (onClick.toString())}
         <MenuOption on:click={onClick} {...props} />
       {/each}
       <Divider />

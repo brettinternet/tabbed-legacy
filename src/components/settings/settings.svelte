@@ -24,7 +24,7 @@
     style={`height:${headerHeight}px`}
   >
     <nav>
-      {#each tabs as { name }, i}
+      {#each tabs as { name }, i (name)}
         <button
           on:click={() => {
             selectedTab = tabs[i]
