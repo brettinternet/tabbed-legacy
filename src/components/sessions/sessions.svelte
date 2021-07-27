@@ -248,6 +248,7 @@
         openSession: handleOpenSession,
         saveSession: handleSaveSession,
         deleteSession: handleDeleteSession,
+        downloadSessions: handleDownloadSessions,
       })
     }
 
@@ -282,14 +283,14 @@
   const handleToggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (
     ev
   ) => {
-    const nextId = ev.currentTarget.id
+    const nextId = ev.currentTarget.dataset.sessionId
     $selectedSessionId = $selectedSessionId === nextId ? undefined : nextId
   }
 
   const handleSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (
     ev
   ) => {
-    const nextId = ev.currentTarget.id
+    const nextId = ev.currentTarget.dataset.sessionId
     $selectedSessionId = nextId
   }
 

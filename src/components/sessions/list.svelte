@@ -13,6 +13,7 @@
     OpenWindowOptions,
     DownloadSessionsOptions,
   } from 'src/utils/messages'
+  import { contextIds } from 'src/components/context-menu/store'
   import ViewButton from './view-button.svelte'
   import WindowList from './window-list.svelte'
   import SessionControl from './control.svelte'
@@ -80,7 +81,11 @@
           : 'created'}
       />
       {#if selectedSessionId === session.id}
-        <div class="lg:hidden p-4 xs:px-6 sm:px-10 py-4">
+        <div
+          class="lg:hidden p-4 xs:px-6 sm:px-10 py-4"
+          data-context-id={contextIds.SESSION}
+          data-session-id={session.id}
+        >
           <SessionControl
             {session}
             openSession={i !== 0 ? openSession : undefined}
@@ -135,7 +140,11 @@
           datePrefix="saved"
         />
         {#if selectedSessionId === session.id}
-          <div class="lg:hidden p-4 xs:px-6 sm:px-10 py-4">
+          <div
+            class="lg:hidden p-4 xs:px-6 sm:px-10 py-4"
+            data-context-id={contextIds.SESSION}
+            data-session-id={session.id}
+          >
             <SessionControl
               {session}
               {openSession}
@@ -163,7 +172,11 @@
     <article
       class="scroll hidden lg:col-span-8 xl:col-span-9 pb-10 h-main overflow-y-auto lg:flex lg:flex-col"
     >
-      <div class="flex-1">
+      <div
+        class="flex-1"
+        data-context-id={contextIds.SESSION}
+        data-session-id={selectedSession.id}
+      >
         <SessionControl
           session={selectedSession}
           openSession={selectedSession.id !== sessionLists.current.id

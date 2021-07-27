@@ -1,7 +1,11 @@
 import { contextIds, contextMenu } from 'src/components/context-menu/store'
 import type { SessionLists } from 'src/utils/browser/storage'
 import { isDefined, parseNum } from 'src/utils/helpers'
-import type { OpenTabOptions, OpenWindowOptions } from 'src/utils/messages'
+import type {
+  DownloadSessionsOptions,
+  OpenTabOptions,
+  OpenWindowOptions,
+} from 'src/utils/messages'
 import Open from 'src/components/icons/open.svelte'
 import Save from 'src/components/icons/save.svelte'
 import Bin from 'src/components/icons/bin.svelte'
@@ -9,12 +13,15 @@ import X from 'src/components/icons/x.svelte'
 import Minimize from 'src/components/icons/minimize.svelte'
 import Expand from 'src/components/icons/expand.svelte'
 import Pin from 'src/components/icons/pin.svelte'
+import Download from 'src/components/icons/download.svelte'
+import { downloadSessions } from 'src/background/sessions'
 
 type RegisterSessionsContextMenuArgs = {
   currentSessionId: string
   openSession: (sessionId: string) => Promise<void>
   saveSession: (sessionId: string) => Promise<void>
   deleteSession: (sessionId: string) => Promise<void>
+  downloadSessions: (options: DownloadSessionsOptions) => Promise<void>
 }
 
 export const registerSessionsContextMenu = ({
@@ -25,14 +32,19 @@ export const registerSessionsContextMenu = ({
 }: RegisterSessionsContextMenuArgs) => {
   contextMenu.register(contextIds.SESSION, {
     items: (target) => {
-      const sessionId = target.id
+      const sessionId = target.dataset.sessionId
 
       if (sessionId) {
         const handleOpen = () => {
           void openSession(sessionId)
         }
+
         const handleSave = () => {
           void saveSession(sessionId)
+        }
+
+        const handleDownload = () => {
+          void downloadSessions({ sessionIds: sessionId })
         }
 
         const handleDelete = () => {
@@ -50,6 +62,11 @@ export const registerSessionsContextMenu = ({
             onClick: handleSave,
             Icon: Save,
             text: 'Save',
+          },
+          {
+            onClick: handleDownload,
+            Icon: Download,
+            text: 'Download',
           },
           {
             onClick: handleDelete,
@@ -90,7 +107,11 @@ export const registerWindowContextMenu = ({
 }: RegisterWindowContextMenuArgs) => {
   if (sessionLists) {
     contextMenu.register(contextIds.WINDOW, {
+      onClose: (target) => {
+        target.classList.remove('underline')
+      },
       items: (target) => {
+        target.classList.add('underline')
         const sessionId = target.dataset.sessionId
         const windowId = parseNum(target.dataset.windowId)
         const minimized = target.dataset.minimized === 'true'

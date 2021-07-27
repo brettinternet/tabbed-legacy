@@ -47,7 +47,7 @@
 </script>
 
 <button
-  id={session.id}
+  data-session-id={session.id}
   data-context-id={contextIds.SESSION}
   aria-expanded={selected}
   on:click={onClick}
