@@ -35,6 +35,7 @@ export type Settings = {
   debugMode: boolean
   saveClosedWindows: boolean
   sortFocusedWindowFirst: boolean
+  saveIncognito: boolean
 }
 
 export const defaultSettings: Settings = {
@@ -51,4 +52,5 @@ export const defaultSettings: Settings = {
   debugMode: !isProd,
   saveClosedWindows: false,
   sortFocusedWindowFirst: false,
+  saveIncognito: false,
 }

@@ -15,10 +15,13 @@
   import { updateSettings, settings } from 'src/components/settings/store'
   import { isSidebarSupported } from 'src/components/app/store'
   import { modal } from 'src/components/modal/store'
+  import { getBrowser, browsers } from 'src/utils/browser/query'
   import Description from './description.svelte'
   import SectionTitle from './section-title.svelte'
 
   export let headerId: string
+
+  const browserRuntime = getBrowser()
 
   const handleChangeLayout: svelte.JSX.FormEventHandler<HTMLInputElement> =
     async (ev) => {
@@ -44,6 +47,13 @@
     async (ev) => {
       await updateSettings({
         saveClosedWindows: ev.currentTarget.checked,
+      })
+    }
+
+  const handleChangeSaveIncognito: svelte.JSX.FormEventHandler<HTMLInputElement> =
+    async (ev) => {
+      await updateSettings({
+        saveIncognito: ev.currentTarget.checked,
       })
     }
 
@@ -107,6 +117,15 @@
   const handleOpenShortcuts: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
     () => {
       modal.shortcuts.set(true)
+    }
+
+  const handleOpenOptions: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
+    async () => {
+      if (browserRuntime === browsers.CHROMIUM) {
+        await browser.tabs.create({
+          url: `chrome://extensions/?id=${browser.runtime.id}`,
+        })
+      }
     }
 </script>
 
@@ -220,6 +239,27 @@
       </div>
       <Description id="save-closed-window-description">
         Saves a single window session when windows are closed.
+      </Description>
+    </div>
+    <div class="mb-6">
+      <div class="mb-3">
+        <Toggle
+          id="save-incognito-window-toggle"
+          label="Save incognito windows"
+          onChange={handleChangeSaveIncognito}
+          checked={$settings.saveIncognito}
+          aria-describedby="save-incognito-window-description"
+        />
+      </div>
+      <Description id="save-incognito-window-description">
+        Allows autosave to save incognito windows.
+        {#if browserRuntime === browsers.CHROMIUM}
+          {' '}<button
+            on:click={handleOpenOptions}
+            class="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500"
+            >Enable incognito access</button
+          > for this option to work.
+        {/if}
       </Description>
     </div>
     <div class="mb-6">

@@ -21,6 +21,7 @@ import {
   readSessionCollection,
   patchSessionInCollection,
   deleteSessionInCollection,
+  readSettings,
 } from 'src/utils/browser/storage'
 import type {
   PatchWindowOptions,
@@ -74,6 +75,7 @@ const getSessions = async (): Promise<Session[]> => {
 export const autoSaveSession = async (closedWindowId?: number) => {
   log.debug(logContext, 'autoSaveSession()', closedWindowId)
 
+  const settings = await readSettings()
   let currentSession = await readSession(localStorageKeys.CURRENT_SESSION)
 
   if (closedWindowId !== undefined) {
@@ -86,7 +88,7 @@ export const autoSaveSession = async (closedWindowId?: number) => {
       ({ id }) => id === closedWindowId
     )
 
-    if (closedWindow) {
+    if (closedWindow && !(!settings.saveIncognito && closedWindow.incognito)) {
       // if matching window from cached current session in `readSession`
       const tabIds = (await browser.tabs.query({}))?.map(({ id }) => id)
 
@@ -114,8 +116,14 @@ export const autoSaveSession = async (closedWindowId?: number) => {
   }
 
   if (currentSession) {
+    if (!settings.saveIncognito) {
+      currentSession.windows = currentSession.windows.filter(
+        (w) => !w.incognito
+      )
+    }
     // otherwise save the entire session
     // TODO: possibly compare current session to be saved with most recent to determine if session is unique enough to be saved?
+    // TODO: consolidate with browser.sessions.getRecentlyClosed() https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/sessions/getRecentlyClosed
     await saveNewSession(localStorageKeys.PREVIOUS_SESSIONS, currentSession)
     await removeSession(localStorageKeys.CURRENT_SESSION)
   }
