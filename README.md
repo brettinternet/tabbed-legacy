@@ -79,6 +79,7 @@ npm test
 - [ ] allow to optionally save private windows
 - [ ] implement undo stack
 - [ ] export/import & backup (download export onclick)
+- [ ] save window popout position/size
 
 #### Related issues
 
