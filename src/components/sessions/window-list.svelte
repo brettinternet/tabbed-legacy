@@ -71,7 +71,11 @@
       <div
         class={cn(
           'flex flex-row items-center justify-between py-3 xl:justify-start',
-          currentWindowId === windowId && 'text-green-500'
+          currentWindowId === windowId
+            ? 'text-green-500'
+            : incognito
+            ? 'text-purple-600'
+            : state === 'minimized' && 'text-yellow-600'
         )}
       >
         <div class="flex flex-row items-center mr-3 leading-5">
@@ -103,7 +107,7 @@
           >
             {#if incognito}
               <span
-                class="mr-2 text-black"
+                class="mr-2 text-purple-600"
                 title="incognito"
                 aria-label="incognito"
               >
@@ -112,7 +116,7 @@
             {/if}
             {#if state === 'minimized'}
               <span
-                class="mr-2 text-yellow-400"
+                class="mr-2 text-yellow-600"
                 title="minimized"
                 aria-label="minimized"
               >
