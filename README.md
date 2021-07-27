@@ -81,10 +81,9 @@ npm test
 - [ ] export/import & backup (download export onclick)
 - [ ] save window popout position/size
 
-#### Related issues
+### Related issues
 
 - ~~[Popup window doesn't respect media queries with a dynamically set width](https://bugs.chromium.org/p/chromium/issues/detail?id=1230120)~~ (This issue was resolved in `Chromium 92.0.4515.107`)
-- [Svelte and its testing-library doesn't support custom children slots](https://github.com/sveltejs/svelte/pull/4296), see also [1](https://github.com/testing-library/svelte-testing-library/issues/48)
 
 ## Alternatives
 
