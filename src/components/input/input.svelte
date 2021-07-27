@@ -5,7 +5,8 @@
     id: OptionalProp<string> = undefined,
     classNames: OptionalProp<string> = undefined,
     onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLInputElement>> =
-      undefined
+      undefined,
+    required: OptionalProp<boolean> = undefined
 
   /**
    * Filter escape key to prevent closing popup, and blur the input instead
@@ -20,7 +21,14 @@
 </script>
 
 {#if label}
-  <label for={id} class="block mb-2">{label}</label>
+  <label for={id} class="block mb-2"
+    >{label}
+    {#if required}
+      <span class="text-red-500 ml-0.5" title="required" aria-label="required"
+        >*</span
+      >
+    {/if}
+  </label>
 {/if}
 <input
   {id}
@@ -30,5 +38,6 @@
   )}
   on:change={onChange}
   on:keydown={handleSearchKeyDown}
+  {required}
   {...$$restProps}
 />
