@@ -60,7 +60,7 @@
       : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-100'
   )}
 >
-  <div>
+  <div class="overflow-hidden">
     {#if title}
       <h1
         {title}
