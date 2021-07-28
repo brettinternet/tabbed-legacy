@@ -26,9 +26,5 @@
       "id": "{6c352909-bfa6-4143-98d2-8bf9441dc7da}"
     }
   },
-  "web_accessible_resources": [
-    "icons/icon-32x32.png",
-    "icons/icon-16x16.png",
-    "icons/icon.svg"
-  ]
+  "web_accessible_resources": ["icons/icon-32x32.png", "icons/icon-16x16.png"]
 }
