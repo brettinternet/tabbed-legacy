@@ -5,7 +5,6 @@ import {
   MESSAGE_TYPE_RELOAD_ACTIONS,
   MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
   MESSAGE_TYPE_UPDATE_LOG_LEVEL,
-  MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
   MESSAGE_TYPE_GET_SESSIONS_LIST,
   MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
   MESSAGE_TYPE_SAVE_EXISTING_SESSION,
@@ -28,7 +27,6 @@ import type {
   ReloadActionsMessage,
   ReloadTabListenersMessage,
   UpdateLogLevelMessage,
-  UpdateSessionsListMessage,
   GetSessionsListMessage,
   ReloadClosedWindowListenerMessage,
   SaveExistingSessionMessage,
@@ -52,6 +50,7 @@ import { updateLogLevel, log } from 'src/utils/logger'
 import { loadActions } from './configuration'
 import {
   getSessionLists,
+  updateSession,
   autoSaveSession,
   saveExistingSession,
   saveWindowAsSession,
@@ -69,32 +68,10 @@ import {
   downloadSessions,
   findDuplicateSessionTabs,
 } from './sessions'
+import { updateSessionMessage } from './message-emitters'
 
 const logContext = 'background/listeners'
 const BADGE_BACKGROUND_COLOR = '#3b82f6'
-
-const updateSessionMessage = async (
-  sessions: UpdateSessionsListMessage['value']
-) => {
-  log.debug(logContext, 'updateSessionMessage()', sessions)
-
-  const message: UpdateSessionsListMessage = {
-    type: MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
-    value: sessions,
-  }
-  try {
-    await browser.runtime.sendMessage(message)
-  } catch (_err) {
-    const err = browser.runtime.lastError
-    // If client is not merely closed
-    if (
-      err?.message !==
-      'Could not establish connection. Receiving end does not exist.'
-    ) {
-      throw err
-    }
-  }
-}
 
 const handleClosedWindow = async (closedWindowId: number) => {
   log.debug(logContext, 'handleClosedWindow()', closedWindowId)
@@ -108,19 +85,6 @@ const handleClosedWindow = async (closedWindowId: number) => {
   }
 }
 
-const updateSession = async () => {
-  log.debug(logContext, 'getWindows')
-
-  try {
-    const sessions = await getSessionLists()
-    await updateSessionMessage(sessions)
-  } catch (err) {
-    log.error(logContext, 'updateSession', err)
-  }
-}
-
-const updateSessionDebounce = debounce(updateSession, 250)
-
 const loadClosedWindowListener = (
   saveClosedWindows: Settings['saveClosedWindows']
 ) => {
@@ -130,7 +94,7 @@ const loadClosedWindowListener = (
     browser.windows.onRemoved.addListener(handleClosedWindow)
   } else {
     browser.windows.onRemoved.removeListener(handleClosedWindow)
-    browser.windows.onRemoved.addListener(updateSessionDebounce)
+    browser.windows.onRemoved.addListener(updateSession)
   }
 }
 
@@ -276,11 +240,11 @@ const setupSessionListeners = () => {
     }
   )
 
-  browser.windows.onCreated.addListener(updateSessionDebounce)
-  browser.tabs.onUpdated.addListener(updateSessionDebounce)
-  browser.tabs.onDetached.addListener(updateSessionDebounce)
-  browser.tabs.onRemoved.addListener(updateSessionDebounce)
-  browser.tabs.onMoved.addListener(updateSessionDebounce)
+  browser.windows.onCreated.addListener(updateSession)
+  browser.tabs.onUpdated.addListener(updateSession)
+  browser.tabs.onDetached.addListener(updateSession)
+  browser.tabs.onRemoved.addListener(updateSession)
+  browser.tabs.onMoved.addListener(updateSession)
 }
 
 const updateTabCountBadge = async () => {

@@ -7,6 +7,7 @@ import {
 import { popupUrl, sidebarUrl } from 'src/utils/env'
 import { Settings, extensionClickActions } from 'src/utils/settings'
 import { log } from 'src/utils/logger'
+import { saveCurrentSession } from 'src/background/sessions'
 
 const logContext = 'background/configuration'
 
@@ -63,13 +64,13 @@ const setupMenus = async (popupDisabled?: boolean) => {
     onclick: openExtensionPopout,
   })
 
-  // TODO: add icon, save action
-  // browser.contextMenus.create({
-  //   id: 'save-session',
-  //   title: 'Save session',
-  //   contexts: ['all'],
-  //   onclick: saveSession,
-  // })
+  // TODO: add icon
+  browser.contextMenus.create({
+    id: 'save-session',
+    title: 'Save session',
+    contexts: ['all'],
+    onclick: saveCurrentSession,
+  })
 }
 
 /**

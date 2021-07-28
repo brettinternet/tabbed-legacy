@@ -35,6 +35,7 @@ import { isDefined, findDuplicates } from 'src/utils/helpers'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
 import { log } from 'src/utils/logger'
 import { appName } from 'src/utils/env'
+import { updateSessionMessage } from './message-emitters'
 
 const logContext = 'background/sessions'
 
@@ -69,6 +70,17 @@ export const getSessionLists = async (): Promise<SessionLists> => {
 const getSessions = async (): Promise<Session[]> => {
   const sessionLists = await getSessionLists()
   return [sessionLists.current, ...sessionLists.previous, ...sessionLists.saved]
+}
+
+export const updateSession = async () => {
+  log.debug(logContext, 'updateSession')
+
+  try {
+    const sessions = await getSessionLists()
+    await updateSessionMessage(sessions)
+  } catch (err) {
+    log.error(logContext, 'updateSession', err)
+  }
 }
 
 /**
@@ -161,6 +173,12 @@ export const saveExistingSession = async (sessionId: string) => {
   } else {
     throwSessionId(sessionId)
   }
+}
+
+export const saveCurrentSession = async () => {
+  const currentSession = await getCurrentSession()
+  await saveExistingSession(currentSession.id)
+  await updateSession()
 }
 
 export const saveWindowAsSession = async ({
