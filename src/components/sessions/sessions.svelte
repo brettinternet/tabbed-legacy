@@ -44,6 +44,7 @@
     registerTabContextMenu,
   } from 'src/components/sessions/context-menus'
   import { contextIds, contextMenu } from 'src/components/context-menu/store'
+  import { modal } from 'src/components/modal/store'
   import EditModal from './edit-modal.svelte'
   import List from './list.svelte'
   import Grid from './grid.svelte'
@@ -53,16 +54,39 @@
   export let currentLayout: Layout
 
   let firstUpdateComplete = false
+  let duplicates: { urls: string[]; sessionId: string } | undefined
 
-  const fetch = async () => {
-    log.debug(logContext, 'fetch()')
+  const handleHighlightDuplicateTabUrls = async (sessionId?: string) => {
+    try {
+      if (sessionId) {
+        const urls = await findDuplicateTabs(sessionId)
+        if (urls) {
+          duplicates = { urls, sessionId }
+          return
+        }
+      }
+      duplicates = undefined
+    } catch (err) {
+      log.error(err)
+    }
+  }
 
+  const updateSessions = async () => {
     try {
       $sessionLists = await getSessions()
+      if (duplicates) {
+        await handleHighlightDuplicateTabUrls(duplicates.sessionId)
+      }
     } catch (err) {
       log.error(err)
       // TODO: handle error presentation
     }
+  }
+
+  const fetch = async () => {
+    log.debug(logContext, 'fetch()')
+
+    await updateSessions()
 
     if (!$selectedSessionId && !firstUpdateComplete) {
       $selectedSessionId = $sessionLists?.current.id
@@ -77,16 +101,26 @@
 
   void fetch()
 
+  const openSessionEditor = () => {
+    modal.sessionEdit.set(true)
+  }
+
+  const closeSessionEditor = () => {
+    modal.sessionEdit.set(false)
+    $editSession = undefined
+  }
+
   const handleOpenSession = async (sessionId: string) => {
     log.debug(logContext, 'handleOpenSession()', sessionId)
 
     try {
       await openSession(sessionId)
-      $sessionLists = await getSessions()
       $selectedSessionId = sessionId
     } catch (err) {
       log.error(err)
     }
+
+    await updateSessions()
   }
 
   const handleSaveSession = async (sessionId: string) => {
@@ -94,11 +128,12 @@
 
     try {
       await saveExistingSession(sessionId)
-      $sessionLists = await getSessions()
       $selectedSessionId = sessionId
     } catch (err) {
       log.error(err)
     }
+
+    await updateSessions()
   }
 
   const handleDeleteSession = async (sessionId: string) => {
@@ -106,12 +141,13 @@
 
     try {
       await deleteSession(sessionId)
-      $sessionLists = await getSessions()
-      if ($selectedSessionId === sessionId) {
-        $selectedSessionId = undefined
-      }
     } catch (err) {
       log.error(err)
+    }
+
+    await updateSessions()
+    if ($selectedSessionId === sessionId) {
+      $selectedSessionId = undefined
     }
   }
 
@@ -121,10 +157,11 @@
     try {
       // TODO: name validation here
       await renameSession(sessionId, name)
-      $sessionLists = await getSessions()
     } catch (err) {
       log.error(err)
     }
+
+    await updateSessions()
   }
 
   const handleOpenWindow = async (
@@ -136,11 +173,12 @@
 
     try {
       await openWindow(sessionId, windowId, options)
-      $sessionLists = await getSessions()
-      $selectedSessionId = sessionId
     } catch (err) {
       log.error(err)
     }
+
+    await updateSessions()
+    $selectedSessionId = sessionId
   }
 
   const handleSaveWindow = async (sessionId: string, windowId: number) => {
@@ -148,11 +186,12 @@
 
     try {
       await saveWindow(sessionId, windowId)
-      $sessionLists = await getSessions()
-      $selectedSessionId = sessionId
     } catch (err) {
       log.error(err)
     }
+
+    await updateSessions()
+    $selectedSessionId = sessionId
   }
 
   const handleRemoveWindow = async (sessionId: string, windowId: number) => {
@@ -160,10 +199,11 @@
 
     try {
       await removeWindow(sessionId, windowId)
-      $sessionLists = await getSessions()
     } catch (err) {
       log.error(err)
     }
+
+    await updateSessions()
   }
 
   const handleOpenTab = async (
@@ -174,10 +214,11 @@
   ) => {
     try {
       await openTab(sessionId, windowId, tabId, options)
-      $sessionLists = await getSessions()
     } catch (err) {
       log.error(err)
     }
+
+    await updateSessions()
   }
 
   const handleCloseTab = async (
@@ -187,10 +228,11 @@
   ) => {
     try {
       await removeTab(sessionId, windowId, tabId)
-      $sessionLists = await getSessions()
     } catch (err) {
       log.error(err)
     }
+
+    await updateSessions()
   }
 
   const handleMinimizeWindow = async (
@@ -203,10 +245,11 @@
         state: minimized ? 'minimized' : 'normal',
       })
       // TODO: push update from backend only if action isn't on current session
-      $sessionLists = await getSessions()
     } catch (err) {
       log.error(err)
     }
+
+    await updateSessions()
   }
 
   const handlePinTab = async (
@@ -217,10 +260,11 @@
   ) => {
     try {
       await patchTab(sessionId, windowId, tabId, { pinned })
-      $sessionLists = await getSessions()
     } catch (err) {
       log.error(err)
     }
+
+    await updateSessions()
   }
 
   const handleDownloadSessions = async (options: DownloadSessionsOptions) => {
@@ -229,29 +273,6 @@
     } catch (err) {
       log.error(err)
     }
-  }
-
-  let duplicateTabUrls: string[] | undefined
-  const handleHighlightDuplicateTabUrls = async (sessionId?: string) => {
-    try {
-      if (sessionId) {
-        duplicateTabUrls = await findDuplicateTabs(sessionId)
-      } else {
-        duplicateTabUrls = undefined
-      }
-    } catch (err) {
-      log.error(err)
-    }
-  }
-
-  let showEditSessionModal = false
-  const openSessionEditor = () => {
-    showEditSessionModal = true
-  }
-
-  const closeSessionEditor = () => {
-    showEditSessionModal = false
-    $editSession = undefined
   }
 
   $: if ($sessionLists) {
@@ -264,7 +285,7 @@
         deleteSession: handleDeleteSession,
         downloadSessions: handleDownloadSessions,
         highlightDuplicateTabUrls: handleHighlightDuplicateTabUrls,
-        isHighlightDuplicatesActive: !!duplicateTabUrls,
+        isHighlightDuplicatesActive: !!duplicates,
       })
     }
 
@@ -284,9 +305,9 @@
     })
   }
 
-  const updateSessions = (message: UpdateSessionsListMessage) => {
+  const respondToSessionsUpdate = (message: UpdateSessionsListMessage) => {
     if (message.type === MESSAGE_TYPE_UPDATE_SESSIONS_LIST) {
-      log.debug(logContext, 'updateSessions()', message.value)
+      log.debug(logContext, 'respondToSessionsUpdate()', message.value)
 
       $sessionLists = message.value
     }
@@ -294,7 +315,7 @@
     return false // no reply
   }
 
-  browser.runtime.onMessage.addListener(updateSessions)
+  browser.runtime.onMessage.addListener(respondToSessionsUpdate)
 
   const handleToggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (
     ev
@@ -332,7 +353,7 @@
 
   onDestroy(() => {
     contextMenu.unregister(contextIds.SESSION)
-    browser.runtime.onMessage.removeListener(updateSessions)
+    browser.runtime.onMessage.removeListener(respondToSessionsUpdate)
     browser.tabs.onActivated.removeListener(handleActiveTabChange)
     browser.windows.onFocusChanged.removeListener(handleFocusWindowChange)
   })
@@ -358,11 +379,11 @@
       openWindow={handleOpenWindow}
       {openSessionEditor}
       downloadSessions={handleDownloadSessions}
-      {duplicateTabUrls}
+      duplicateTabUrls={duplicates?.urls}
     />
   {/if}
 
-  {#if showEditSessionModal && $editSession}
+  {#if $modal.sessionEdit && $editSession}
     <EditModal
       close={closeSessionEditor}
       session={$editSession}
@@ -370,4 +391,3 @@
     />
   {/if}
 {/if}
-<!-- highlightDuplicateTabIds={handleHighlightDuplicateTabUrls} -->
