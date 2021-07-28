@@ -29,6 +29,7 @@ const config: Config.InitialOptions = {
   setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
   moduleNameMapper: {
     '^.+\\.css$': '<rootDir>/test/css-stub.ts',
+    '\\.(jpg|png|svg)$': '<rootDir>/test/assets-transformer.ts',
   },
 }
 
