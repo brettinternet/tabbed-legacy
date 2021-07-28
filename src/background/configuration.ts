@@ -26,6 +26,9 @@ const disablePopup = async () => {
 const setupMenus = (popupDisabled?: boolean) => {
   log.debug(logContext, 'setupMenus()', popupDisabled)
 
+  // reset to avoid duplicates
+  browser.contextMenus.removeAll()
+
   browser.contextMenus.create({
     title: 'Open popup',
     contexts: ['browser_action'],
