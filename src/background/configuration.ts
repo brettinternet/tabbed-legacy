@@ -64,12 +64,23 @@ const setupMenus = async (popupDisabled?: boolean) => {
     onclick: openExtensionPopout,
   })
 
-  // TODO: add icon
   browser.contextMenus.create({
     id: 'save-session',
     title: 'Save session',
-    contexts: ['all'],
-    onclick: saveCurrentSession,
+    contexts: ['page'],
+    onclick: async () => {
+      try {
+        await saveCurrentSession()
+        await browser.notifications.create({
+          type: 'basic',
+          iconUrl: 'icons/icon-32x32.png',
+          title: 'Session saved',
+          message: 'The current session has been saved',
+        })
+      } catch (err) {
+        log.error(err)
+      }
+    },
   })
 }
 
