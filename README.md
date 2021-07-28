@@ -44,29 +44,20 @@ npm test
 
 ### Todo
 
-#### Windows & tabs
+#### Sessions, windows & tabs
 
-- [ ] multi-select tabs and windows, shift click
-- [ ] save tab groups
-- [ ] select box (left) - also move active indicator, context menu for tab actions
-
-#### Sessions
-
-- [ ] fix autosave entire session on startup
-- [ ] Get recently closed sessions and consolidate with previous?
 - [ ] Give previous sessions a name with predominant tabs, like "& 4 more"
-- [ ] merge multiple sessions
-- [ ] merge multiple windows
+- [ ] Get recently closed sessions and consolidate with previous?
+- [ ] multi-select sessions, tabs and windows
+  - [ ] select box (left) - also move active indicator, context menu for tab actions
+  - [ ] merge multiple sessions
+  - [ ] merge multiple windows
+  - [ ] drag and drop tabs to reorder or assign to new window
 
 #### Layouts
 
 - [ ] Grid layout ([1](https://github.com/isaacHagoel/svelte-dnd-action), [2](https://github.com/vaheqelyan/svelte-grid))
-  - [ ] resize boxes
   - [ ] zones to move window groups to? current/minimized/saved
-
-#### Search
-
-- [ ] Search tab titles, urls
 
 #### Accessibility
 
@@ -74,15 +65,20 @@ npm test
 
 #### App
 
-- [ ] save last selected session (?)
-- [ ] allow to optionally save private windows
 - [ ] implement undo stack
-- [ ] export/import & backup (download export onclick)
+- [ ] export/import & backup
 - [ ] save window popout position/size
+- [ ] Search tab titles, urls
+
+#### Pending
+
+- [ ] save tab groups
 
 ### Related issues
 
 - ~~[Popup window doesn't respect media queries with a dynamically set width](https://bugs.chromium.org/p/chromium/issues/detail?id=1230120)~~ (This issue was resolved in `Chromium 92.0.4515.107`)
+- [Safari support](https://github.com/mozilla/webextension-polyfill/issues/234)
+- [Manifest v3](https://github.com/extend-chrome/rollup-plugin-chrome-extension/discussions/79)
 
 ## Alternatives
 
