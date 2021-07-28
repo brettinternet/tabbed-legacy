@@ -11,8 +11,10 @@
     repoUrl,
     licenseUrl,
     privacyPolicyUrl,
+    attributions,
   } from 'src/utils/env'
   import A from 'src/components/anchor/anchor.svelte'
+  import Icon from 'src/icons/icon.svg'
 
   export let headerId: string
 
@@ -24,6 +26,8 @@
 <h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">
   About {appName}
 </h1>
+
+<img class="w-10 my-6" src={Icon} alt={appName} />
 
 <table class="font-light">
   <caption class="font-medium text-left mb-2">Client</caption>
@@ -62,3 +66,24 @@
     <A href={privacyPolicyUrl} newTab>Privacy Policy</A>
   </li>
 </ul>
+
+<hr class="my-6" />
+
+<h2 class="font-medium text-left mb-2">Attribution</h2>
+
+<ul class="font-light mb-2">
+  {#each attributions as { projectUrl, projectName, licenseType, licenseUrl, authors } (projectUrl)}
+    <li>
+      <A href={projectUrl} newTab>{projectName}</A> by {authors} - <A
+        href={licenseUrl}
+        newTab>{licenseType}</A
+      >
+    </li>
+  {/each}
+</ul>
+
+<p class="font-light">
+  For additional attribution, please see this <A href={repoUrl} newTab
+    >project's source</A
+  >.
+</p>
