@@ -19,6 +19,9 @@ import {
   MESSAGE_TYPE_DISCARD_TABS,
   MESSAGE_TYPE_MOVE_TABS,
   MESSAGE_TYPE_DOWNLOAD_SESSIONS,
+  FindDuplicateSessionTabsMessage,
+  MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS,
+  FindDuplicateSessionTabsResponse,
 } from 'src/utils/messages'
 import type {
   GetSessionsListMessage,
@@ -214,4 +217,17 @@ export const downloadSessions = async (options: DownloadSessionsOptions) => {
     value: options,
   }
   await browser.runtime.sendMessage(message)
+}
+
+export const findDuplicateTabs = async (sessionId: string) => {
+  const message: FindDuplicateSessionTabsMessage = {
+    type: MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS,
+    value: { sessionId },
+  }
+  const dupes = (await browser.runtime.sendMessage(
+    message
+  )) as FindDuplicateSessionTabsResponse
+  if (dupes.length > 0) {
+    return dupes
+  }
 }

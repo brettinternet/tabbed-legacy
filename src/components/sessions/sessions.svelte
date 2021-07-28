@@ -36,6 +36,7 @@
     patchWindow,
     patchTab,
     downloadSessions,
+    findDuplicateTabs,
   } from 'src/components/sessions/store'
   import {
     registerSessionsContextMenu,
@@ -230,6 +231,19 @@
     }
   }
 
+  let duplicateTabUrls: string[] | undefined
+  const handleHighlightDuplicateTabUrls = async (sessionId?: string) => {
+    try {
+      if (sessionId) {
+        duplicateTabUrls = await findDuplicateTabs(sessionId)
+      } else {
+        duplicateTabUrls = undefined
+      }
+    } catch (err) {
+      log.error(err)
+    }
+  }
+
   let showEditSessionModal = false
   const openSessionEditor = () => {
     showEditSessionModal = true
@@ -249,6 +263,8 @@
         saveSession: handleSaveSession,
         deleteSession: handleDeleteSession,
         downloadSessions: handleDownloadSessions,
+        highlightDuplicateTabUrls: handleHighlightDuplicateTabUrls,
+        isHighlightDuplicatesActive: !!duplicateTabUrls,
       })
     }
 
@@ -342,6 +358,7 @@
       openWindow={handleOpenWindow}
       {openSessionEditor}
       downloadSessions={handleDownloadSessions}
+      {duplicateTabUrls}
     />
   {/if}
 
@@ -353,3 +370,4 @@
     />
   {/if}
 {/if}
+<!-- highlightDuplicateTabIds={handleHighlightDuplicateTabUrls} -->

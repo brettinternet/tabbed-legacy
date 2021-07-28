@@ -14,6 +14,7 @@ import Minimize from 'src/components/icons/minimize.svelte'
 import Expand from 'src/components/icons/expand.svelte'
 import Pin from 'src/components/icons/pin.svelte'
 import Download from 'src/components/icons/download.svelte'
+import HighlightDupes from 'src/components/icons/search-property.svelte'
 import { downloadSessions } from 'src/background/sessions'
 
 type RegisterSessionsContextMenuArgs = {
@@ -22,6 +23,8 @@ type RegisterSessionsContextMenuArgs = {
   saveSession: (sessionId: string) => Promise<void>
   deleteSession: (sessionId: string) => Promise<void>
   downloadSessions: (options: DownloadSessionsOptions) => Promise<void>
+  highlightDuplicateTabUrls: (sessionId?: string) => Promise<void>
+  isHighlightDuplicatesActive: boolean
 }
 
 export const registerSessionsContextMenu = ({
@@ -29,6 +32,8 @@ export const registerSessionsContextMenu = ({
   openSession,
   saveSession,
   deleteSession,
+  highlightDuplicateTabUrls,
+  isHighlightDuplicatesActive,
 }: RegisterSessionsContextMenuArgs) => {
   contextMenu.register(contextIds.SESSION, {
     items: (target) => {
@@ -41,6 +46,12 @@ export const registerSessionsContextMenu = ({
 
         const handleSave = () => {
           void saveSession(sessionId)
+        }
+
+        const handleHighlightDuplicates = () => {
+          void highlightDuplicateTabUrls(
+            isHighlightDuplicatesActive ? undefined : sessionId
+          )
         }
 
         const handleDownload = () => {
@@ -62,6 +73,13 @@ export const registerSessionsContextMenu = ({
             onClick: handleSave,
             Icon: Save,
             text: 'Save',
+          },
+          {
+            onClick: handleHighlightDuplicates,
+            Icon: HighlightDupes,
+            text: isHighlightDuplicatesActive
+              ? 'Unhighlight'
+              : 'Highlight duplicates',
           },
           {
             onClick: handleDownload,

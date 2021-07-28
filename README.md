@@ -52,6 +52,7 @@ npm test
 
 #### Sessions
 
+- [ ] fix autosave entire session on startup
 - [ ] Get recently closed sessions and consolidate with previous?
 - [ ] Give previous sessions a name with predominant tabs, like "& 4 more"
 - [ ] merge multiple sessions
@@ -73,7 +74,6 @@ npm test
 
 #### App
 
-- [ ] highlight duplicate tabs
 - [ ] save last selected session (?)
 - [ ] allow to optionally save private windows
 - [ ] implement undo stack

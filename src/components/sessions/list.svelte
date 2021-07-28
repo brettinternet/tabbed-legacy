@@ -40,7 +40,8 @@
       options?: OpenTabOptions
     ) => Promise<void>,
     openSessionEditor: () => void,
-    downloadSessions: (options: DownloadSessionsOptions) => Promise<void>
+    downloadSessions: (options: DownloadSessionsOptions) => Promise<void>,
+    duplicateTabUrls: string[] | undefined
 
   $: selectedSession = [
     sessionLists.current,
@@ -101,6 +102,7 @@
             {currentTabId}
             {openWindow}
             {openTab}
+            {duplicateTabUrls}
           />
         </div>
       {/if}
@@ -161,6 +163,7 @@
               {currentTabId}
               {openWindow}
               {openTab}
+              {duplicateTabUrls}
             />
           </div>
         {/if}
@@ -199,6 +202,7 @@
           {currentTabId}
           {openWindow}
           {openTab}
+          {duplicateTabUrls}
         />
       </div>
       <div class="mt-8">

@@ -47,7 +47,6 @@ export const MESSAGE_TYPE_GET_SESSIONS_LIST = 'get_sessions'
 export type GetSessionsListMessage = Message<
   typeof MESSAGE_TYPE_GET_SESSIONS_LIST
 >
-
 export type GetSessionsListResponse = SessionLists
 
 // session actions
@@ -168,3 +167,11 @@ export type DownloadSessionsMessage = MessageWithValue<
   typeof MESSAGE_TYPE_DOWNLOAD_SESSIONS,
   DownloadSessionsOptions
 >
+
+export const MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS =
+  'find_duplicate_session_tabs'
+export type FindDuplicateSessionTabsMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS,
+  { sessionId: string }
+>
+export type FindDuplicateSessionTabsResponse = string[] // urls

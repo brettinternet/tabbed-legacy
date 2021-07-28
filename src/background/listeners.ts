@@ -22,6 +22,7 @@ import {
   MESSAGE_TYPE_DISCARD_TABS,
   MESSAGE_TYPE_MOVE_TABS,
   MESSAGE_TYPE_DOWNLOAD_SESSIONS,
+  MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS,
 } from 'src/utils/messages'
 import type {
   ReloadActionsMessage,
@@ -44,6 +45,7 @@ import type {
   DiscardTabsMessage,
   MoveTabsMessage,
   DownloadSessionsMessage,
+  FindDuplicateSessionTabsMessage,
 } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
@@ -65,6 +67,7 @@ import {
   discardTabs,
   moveTabs,
   downloadSessions,
+  findDuplicateSessionTabs,
 } from './sessions'
 
 const logContext = 'background/listeners'
@@ -262,6 +265,16 @@ const setupSessionListeners = () => {
 
     return false
   })
+
+  browser.runtime.onMessage.addListener(
+    (message: FindDuplicateSessionTabsMessage) => {
+      if (message.type === MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS) {
+        return findDuplicateSessionTabs(message.value.sessionId)
+      }
+
+      return false
+    }
+  )
 
   browser.windows.onCreated.addListener(updateSessionDebounce)
   browser.tabs.onUpdated.addListener(updateSessionDebounce)

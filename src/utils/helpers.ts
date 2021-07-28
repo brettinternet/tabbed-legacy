@@ -33,3 +33,14 @@ export const objValue = <T extends Record<string, unknown>>(
  */
 export const parseNum = (str: string | undefined) =>
   str ? parseInt(str, 10) : undefined
+
+export const findDuplicates = (arr: unknown[]) => {
+  const sorted = arr.slice().sort()
+  const duplicates = []
+  for (let i = 0; i < sorted.length - 1; i++) {
+    if (sorted[i + 1] === sorted[i]) {
+      duplicates.push(sorted[i])
+    }
+  }
+  return duplicates
+}

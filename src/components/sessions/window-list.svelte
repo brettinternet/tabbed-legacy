@@ -29,7 +29,8 @@
       windowId: number,
       tabId: number,
       options?: OpenTabOptions
-    ) => Promise<void>
+    ) => Promise<void>,
+    duplicateTabUrls: string[] | undefined
 
   const handleWindowClick: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
     async (ev) => {
@@ -145,7 +146,11 @@
                   class={cn(
                     'leading-5 inline-flex items-center',
                     'overflow-hidden whitespace-pre',
-                    tabId === currentTabId && 'text-green-500'
+                    tabId === currentTabId && 'text-green-500',
+                    duplicateTabUrls && // TODO: accessible attribute to indicate highlighted?
+                      (url || pendingUrl) &&
+                      duplicateTabUrls.includes(url || pendingUrl || '') &&
+                      'bg-yellow-100'
                   )}
                 >
                   {#if url || pendingUrl}

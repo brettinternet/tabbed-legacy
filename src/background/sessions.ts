@@ -31,7 +31,7 @@ import type {
   OpenWindowOptions,
   OpenTabOptions,
 } from 'src/utils/messages'
-import { isDefined } from 'src/utils/helpers'
+import { isDefined, findDuplicates } from 'src/utils/helpers'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
 import { log } from 'src/utils/logger'
 import { appName } from 'src/utils/env'
@@ -548,5 +548,24 @@ export const downloadSessions = async ({
     anchor.remove()
   } else {
     throw Error('Unable to read sessions')
+  }
+}
+
+export const findDuplicateSessionTabs = async (sessionId: string) => {
+  const session = await findSession(sessionId)
+  if (session) {
+    const tabUrls = session.windows.reduce((acc, w) => {
+      if (w.tabs) {
+        const urls = w.tabs.reduce(
+          (_acc, { url }) => (url ? _acc.concat(url) : _acc),
+          [] as string[]
+        )
+        return acc.concat(urls)
+      }
+      return acc
+    }, [] as string[])
+    return findDuplicates(tabUrls)
+  } else {
+    throwSessionId(sessionId)
   }
 }
