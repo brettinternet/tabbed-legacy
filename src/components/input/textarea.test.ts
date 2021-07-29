@@ -15,7 +15,7 @@ describe('components/input/textarea.svelte', () => {
 
     const textarea = screen.getByLabelText('Name')
     await fireEvent.change(textarea, { target: { value: 'Hi mom!' } })
-    expect(textarea).toHaveValue('Johnny Bravo')
+    expect(textarea).toHaveValue('Hi mom!')
     expect(mockChangeHandler).toHaveBeenCalled()
   })
 
