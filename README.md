@@ -46,7 +46,6 @@ npm test
 
 #### Sessions, windows & tabs
 
-- [ ] Give previous sessions a name with predominant tabs, like "& 4 more"
 - [ ] Get recently closed sessions and consolidate with previous?
 - [ ] multi-select sessions, windows, and tabs
   - [ ] select box (left) - also move active indicator, context menu for tab actions
@@ -66,6 +65,7 @@ npm test
 
 - [ ] implement undo stack
 - [ ] Search tab titles, urls
+- [ ] url/regex ignore list
 
 #### Pending
 
