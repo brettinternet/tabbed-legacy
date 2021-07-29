@@ -16,6 +16,7 @@ import {
   localStorageKeys,
   createSessionFromWindows,
   saveNewSession,
+  saveImportedSession,
   patchSession,
   readSession,
   removeSession,
@@ -73,14 +74,14 @@ export const getAllSessions = async (): Promise<Session[]> => {
   return [sessionLists.current, ...sessionLists.previous, ...sessionLists.saved]
 }
 
-export const updateSession = async () => {
-  log.debug(logContext, 'updateSession')
+export const updateSessions = async () => {
+  log.debug(logContext, 'updateSessions')
 
   try {
     const sessions = await getSessionLists()
     await updateSessionMessage(sessions)
   } catch (err) {
-    log.error(logContext, 'updateSession', err)
+    log.error(logContext, 'updateSessions', err)
   }
 }
 
@@ -190,7 +191,7 @@ export const saveExistingSession = async (sessionId: string) => {
 export const saveCurrentSession = async () => {
   const currentSession = await getCurrentSession()
   await saveExistingSession(currentSession.id)
-  await updateSession()
+  await updateSessions()
 }
 
 export const saveWindowAsSession = async ({
@@ -557,6 +558,9 @@ export type SessionDataExport = {
   sessions?: Session[]
 }
 
+/**
+ * TODO: Compress by removing extra fields
+ */
 export const downloadSessions = async ({
   sessionIds,
 }: DownloadSessionsOptions) => {
@@ -626,11 +630,10 @@ export const importSessionsFromText = async (content?: string) => {
       throw Error('No sessions found')
     }
 
-    const tasks = data.sessions.map(async (session) => {
-      await saveNewSession(localStorageKeys.USER_SAVED_SESSIONS, session)
-    })
-    await Promise.all(tasks)
-    await updateSession()
+    for (const session of data.sessions.reverse()) {
+      await saveImportedSession(session)
+    }
+    await updateSessions()
   } else {
     throw Error('No content found in session import')
   }

@@ -69,6 +69,18 @@ const getSessionType = (key: LocalStorageKey) => {
   }
 }
 
+const getLocalStorageKey = (key: SessionType) => {
+  switch (key) {
+    case sessionType.CURRENT:
+      return localStorageKeys.CURRENT_SESSION
+    case sessionType.PREVIOUS:
+      return localStorageKeys.PREVIOUS_SESSIONS
+    case sessionType.SAVED:
+    default:
+      return localStorageKeys.USER_SAVED_SESSIONS
+  }
+}
+
 const checkCollectionKey = (key: LocalStorageKey): boolean => {
   if (
     key === localStorageKeys.PREVIOUS_SESSIONS ||
@@ -162,6 +174,19 @@ export const saveNewSession = async (
     }
     await saveSessionToCollection(key, session)
   }
+}
+
+/**
+ * Save an imported session, assign new ID to allow duplicate imports
+ * Move imported current sessions to previous
+ */
+export const saveImportedSession = async (session: Session) => {
+  session.id = uuidv4()
+  if (session.type === sessionType.CURRENT) {
+    session.type = sessionType.PREVIOUS
+  }
+  let key = getLocalStorageKey(session.type)
+  await saveSessionToCollection(key, session)
 }
 
 /**
