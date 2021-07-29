@@ -21,8 +21,8 @@
   import SessionControl from './control.svelte'
   import Meta from './meta.svelte'
 
-  export let onSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
-    onToggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
+  export let selectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
+    toggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
     selectedSessionId: string | undefined,
     sessionLists: SessionLists,
     currentWindowId: number | undefined,
@@ -75,8 +75,8 @@
   >
     {#each unsavedSessions as session, i (session.id)}
       <ViewButton
-        onClick={onToggleSession}
-        onContextMenu={onSelectSession}
+        {toggleSession}
+        {selectSession}
         title={i === 0 ? 'Current' : session.title}
         {session}
         selected={selectedSessionId ? selectedSessionId === session.id : false}
@@ -133,25 +133,25 @@
       </div>
     {/if}
 
-    {#if sessionLists.saved.length > 0}
-      <div
-        class="flex justify-between items-center pr-1 pt-3 pb-2 xs:pr-3 sm:pr-7 lg:pr-3 pl-4 xs:pl-6 sm:pl-10 lg:pl-6"
+    <div
+      class="flex justify-between items-center pr-1 pt-3 pb-2 xs:pr-3 sm:pr-7 lg:pr-3 pl-4 xs:pl-6 sm:pl-10 lg:pl-6"
+    >
+      <h2>Saved</h2>
+      <button
+        on:click={handleOpenImporter}
+        class="py-2 px-3"
+        aria-label="Upload sessions"
+        title="Upload sessions"
       >
-        <h2>Saved</h2>
-        <button
-          on:click={handleOpenImporter}
-          class="py-2 px-3"
-          aria-label="Upload sessions"
-          title="Upload sessions"
-        >
-          <Upload />
-        </button>
-      </div>
+        <Upload />
+      </button>
+    </div>
 
+    {#if sessionLists.saved.length > 0}
       {#each sessionLists.saved as session (session.id)}
         <ViewButton
-          onClick={onToggleSession}
-          onContextMenu={onSelectSession}
+          {toggleSession}
+          {selectSession}
           title={session.title}
           {session}
           selected={selectedSessionId
@@ -188,6 +188,8 @@
           </div>
         {/if}
       {/each}
+    {:else}
+      <p class="text-gray-500 p-4 xs:px-6 sm:px-10 py-4">None</p>
     {/if}
   </menu>
 

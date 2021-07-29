@@ -10,8 +10,8 @@
   import { contextIds } from 'src/components/context-menu/store'
 
   export let session: Session,
-    onClick: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
-    onContextMenu: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
+    toggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
+    selectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
     selected: boolean,
     title: OptionalProp<string> = session.title,
     date: OptionalProp<string> = undefined,
@@ -51,8 +51,8 @@
   data-context-id={contextIds.SESSION}
   data-session-type={session.type}
   aria-expanded={selected}
-  on:click={onClick}
-  on:contextmenu={onContextMenu}
+  on:click={toggleSession}
+  on:contextmenu={selectSession}
   style="height:70px;"
   class={cn(
     'p-4 xs:px-6 sm:px-10 py-4 flex justify-between items-center text-left w-full overflow-hidden whitespace-nowrap lg:rounded-sm lg:px-6',

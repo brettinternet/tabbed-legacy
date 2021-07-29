@@ -26,8 +26,8 @@
     downloadSessions: (options: DownloadSessionsOptions) => Promise<void>
 
   const handleOpenSessionEditor = () => {
-    $editSession = session
     if (openSessionEditor) {
+      $editSession = session
       openSessionEditor()
     }
   }

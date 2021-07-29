@@ -366,8 +366,8 @@
     <Grid selectedSessionId={$selectedSessionId} />
   {:else}
     <List
-      onToggleSession={handleToggleSession}
-      onSelectSession={handleSelectSession}
+      toggleSession={handleToggleSession}
+      selectSession={handleSelectSession}
       selectedSessionId={$selectedSessionId}
       sessionLists={$sessionLists}
       currentWindowId={$currentWindowId}
