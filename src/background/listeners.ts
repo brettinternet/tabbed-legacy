@@ -23,6 +23,7 @@ import {
   MESSAGE_TYPE_DOWNLOAD_SESSIONS,
   MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS,
   MESSAGE_TYPE_IMPORT_SESSIONS_FROM_TEXT,
+  MESSAGE_TYPE_UPDATE_POPOUT_POSITION,
 } from 'src/utils/messages'
 import type {
   ReloadActionsMessage,
@@ -30,6 +31,7 @@ import type {
   UpdateLogLevelMessage,
   GetSessionsListMessage,
   ReloadClosedWindowListenerMessage,
+  UpdatePopoutPositionMessage,
   SaveExistingSessionMessage,
   SaveWindowMessage,
   OpenSessionMessage,
@@ -48,6 +50,7 @@ import type {
   ImportSessionsFromTextMessage,
 } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
+import { writeSetting } from 'src/utils/browser/storage'
 import { updateLogLevel, log } from 'src/utils/logger'
 import { loadActions } from './configuration'
 import {
@@ -302,6 +305,10 @@ const loadTabCountListeners = (showTabCountBadge: boolean) => {
   }
 }
 
+const updatePopoutPosition = async (popoutState: Settings['popoutState']) => {
+  await writeSetting({ popoutState })
+}
+
 export const setupListeners = (settings: Settings) => {
   updateLogLevel(settings.debugMode)
   log.debug(logContext, 'setupListeners()', settings)
@@ -340,6 +347,16 @@ export const setupListeners = (settings: Settings) => {
     (message: ReloadClosedWindowListenerMessage) => {
       if (message.type === MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER) {
         void loadClosedWindowListener(message.value)
+      }
+
+      return false
+    }
+  )
+
+  browser.runtime.onMessage.addListener(
+    (message: UpdatePopoutPositionMessage) => {
+      if (message.type === MESSAGE_TYPE_UPDATE_POPOUT_POSITION) {
+        return updatePopoutPosition(message.value)
       }
 
       return false

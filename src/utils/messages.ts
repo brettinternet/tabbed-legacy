@@ -36,6 +36,12 @@ export type ReloadClosedWindowListenerMessage = MessageWithValue<
   boolean
 >
 
+export const MESSAGE_TYPE_UPDATE_POPOUT_POSITION = 'update_popout_position'
+export type UpdatePopoutPositionMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_UPDATE_POPOUT_POSITION,
+  Settings['popoutState']
+>
+
 // session list actions
 export const MESSAGE_TYPE_UPDATE_SESSIONS_LIST = 'update_sessions'
 export type UpdateSessionsListMessage = MessageWithValue<

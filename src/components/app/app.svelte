@@ -2,6 +2,7 @@
   import { isLoading } from 'svelte-i18n'
 
   import './scrollbar.css'
+  import 'src/components/app/listeners'
   import { isPopup } from 'src/components/app/store'
   import { modal, someModal } from 'src/components/modal/store'
   import { settings } from 'src/components/settings/store'

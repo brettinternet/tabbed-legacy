@@ -12,13 +12,12 @@ export const openExtensionTab = async () => {
 }
 
 export const openExtensionPopout = async () => {
-  const { popupDimensions } = await readSettings()
+  const { popoutState } = await readSettings()
 
   await browser.windows.create({
     type: 'popup',
     focused: true,
     url: popoutUrl,
-    height: popupDimensions.height,
-    width: popupDimensions.width,
+    ...popoutState,
   })
 }

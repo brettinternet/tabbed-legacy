@@ -31,6 +31,12 @@ export type Settings = {
     width: number
     height: number
   }
+  popoutState: {
+    top: number
+    left: number
+    height: number
+    width: number
+  }
   theme: Theme
   debugMode: boolean
   saveClosedWindows: boolean
@@ -47,6 +53,12 @@ export const defaultSettings: Settings = {
   popupDimensions: {
     width: 600,
     height: 600,
+  },
+  popoutState: {
+    top: 0,
+    left: 0,
+    height: 600,
+    width: 600,
   },
   theme: themes.LIGHT,
   debugMode: !isProd,
