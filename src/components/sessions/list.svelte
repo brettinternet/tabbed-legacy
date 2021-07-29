@@ -77,7 +77,7 @@
       <ViewButton
         onClick={onToggleSession}
         onContextMenu={onSelectSession}
-        title={i === 0 ? 'Current' : undefined}
+        title={i === 0 ? 'Current' : session.title}
         {session}
         selected={selectedSessionId ? selectedSessionId === session.id : false}
         date={session.id === sessionLists.current.id

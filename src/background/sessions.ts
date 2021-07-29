@@ -36,6 +36,7 @@ import type { SessionLists, Session } from 'src/utils/browser/storage'
 import { log } from 'src/utils/logger'
 import { appName } from 'src/utils/env'
 import { updateSessionMessage } from './message-emitters'
+import { getSessionTitle, getWindowTitle } from './derived-title'
 
 const logContext = 'background/sessions'
 
@@ -123,10 +124,15 @@ export const autoSaveSession = async (closedWindowId?: number) => {
         return
       }
 
-      await createSessionFromWindows(localStorageKeys.PREVIOUS_SESSIONS, [
-        closedWindow,
-      ])
-      return
+      if (closedWindow.tabs) {
+        const title = getWindowTitle(closedWindow.tabs)
+        await createSessionFromWindows(
+          localStorageKeys.PREVIOUS_SESSIONS,
+          [closedWindow],
+          title
+        )
+        return
+      }
     }
   }
 
@@ -136,10 +142,16 @@ export const autoSaveSession = async (closedWindowId?: number) => {
         (w) => !w.incognito
       )
     }
+
+    const title = getSessionTitle(currentSession.windows)
     // otherwise save the entire session
     // TODO: possibly compare current session to be saved with most recent to determine if session is unique enough to be saved?
     // TODO: consolidate with browser.sessions.getRecentlyClosed() https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/sessions/getRecentlyClosed
-    await saveNewSession(localStorageKeys.PREVIOUS_SESSIONS, currentSession)
+    await saveNewSession(
+      localStorageKeys.PREVIOUS_SESSIONS,
+      currentSession,
+      title
+    )
     await removeSession(localStorageKeys.CURRENT_SESSION)
   }
 }
@@ -193,10 +205,13 @@ export const saveWindowAsSession = async ({
   const session = await findSession(sessionId)
   if (session) {
     const win = findWindow(windowId, session)
-    if (win) {
-      await createSessionFromWindows(localStorageKeys.USER_SAVED_SESSIONS, [
-        win,
-      ])
+    if (win?.tabs) {
+      const title = getWindowTitle(win.tabs)
+      await createSessionFromWindows(
+        localStorageKeys.USER_SAVED_SESSIONS,
+        [win],
+        title
+      )
     } else {
       throwWindowId(windowId)
     }

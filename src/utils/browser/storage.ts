@@ -102,7 +102,8 @@ const saveSessionToCollection = async (
  */
 export const createSessionFromWindows = async (
   key: LocalStorageKey,
-  windows: Session['windows']
+  windows: Session['windows'],
+  title?: string
 ) => {
   const now = new Date().toJSON()
   const session: Session = {
@@ -111,6 +112,7 @@ export const createSessionFromWindows = async (
     createdDate: now,
     lastModifiedDate: now,
     type: getSessionType(key),
+    title,
   }
   if (key === localStorageKeys.CURRENT_SESSION) {
     await saveSingleSession(key, session)
@@ -127,12 +129,16 @@ export const createSessionFromWindows = async (
  */
 export const saveNewSession = async (
   key: LocalStorageKey,
-  session: Session
+  session: Session,
+  title?: string
 ) => {
   const now = new Date().toJSON()
   session.id = uuidv4()
   session.lastModifiedDate = now
   session.type = getSessionType(key)
+  if (title) {
+    session.title = title
+  }
   if (key === localStorageKeys.CURRENT_SESSION) {
     await saveSingleSession(key, session)
   } else {
