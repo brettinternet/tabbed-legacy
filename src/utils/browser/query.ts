@@ -216,11 +216,6 @@ type OpenTabOptions = {
  * open with matching incognito state
  */
 export const openTab = async (options: OpenTabOptions, incognito?: boolean) => {
-  const url = options.url
-  // hashes cause queries to return empty
-  const hashIndex = options.url.indexOf('#') ?? -1
-  options.url = url && hashIndex > -1 ? url.substr(0, hashIndex) : url
-
   const allowed = await browser.extension.isAllowedIncognitoAccess()
   if (incognito && !allowed) {
     /**
@@ -230,7 +225,7 @@ export const openTab = async (options: OpenTabOptions, incognito?: boolean) => {
     throw Error('No incognito access allowed')
   }
 
-  const { pinned } = options
+  const { url, pinned } = options
   if (
     (!incognito && browser.extension.inIncognitoContext) ||
     (incognito && !browser.extension.inIncognitoContext)
@@ -263,6 +258,31 @@ const openTabs = async (tabs: browser.tabs.Tab[], windowId?: number) => {
       })
     })
   await Promise.all(tasks)
+}
+
+export const openTabOrFocus = async (
+  query: browser.tabs._QueryQueryInfo,
+  incognito?: boolean
+) => {
+  const _url = Array.isArray(query.url) ? query.url[0] : query.url
+  // hashes cause queries to return empty
+  const hashIndex = _url?.indexOf('#') ?? -1
+  query.url = _url && hashIndex > -1 ? _url.substr(0, hashIndex) : _url
+
+  let tab: browser.tabs.Tab | undefined
+  const matches = await browser.tabs.query(query)
+  if (matches.length >= 1) {
+    tab = matches[0]
+  }
+
+  if (tab?.id && tab?.windowId) {
+    await focusWindowTab(tab.windowId, tab.id)
+  } else {
+    const { url, pinned } = query
+    if (url) {
+      await openTab({ url, pinned }, incognito)
+    }
+  }
 }
 
 // TODO: Add find option to optionally search by ID
