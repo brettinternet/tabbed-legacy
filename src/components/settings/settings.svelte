@@ -4,12 +4,14 @@
   import X from 'src/components/icons/x.svelte'
   import About from 'src/components/settings/about.svelte'
   import Options from 'src/components/settings/options.svelte'
+  import Export from 'src/components/settings/export.svelte'
   import Modal from 'src/components/modal/modal.svelte'
 
   export let close: () => void
 
   const tabs = [
     { name: 'options', component: Options },
+    { name: 'export', component: Export },
     { name: 'about', component: About },
   ]
 

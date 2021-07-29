@@ -23,7 +23,7 @@
     selectedSessionId,
     editSession,
     sortCurrentSession,
-    getSessions,
+    getSessionLists,
     saveExistingSession,
     saveWindow,
     openSession,
@@ -73,7 +73,7 @@
 
   const updateSessions = async () => {
     try {
-      $sessionLists = await getSessions()
+      $sessionLists = await getSessionLists()
       if (duplicates) {
         await handleHighlightDuplicateTabUrls(duplicates.sessionId)
       }
