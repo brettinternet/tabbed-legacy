@@ -71,9 +71,7 @@ const parseTitle = (tab: browser.tabs.Tab) => {
       tabTitle = specialTitle
     } else {
       hostname = hostname.replace('www.', '')
-      const reg = new RegExp(
-        /(\.[^\.]{0,2})(\.[^\.]{0,2})(\.*$)|(\.[^\.]*)(\.*$)/
-      )
+      const reg = new RegExp(/(\.[^.]{0,2})(\.[^.]{0,2})(\.*$)|(\.[^.]*)(\.*$)/)
       tabTitle = hostname.replace(reg, '').split('.').pop() || ''
     }
     if (tabTitle.length > MAX_TITLE_LENTH) {
