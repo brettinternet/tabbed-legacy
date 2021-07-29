@@ -112,6 +112,7 @@
   const handlePurgeAllStorage: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
     async () => {
       await purgeAllStorage()
+      window.location.reload()
     }
 
   const handleChangeSortFocusedWindowFirst: svelte.JSX.FormEventHandler<HTMLInputElement> =
