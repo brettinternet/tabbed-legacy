@@ -137,7 +137,12 @@
         class="flex justify-between items-center pr-1 pt-3 pb-2 xs:pr-3 sm:pr-7 lg:pr-3 pl-4 xs:pl-6 sm:pl-10 lg:pl-6"
       >
         <h2>Saved</h2>
-        <button on:click={handleOpenImporter} class="py-2 px-3">
+        <button
+          on:click={handleOpenImporter}
+          class="py-2 px-3"
+          aria-label="Upload sessions"
+          title="Upload sessions"
+        >
           <Upload />
         </button>
       </div>
