@@ -4,14 +4,14 @@
   export let label: OptionalProp<string> = undefined,
     id: OptionalProp<string> = undefined,
     classNames: OptionalProp<string> = undefined,
-    onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLInputElement>> =
+    onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLTextAreaElement>> =
       undefined,
     required: OptionalProp<boolean> = undefined
 
   /**
    * Filter escape key to prevent closing popup, and blur the input instead
    */
-  const handleKeyDown: svelte.JSX.KeyboardEventHandler<HTMLInputElement> = (
+  const handleKeyDown: svelte.JSX.KeyboardEventHandler<HTMLTextAreaElement> = (
     ev
   ) => {
     if (ev.key === 'Escape') {
@@ -31,7 +31,7 @@
     {/if}
   </label>
 {/if}
-<input
+<textarea
   {id}
   class={cn(
     'rounded-sm border border-gray-800 px-2 py-1 dark:bg-gray-900 dark:border-gray-500 dark:text-white',
