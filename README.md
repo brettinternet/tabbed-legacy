@@ -48,11 +48,10 @@ npm test
 
 - [ ] Give previous sessions a name with predominant tabs, like "& 4 more"
 - [ ] Get recently closed sessions and consolidate with previous?
-- [ ] multi-select sessions, tabs and windows
+- [ ] multi-select sessions, windows, and tabs
   - [ ] select box (left) - also move active indicator, context menu for tab actions
-  - [ ] merge multiple sessions
-  - [ ] merge multiple windows
-  - [ ] drag and drop tabs to reorder or assign to new window
+  - [ ] merge multiple sessions & windows
+  - [ ] drag and drop tabs to reorder tabs or assign to new window
 
 #### Layouts
 
@@ -66,13 +65,11 @@ npm test
 #### App
 
 - [ ] implement undo stack
-- [ ] export/import & backup
-- [ ] save window popout position/size
 - [ ] Search tab titles, urls
 
 #### Pending
 
-- [ ] save tab groups
+- [ ] support tab groups
 
 ### Related issues
 
