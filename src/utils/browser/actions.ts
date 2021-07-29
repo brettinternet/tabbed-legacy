@@ -1,4 +1,4 @@
-import { openTabOrFocus } from 'src/utils/browser/query'
+import { openTabOrFocus, openTab } from 'src/utils/browser/query'
 import { tabUrl, popoutUrl } from 'src/utils/env'
 import { readSettings } from './storage'
 
@@ -6,9 +6,15 @@ export const openExtensionPopup = () => browser.browserAction.openPopup()
 
 export const openExtensionSidebar = async () => browser.sidebarAction.open()
 
-export const openExtensionTab = async () => {
+export const openExtensionNewTab = async () => {
   const url = browser.runtime.getURL(tabUrl)
-  await openTabOrFocus({ url }, browser.extension.inIncognitoContext)
+  await openTab({ url }, browser.extension.inIncognitoContext)
+}
+
+export const openExtensionExistingTab = async () => {
+  const url = browser.runtime.getURL(tabUrl)
+  const incognito = browser.extension.inIncognitoContext
+  await openTabOrFocus({ url }, incognito)
 }
 
 export const openExtensionPopout = async () => {

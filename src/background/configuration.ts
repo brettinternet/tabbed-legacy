@@ -1,7 +1,8 @@
 import {
   openExtensionPopup,
   openExtensionSidebar,
-  openExtensionTab,
+  openExtensionNewTab,
+  openExtensionExistingTab,
   openExtensionPopout,
 } from 'src/utils/browser/actions'
 import { popupUrl, sidebarUrl } from 'src/utils/env'
@@ -55,7 +56,7 @@ const setupMenus = async (popupDisabled?: boolean) => {
   browser.contextMenus.create({
     title: 'Open in tab',
     contexts: ['browser_action'],
-    onclick: openExtensionTab,
+    onclick: openExtensionNewTab,
   })
 
   browser.contextMenus.create({
@@ -95,20 +96,20 @@ export const loadActions = async (
   if (extensionClickAction === extensionClickActions.TAB) {
     await disablePopup()
     browser.browserAction.onClicked.removeListener(openExtensionSidebar)
-    browser.browserAction.onClicked.addListener(openExtensionTab)
+    browser.browserAction.onClicked.addListener(openExtensionExistingTab)
   } else if (
     extensionClickAction === extensionClickActions.SIDEBAR &&
     !!browser.sidebarAction
   ) {
     await disablePopup()
-    browser.browserAction.onClicked.removeListener(openExtensionTab)
+    browser.browserAction.onClicked.removeListener(openExtensionExistingTab)
     await browser.sidebarAction.setPanel({
       panel: sidebarUrl,
     })
     browser.browserAction.onClicked.addListener(openExtensionSidebar)
   } else {
     browser.browserAction.onClicked.removeListener(openExtensionSidebar)
-    browser.browserAction.onClicked.removeListener(openExtensionTab)
+    browser.browserAction.onClicked.removeListener(openExtensionExistingTab)
     await enablePopup()
   }
 
