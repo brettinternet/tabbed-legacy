@@ -74,18 +74,18 @@ import {
   findDuplicateSessionTabs,
   importSessionsFromText,
 } from './sessions'
-import { updateSessionMessage } from './message-emitters'
 
 const logContext = 'background/listeners'
 const BADGE_BACKGROUND_COLOR = '#3b82f6'
+
+const updateSessionDebounce = debounce(updateSession, 250)
 
 const handleClosedWindow = async (closedWindowId: number) => {
   log.debug(logContext, 'handleClosedWindow()', closedWindowId)
 
   try {
     await autoSaveSession(closedWindowId)
-    const sessions = await getSessionLists()
-    await updateSessionMessage(sessions)
+    await updateSessionDebounce()
   } catch (err) {
     log.error(logContext, 'handleClosedWindow', err)
   }
@@ -100,7 +100,7 @@ const loadClosedWindowListener = (
     browser.windows.onRemoved.addListener(handleClosedWindow)
   } else {
     browser.windows.onRemoved.removeListener(handleClosedWindow)
-    browser.windows.onRemoved.addListener(updateSession)
+    browser.windows.onRemoved.addListener(updateSessionDebounce)
   }
 }
 
@@ -256,11 +256,11 @@ const setupSessionListeners = () => {
     }
   )
 
-  browser.windows.onCreated.addListener(updateSession)
-  browser.tabs.onUpdated.addListener(updateSession)
-  browser.tabs.onDetached.addListener(updateSession)
-  browser.tabs.onRemoved.addListener(updateSession)
-  browser.tabs.onMoved.addListener(updateSession)
+  browser.windows.onCreated.addListener(updateSessionDebounce)
+  browser.tabs.onUpdated.addListener(updateSessionDebounce)
+  browser.tabs.onDetached.addListener(updateSessionDebounce)
+  browser.tabs.onRemoved.addListener(updateSessionDebounce)
+  browser.tabs.onMoved.addListener(updateSessionDebounce)
 }
 
 const updateTabCountBadge = async () => {
