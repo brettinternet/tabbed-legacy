@@ -34,7 +34,9 @@ export default {
         'process.env.NODE_ENV': JSON.stringify(environment),
         'process.env.BUILD_TIME': () => JSON.stringify(new Date().getTime()),
         'process.env.BUILD_VERSION': JSON.stringify(pkg.version),
-        'process.env.APP_NAME': JSON.stringify(pkg.name),
+        'process.env.APP_NAME': JSON.stringify(
+          pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1)
+        ),
       },
     }),
     alias({
