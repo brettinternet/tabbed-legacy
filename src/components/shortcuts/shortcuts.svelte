@@ -49,6 +49,10 @@
           <th class={th}><Kbd>`</Kbd></th>
           <td class={td}>Toggle settings display</td>
         </tr>
+        <tr>
+          <th class={th}><Kbd>i</Kbd></th>
+          <td class={td}>Open import form</td>
+        </tr>
       </tbody>
     </table>
   </div>

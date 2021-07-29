@@ -14,6 +14,8 @@
     DownloadSessionsOptions,
   } from 'src/utils/messages'
   import { contextIds } from 'src/components/context-menu/store'
+  import { modal } from 'src/components/modal/store'
+  import Upload from 'src/components/icons/upload.svelte'
   import ViewButton from './view-button.svelte'
   import WindowList from './window-list.svelte'
   import SessionControl from './control.svelte'
@@ -54,6 +56,10 @@
 
   const toggleViewAll = () => {
     viewAllPrevious = !viewAllPrevious
+  }
+
+  const handleOpenImporter = () => {
+    modal.importer.set(true)
   }
 
   $: unsavedSessions = [sessionLists.current, ...sessionLists.previous].slice(
@@ -127,7 +133,14 @@
     {/if}
 
     {#if sessionLists.saved.length > 0}
-      <h2 class="p-4 xs:px-6 sm:px-10 pt-8 pb-4 lg:px-6">Saved</h2>
+      <div
+        class="flex justify-between items-center pr-1 pt-3 pb-2 xs:pr-3 sm:pr-7 lg:pr-3 pl-4 xs:pl-6 sm:pl-10 lg:pl-6"
+      >
+        <h2>Saved</h2>
+        <button on:click={handleOpenImporter} class="py-2 px-3">
+          <Upload />
+        </button>
+      </div>
 
       {#each sessionLists.saved as session (session.id)}
         <ViewButton

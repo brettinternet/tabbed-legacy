@@ -34,7 +34,7 @@ const setupShortcuts = (enabled: boolean) => {
   log.debug(logContext, 'setupShortcuts', enabled)
 
   if (enabled) {
-    hotkeys('shift+/,esc,/,`', shortcutScopes.ENABLED, (event, handler) => {
+    hotkeys('shift+/,esc,/,`,i', shortcutScopes.ENABLED, (event, handler) => {
       if (enabled) {
         event.preventDefault()
         switch (handler.key) {
@@ -58,6 +58,9 @@ const setupShortcuts = (enabled: boolean) => {
           }
           case '`':
             modal.settings.toggle()
+            break
+          case 'i':
+            modal.importer.set(true)
             break
         }
       }

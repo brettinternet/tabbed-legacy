@@ -11,6 +11,7 @@
   import Sessions from 'src/components/sessions/sessions.svelte'
   import SettingsModal from 'src/components/settings/settings.svelte'
   import ShortcutsModal from 'src/components/shortcuts/shortcuts.svelte'
+  import UploaderModal from 'src/components/import/import.svelte'
   import Overlay from 'src/components/modal/overlay.svelte'
   import ContextMenu from 'src/components/context-menu/context-menu.svelte'
 
@@ -46,6 +47,9 @@
   {/if}
   {#if $modal.shortcuts}
     <ShortcutsModal close={modal.off} />
+  {/if}
+  {#if $modal.importer}
+    <UploaderModal />
   {/if}
   {#if $someModal}
     <Overlay />
