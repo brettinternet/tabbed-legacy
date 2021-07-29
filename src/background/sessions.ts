@@ -600,7 +600,7 @@ export const downloadSessions = async ({
 
 export const importSessionsFromText = async (content?: string) => {
   if (content) {
-    const data: SessionDataExport = JSON.parse(content)
+    const data = JSON.parse(content) as SessionDataExport
     log.debug(logContext, 'importSessionsFromText()', 'parsed:', data)
 
     if (!data.sessions || !Array.isArray(data.sessions)) {
