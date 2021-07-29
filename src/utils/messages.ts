@@ -158,6 +158,14 @@ export type DiscardTabsMessage = MessageWithValue<
   { tabIds: number | number[] }
 >
 
+export const MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS =
+  'find_duplicate_session_tabs'
+export type FindDuplicateSessionTabsMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS,
+  { sessionId: string }
+>
+export type FindDuplicateSessionTabsResponse = string[] // urls
+
 // download/backup
 export type DownloadSessionsOptions = {
   sessionIds?: string | string[]
@@ -168,10 +176,9 @@ export type DownloadSessionsMessage = MessageWithValue<
   DownloadSessionsOptions
 >
 
-export const MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS =
-  'find_duplicate_session_tabs'
-export type FindDuplicateSessionTabsMessage = MessageWithValue<
-  typeof MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS,
-  { sessionId: string }
+export const MESSAGE_TYPE_IMPORT_SESSIONS_FROM_TEXT =
+  'import_sessions_from_text'
+export type ImportSessionsFromTextMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_IMPORT_SESSIONS_FROM_TEXT,
+  { content: string }
 >
-export type FindDuplicateSessionTabsResponse = string[] // urls

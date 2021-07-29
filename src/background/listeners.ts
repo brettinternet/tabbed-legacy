@@ -22,6 +22,7 @@ import {
   MESSAGE_TYPE_MOVE_TABS,
   MESSAGE_TYPE_DOWNLOAD_SESSIONS,
   MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS,
+  MESSAGE_TYPE_IMPORT_SESSIONS_FROM_TEXT,
 } from 'src/utils/messages'
 import type {
   ReloadActionsMessage,
@@ -44,6 +45,7 @@ import type {
   MoveTabsMessage,
   DownloadSessionsMessage,
   FindDuplicateSessionTabsMessage,
+  ImportSessionsFromTextMessage,
 } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { updateLogLevel, log } from 'src/utils/logger'
@@ -67,6 +69,7 @@ import {
   moveTabs,
   downloadSessions,
   findDuplicateSessionTabs,
+  importSessionsFromText,
 } from './sessions'
 import { updateSessionMessage } from './message-emitters'
 
@@ -234,6 +237,16 @@ const setupSessionListeners = () => {
     (message: FindDuplicateSessionTabsMessage) => {
       if (message.type === MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS) {
         return findDuplicateSessionTabs(message.value.sessionId)
+      }
+
+      return false
+    }
+  )
+
+  browser.runtime.onMessage.addListener(
+    (message: ImportSessionsFromTextMessage) => {
+      if (message.type === MESSAGE_TYPE_IMPORT_SESSIONS_FROM_TEXT) {
+        return importSessionsFromText(message.value.content)
       }
 
       return false

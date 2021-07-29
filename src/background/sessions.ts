@@ -518,18 +518,42 @@ export const moveTabs = async ({
   await browser.tabs.move(tabIds, options)
 }
 
+export const findDuplicateSessionTabs = async (sessionId: string) => {
+  const session = await findSession(sessionId)
+  if (session) {
+    const tabUrls = session.windows.reduce((acc, w) => {
+      if (w.tabs) {
+        const urls = w.tabs.reduce(
+          (_acc, { url }) => (url ? _acc.concat(url) : _acc),
+          [] as string[]
+        )
+        return acc.concat(urls)
+      }
+      return acc
+    }, [] as string[])
+    return findDuplicates(tabUrls)
+  } else {
+    throwSessionId(sessionId)
+  }
+}
+
+type SessionDataExport = {
+  exportedDate: Date
+  sessions?: Session[]
+}
+
 export const downloadSessions = async ({
   sessionIds,
 }: DownloadSessionsOptions) => {
   log.debug(logContext, 'downloadSession()', { sessionIds })
 
-  let data: unknown
+  let exportSessions: Session[] | undefined
   let title = appName
   if (isDefined(sessionIds) && !Array.isArray(sessionIds)) {
     const sessionId = sessionIds
     const session = await findSession(sessionId)
     if (session) {
-      data = [session]
+      exportSessions = [session]
       if (session.title) {
         title = session.title
           .replace(/\\|\/|:|\?|\.|"|<|>|\|/g, '-')
@@ -543,11 +567,16 @@ export const downloadSessions = async ({
     if (sessionIds) {
       sessions = sessions.filter((s) => sessionIds.includes(s.id))
     }
-    data = sessions
+    exportSessions = sessions
   }
 
-  if (data) {
-    const timestamp = lightFormat(new Date(), 'yyyy-MM-dd-hh-mm-ss-SS')
+  if (exportSessions) {
+    const now = new Date()
+    const timestamp = lightFormat(now, 'yyyy-MM-dd-hh-mm-ss-SS')
+    const data: SessionDataExport = {
+      exportedDate: now,
+      sessions: exportSessions,
+    }
     const filename = `${title}-${timestamp}.json`
     const url = window.URL.createObjectURL(
       new Blob([JSON.stringify(data, null, '\t')], {
@@ -569,21 +598,25 @@ export const downloadSessions = async ({
   }
 }
 
-export const findDuplicateSessionTabs = async (sessionId: string) => {
-  const session = await findSession(sessionId)
-  if (session) {
-    const tabUrls = session.windows.reduce((acc, w) => {
-      if (w.tabs) {
-        const urls = w.tabs.reduce(
-          (_acc, { url }) => (url ? _acc.concat(url) : _acc),
-          [] as string[]
-        )
-        return acc.concat(urls)
-      }
-      return acc
-    }, [] as string[])
-    return findDuplicates(tabUrls)
+export const importSessionsFromText = async (content?: string) => {
+  if (content) {
+    const data: SessionDataExport = JSON.parse(content)
+    log.debug(logContext, 'importSessionsFromText()', 'parsed:', data)
+
+    if (!data.sessions || !Array.isArray(data.sessions)) {
+      throw Error('Unrecognized data format, sessions not found')
+    }
+
+    if (!data.sessions[0]?.id) {
+      throw Error('No sessions found')
+    }
+
+    const tasks = data.sessions.map(async (session) => {
+      await saveNewSession(localStorageKeys.USER_SAVED_SESSIONS, session)
+    })
+    await Promise.all(tasks)
+    await updateSession()
   } else {
-    throwSessionId(sessionId)
+    throw Error('No content found in session import')
   }
 }
