@@ -59,14 +59,25 @@ export type SessionLists = {
 
 const getSessionType = (key: LocalStorageKey) => {
   switch (key) {
-    case 'current_session':
+    case localStorageKeys.CURRENT_SESSION:
       return sessionType.CURRENT
-    case 'previous_sessions':
+    case localStorageKeys.PREVIOUS_SESSIONS:
       return sessionType.PREVIOUS
-    case 'user_saved_sessions':
+    case localStorageKeys.USER_SAVED_SESSIONS:
     default:
       return sessionType.SAVED
   }
+}
+
+const checkCollectionKey = (key: LocalStorageKey): boolean => {
+  if (
+    key === localStorageKeys.PREVIOUS_SESSIONS ||
+    key === localStorageKeys.USER_SAVED_SESSIONS
+  ) {
+    return true
+  }
+
+  return false
 }
 
 /**
@@ -91,10 +102,14 @@ const saveSessionToCollection = async (
   key: LocalStorageKey,
   session: Session
 ) => {
-  const existing = await readSessionCollection(key)
-  await browser.storage.local.set({
-    [key]: [session, ...(existing || [])],
-  })
+  if (checkCollectionKey(key)) {
+    const existing = await readSessionCollection(key)
+    await browser.storage.local.set({
+      [key]: [session, ...(existing || [])],
+    })
+  } else {
+    throw Error(`${key} is not a collection storage key`)
+  }
 }
 
 /**
@@ -182,23 +197,31 @@ export const deleteSessionInCollection = async (
   key: LocalStorageKey,
   sessionId: string
 ) => {
-  const existing = await readSessionCollection(key)
-  await browser.storage.local.set({
-    [key]: existing.filter(({ id }) => id !== sessionId),
-  })
+  if (checkCollectionKey(key)) {
+    const existing = await readSessionCollection(key)
+    await browser.storage.local.set({
+      [key]: existing.filter(({ id }) => id !== sessionId),
+    })
+  } else {
+    throw Error(`${key} is not a collection storage key`)
+  }
 }
 
 export const patchSessionInCollection = async (
   key: LocalStorageKey,
   session: Session
 ) => {
-  const existing = await readSessionCollection(key)
-  const updateIndex = existing.findIndex(({ id }) => id === session.id)
-  session.lastModifiedDate = new Date().toJSON()
-  existing.splice(updateIndex, 1, session)
-  await browser.storage.local.set({
-    [key]: existing,
-  })
+  if (checkCollectionKey(key)) {
+    const existing = await readSessionCollection(key)
+    const updateIndex = existing.findIndex(({ id }) => id === session.id)
+    session.lastModifiedDate = new Date().toJSON()
+    existing.splice(updateIndex, 1, session)
+    await browser.storage.local.set({
+      [key]: existing,
+    })
+  } else {
+    throw Error(`${key} is not a collection storage key`)
+  }
 }
 
 /**
