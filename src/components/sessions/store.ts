@@ -4,7 +4,7 @@ import { log } from 'src/utils/logger'
 import { sortWindows } from 'src/utils/browser/query'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
 import {
-  MESSAGE_TYPE_GET_SESSIONS_LIST,
+  MESSAGE_TYPE_GET_SESSION_LISTS,
   MESSAGE_TYPE_SAVE_EXISTING_SESSION,
   MESSAGE_TYPE_SAVE_WINDOW,
   MESSAGE_TYPE_OPEN_SESSION,
@@ -24,8 +24,8 @@ import {
   FindDuplicateSessionTabsResponse,
 } from 'src/utils/messages'
 import type {
-  GetSessionsListMessage,
-  GetSessionsListResponse,
+  GetSessionListsMessage,
+  GetSessionListsResponse,
   SaveExistingSessionMessage,
   SaveWindowMessage,
   OpenSessionMessage,
@@ -73,11 +73,11 @@ export const sortCurrentSession = async (activeWindowId?: number) => {
   }
 }
 
-export const getSessions = async (): Promise<GetSessionsListResponse> => {
-  log.debug(logContext, 'getSessions()')
+export const getSessionLists = async (): Promise<GetSessionListsResponse> => {
+  log.debug(logContext, 'getSessionLists()')
 
-  const message: GetSessionsListMessage = {
-    type: MESSAGE_TYPE_GET_SESSIONS_LIST,
+  const message: GetSessionListsMessage = {
+    type: MESSAGE_TYPE_GET_SESSION_LISTS,
   }
   return await browser.runtime.sendMessage(message)
 }

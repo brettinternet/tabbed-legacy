@@ -1,5 +1,5 @@
 import type { Settings } from 'src/utils/settings'
-import type { SessionLists } from 'src/utils/browser/storage'
+import type { SessionLists, Session } from 'src/utils/browser/storage'
 
 type MessageWithValue<T, U = undefined> = {
   type: T
@@ -49,11 +49,17 @@ export type UpdateSessionsListMessage = MessageWithValue<
   SessionLists
 >
 
-export const MESSAGE_TYPE_GET_SESSIONS_LIST = 'get_sessions'
-export type GetSessionsListMessage = Message<
-  typeof MESSAGE_TYPE_GET_SESSIONS_LIST
+export const MESSAGE_TYPE_GET_SESSION_LISTS = 'get_session_lists'
+export type GetSessionListsMessage = Message<
+  typeof MESSAGE_TYPE_GET_SESSION_LISTS
 >
-export type GetSessionsListResponse = SessionLists
+export type GetSessionListsResponse = SessionLists
+
+export const MESSAGE_TYPE_GET_ALL_SESSIONS = 'get_all_sessions'
+export type GetAllSessionsMessage = Message<
+  typeof MESSAGE_TYPE_GET_ALL_SESSIONS
+>
+export type GetAllSessionsResponse = Session[]
 
 // session actions
 

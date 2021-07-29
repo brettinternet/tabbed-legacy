@@ -5,7 +5,7 @@ import {
   MESSAGE_TYPE_RELOAD_ACTIONS,
   MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
   MESSAGE_TYPE_UPDATE_LOG_LEVEL,
-  MESSAGE_TYPE_GET_SESSIONS_LIST,
+  MESSAGE_TYPE_GET_SESSION_LISTS,
   MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
   MESSAGE_TYPE_SAVE_EXISTING_SESSION,
   MESSAGE_TYPE_SAVE_WINDOW,
@@ -24,12 +24,13 @@ import {
   MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS,
   MESSAGE_TYPE_IMPORT_SESSIONS_FROM_TEXT,
   MESSAGE_TYPE_UPDATE_POPOUT_POSITION,
+  MESSAGE_TYPE_GET_ALL_SESSIONS,
 } from 'src/utils/messages'
 import type {
   ReloadActionsMessage,
   ReloadTabListenersMessage,
   UpdateLogLevelMessage,
-  GetSessionsListMessage,
+  GetSessionListsMessage,
   ReloadClosedWindowListenerMessage,
   UpdatePopoutPositionMessage,
   SaveExistingSessionMessage,
@@ -48,6 +49,7 @@ import type {
   DownloadSessionsMessage,
   FindDuplicateSessionTabsMessage,
   ImportSessionsFromTextMessage,
+  GetAllSessionsMessage,
 } from 'src/utils/messages'
 import type { Settings } from 'src/utils/settings'
 import { writeSetting } from 'src/utils/browser/storage'
@@ -55,6 +57,7 @@ import { updateLogLevel, log } from 'src/utils/logger'
 import { loadActions } from './configuration'
 import {
   getSessionLists,
+  getAllSessions,
   updateSession,
   autoSaveSession,
   saveExistingSession,
@@ -112,9 +115,17 @@ const setupSessionListeners = () => {
     void autoSaveSession()
   }
 
-  browser.runtime.onMessage.addListener((message: GetSessionsListMessage) => {
-    if (message.type === MESSAGE_TYPE_GET_SESSIONS_LIST) {
+  browser.runtime.onMessage.addListener((message: GetSessionListsMessage) => {
+    if (message.type === MESSAGE_TYPE_GET_SESSION_LISTS) {
       return getSessionLists()
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: GetAllSessionsMessage) => {
+    if (message.type === MESSAGE_TYPE_GET_ALL_SESSIONS) {
+      return getAllSessions()
     }
 
     return false

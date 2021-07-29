@@ -68,7 +68,7 @@ export const getSessionLists = async (): Promise<SessionLists> => {
   }
 }
 
-const getSessions = async (): Promise<Session[]> => {
+export const getAllSessions = async (): Promise<Session[]> => {
   const sessionLists = await getSessionLists()
   return [sessionLists.current, ...sessionLists.previous, ...sessionLists.saved]
 }
@@ -157,7 +157,7 @@ export const autoSaveSession = async (closedWindowId?: number) => {
 }
 
 const findSession = async (sessionId: Session['id']) => {
-  const sessions = await getSessions()
+  const sessions = await getAllSessions()
   return sessions.find((s) => s.id === sessionId)
 }
 
@@ -552,7 +552,7 @@ export const findDuplicateSessionTabs = async (sessionId: string) => {
   }
 }
 
-type SessionDataExport = {
+export type SessionDataExport = {
   exportedDate: Date
   sessions?: Session[]
 }
@@ -578,7 +578,7 @@ export const downloadSessions = async ({
       throwSessionId(sessionId)
     }
   } else {
-    let sessions = await getSessions()
+    let sessions = await getAllSessions()
     if (sessionIds) {
       sessions = sessions.filter((s) => sessionIds.includes(s.id))
     }
