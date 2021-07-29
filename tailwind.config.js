@@ -28,6 +28,7 @@ module.exports = {
       },
       maxHeight: {
         modal: 'calc(100vh - 10rem)',
+        'import-textarea': 'calc(100vh - 30rem)',
       },
       minWidth: {
         5: '1.25rem', // `window-list.svelte` image container

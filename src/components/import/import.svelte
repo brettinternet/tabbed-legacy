@@ -6,6 +6,7 @@
   import FileButton from 'src/components/button/file.svelte'
   import { modal } from 'src/components/modal/store'
   import { importSessionsFromText } from 'src/components/import/store'
+  import { isPopup } from 'src/components/app/store'
 
   let errorMessage: string | undefined,
     form: HTMLFormElement | undefined,
@@ -91,7 +92,7 @@
 <Modal
   close={handleClose}
   ariaLabelledby={headerId}
-  classNames="max-w-screen-sm"
+  classNames="lg:max-w-screen-sm"
 >
   <Header onClickClose={handleClose} title="Import" {headerId} />
   <form
@@ -101,8 +102,7 @@
   >
     <div class="w-full">
       <Textarea
-        style="max-height:calc(100vh - 30rem)"
-        classNames="w-full"
+        classNames="w-full max-h-import-textarea"
         aria-label="Import session"
         rows="12"
         placeholder="Paste exported session content"
@@ -126,6 +126,12 @@
           multiple
           secondary>Select file</FileButton
         >
+        {#if isPopup}
+          <p class="text-gray-500 dark:text-gray-600 text-xs mt-2">
+            Using "Select file" may cause the popup to close. Try opening the
+            extension in a new tab first.
+          </p>
+        {/if}
         {#if files}
           <ol>
             {#each files as { name }}
