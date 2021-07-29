@@ -60,7 +60,11 @@
   const headerId = 'session-editing'
 </script>
 
-<Modal close={handleClose} ariaLabelledby={headerId}>
+<Modal
+  close={handleClose}
+  ariaLabelledby={headerId}
+  classNames="lg:max-w-screen-xxs"
+>
   <Header onClickClose={handleClose} title="Session" {headerId} />
   <form
     bind:this={form}

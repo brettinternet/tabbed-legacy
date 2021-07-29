@@ -18,7 +18,12 @@
   const headerHeight = 76
 </script>
 
-<Modal {close} ariaLabelledby={headerId} stretch>
+<Modal
+  {close}
+  ariaLabelledby={headerId}
+  stretchHeight
+  classNames="lg:max-w-screen-sm"
+>
   <header
     class="flex flex-row justify-between p-5"
     style={`height:${headerHeight}px`}

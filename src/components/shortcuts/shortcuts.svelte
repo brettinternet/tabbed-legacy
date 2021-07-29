@@ -11,7 +11,12 @@
   const td = 'text-gray-600 dark:text-gray-300'
 </script>
 
-<Modal {close} ariaLabelledby={headerId} stretch>
+<Modal
+  {close}
+  ariaLabelledby={headerId}
+  stretchHeight
+  classNames="lg:max-w-screen-sm"
+>
   <Header
     headerStyle={`height:${headerHeight}px`}
     onClickClose={close}

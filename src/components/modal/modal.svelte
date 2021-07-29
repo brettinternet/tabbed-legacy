@@ -12,7 +12,7 @@
 
   export let close: () => void,
     ariaLabelledby: string,
-    stretch = false,
+    stretchHeight = false,
     classNames: OptionalProp<ClassnamesArgument> = undefined
 
   let trap: FocusTrap, modal: HTMLElement | null, main: HTMLElement | null
@@ -64,9 +64,8 @@
     'modal bg-white dark:bg-gray-900 dark:text-white',
     'fixed z-modal top-0 left-0 right-0 bottom-0 overflow-hidden',
     'lg:top-20 lg:left-1/2 lg:right-auto lg:bottom-auto lg:transform lg:-translate-x-1/2 lg:border lg:border-gray-400 lg:shadow-lg lg:rounded-sm',
-    stretch
-      ? 'lg:w-full lg:max-w-screen-sm lg:h-full lg:max-h-modal'
-      : 'lg:w-full lg:max-w-screen-xxs lg:h-auto',
+    'lg:w-full',
+    stretchHeight ? 'lg:h-full lg:max-h-modal' : 'lg:h-auto',
     classNames
   )}
   use:portal
