@@ -49,6 +49,7 @@
 <button
   data-session-id={session.id}
   data-context-id={contextIds.SESSION}
+  data-session-type={session.type}
   aria-expanded={selected}
   on:click={onClick}
   on:contextmenu={onContextMenu}

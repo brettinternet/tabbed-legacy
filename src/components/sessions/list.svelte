@@ -92,6 +92,7 @@
           class="lg:hidden p-4 xs:px-6 sm:px-10 py-4"
           data-context-id={contextIds.SESSION}
           data-session-id={session.id}
+          data-session-type={session.type}
         >
           <SessionControl
             {session}
@@ -164,6 +165,7 @@
             class="lg:hidden p-4 xs:px-6 sm:px-10 py-4"
             data-context-id={contextIds.SESSION}
             data-session-id={session.id}
+            data-session-type={session.type}
           >
             <SessionControl
               {session}
@@ -197,6 +199,7 @@
         class="flex-1"
         data-context-id={contextIds.SESSION}
         data-session-id={selectedSession.id}
+        data-session-type={selectedSession.type}
       >
         <SessionControl
           session={selectedSession}
