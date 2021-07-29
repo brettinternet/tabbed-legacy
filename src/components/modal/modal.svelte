@@ -27,7 +27,10 @@
       if (modal) {
         try {
           disableBodyScroll(modal)
-          trap = createFocusTrap(modal)
+          trap = createFocusTrap(modal, {
+            // Escape should destroy the modal first or blur an input
+            escapeDeactivates: false,
+          })
           trap.activate()
         } catch (err) {
           log.error(err)
