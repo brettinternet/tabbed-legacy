@@ -27,6 +27,11 @@
     class="px-7 pb-7 overflow-y-auto scroll"
     style={`height:calc(100% - ${headerHeight}px);`}
   >
+    <p class="mb-3 text-gray-600 dark:text-gray-300">
+      This extension supports context menus. Try right clicking the extension
+      icon, or right clicking over different elements on the page.
+    </p>
+
     <table class="mx-auto">
       <tbody>
         <tr>
