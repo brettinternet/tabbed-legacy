@@ -25,12 +25,14 @@ import {
   MESSAGE_TYPE_IMPORT_SESSIONS_FROM_TEXT,
   MESSAGE_TYPE_UPDATE_POPOUT_POSITION,
   MESSAGE_TYPE_GET_ALL_SESSIONS,
+  MESSAGE_TYPE_QUERY_SESSION,
 } from 'src/utils/messages'
 import type {
   ReloadActionsMessage,
   ReloadTabListenersMessage,
   UpdateLogLevelMessage,
   GetSessionListsMessage,
+  QuerySessionMessage,
   ReloadClosedWindowListenerMessage,
   UpdatePopoutPositionMessage,
   SaveExistingSessionMessage,
@@ -76,6 +78,7 @@ import {
   downloadSessions,
   findDuplicateSessionTabs,
   importSessionsFromText,
+  querySession,
 } from './sessions'
 
 const logContext = 'background/listeners'
@@ -126,6 +129,14 @@ const setupSessionListeners = () => {
   browser.runtime.onMessage.addListener((message: GetAllSessionsMessage) => {
     if (message.type === MESSAGE_TYPE_GET_ALL_SESSIONS) {
       return getAllSessions()
+    }
+
+    return false
+  })
+
+  browser.runtime.onMessage.addListener((message: QuerySessionMessage) => {
+    if (message.type === MESSAGE_TYPE_QUERY_SESSION) {
+      return querySession(message.value)
     }
 
     return false

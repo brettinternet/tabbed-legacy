@@ -31,6 +31,7 @@ import type {
   DownloadSessionsOptions,
   OpenWindowOptions,
   OpenTabOptions,
+  SessionQuery,
 } from 'src/utils/messages'
 import { isDefined, findDuplicates } from 'src/utils/helpers'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
@@ -72,6 +73,20 @@ export const getSessionLists = async (): Promise<SessionLists> => {
 export const getAllSessions = async (): Promise<Session[]> => {
   const sessionLists = await getSessionLists()
   return [sessionLists.current, ...sessionLists.previous, ...sessionLists.saved]
+}
+
+export const querySession = async ({
+  current,
+  sessionId,
+}: SessionQuery): Promise<Session | undefined> => {
+  if (current) {
+    return await getCurrentSession()
+  }
+
+  const sessions = await getAllSessions()
+  if (sessionId) {
+    return sessions.find((s) => s.id === sessionId)
+  }
 }
 
 export const updateSessions = async () => {
@@ -144,15 +159,14 @@ export const autoSaveSession = async (closedWindowId?: number) => {
       )
     }
 
-    const title = getSessionTitle(currentSession.windows)
     // otherwise save the entire session
     // TODO: possibly compare current session to be saved with most recent to determine if session is unique enough to be saved?
     // TODO: consolidate with browser.sessions.getRecentlyClosed() https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/sessions/getRecentlyClosed
-    await saveNewSession(
-      localStorageKeys.PREVIOUS_SESSIONS,
-      currentSession,
-      title
-    )
+    const title = getSessionTitle(currentSession.windows)
+    if (!currentSession.title) {
+      currentSession.title = title
+    }
+    await saveNewSession(localStorageKeys.PREVIOUS_SESSIONS, currentSession)
     await removeSession(localStorageKeys.CURRENT_SESSION)
   }
 }

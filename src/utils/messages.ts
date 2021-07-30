@@ -42,7 +42,7 @@ export type UpdatePopoutPositionMessage = MessageWithValue<
   Settings['popoutState']
 >
 
-// session list actions
+// session list
 export const MESSAGE_TYPE_UPDATE_SESSIONS_LIST = 'update_sessions'
 export type UpdateSessionsListMessage = MessageWithValue<
   typeof MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
@@ -60,6 +60,18 @@ export type GetAllSessionsMessage = Message<
   typeof MESSAGE_TYPE_GET_ALL_SESSIONS
 >
 export type GetAllSessionsResponse = Session[]
+
+// query sessions
+export type SessionQuery = {
+  current?: boolean
+  sessionId?: string
+}
+export const MESSAGE_TYPE_QUERY_SESSION = 'query_session'
+export type QuerySessionMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_QUERY_SESSION,
+  SessionQuery
+>
+export type QuerySessionResponse = Session | undefined
 
 // session actions
 
