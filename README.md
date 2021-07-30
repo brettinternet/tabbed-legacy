@@ -2,7 +2,7 @@
 
 [![Test](https://github.com/brettinternet/tabbed/actions/workflows/test.yml/badge.svg)](https://github.com/brettinternet/tabbed/actions/workflows/test.yml)
 
-Keep tabs on your browser sessions and don't lose track of websites you've tabbed.
+Keep track of your browser sessions and don't lose your tabs.
 
 ## Privacy
 
@@ -54,12 +54,8 @@ npm test
 
 #### Layouts
 
-- [ ] Grid layout ([1](https://github.com/isaacHagoel/svelte-dnd-action), [2](https://github.com/vaheqelyan/svelte-grid))
+- [ ] Grid layout - [1](https://github.com/isaacHagoel/svelte-dnd-action), [2](https://github.com/vaheqelyan/svelte-grid)
   - [ ] zones to move window groups to? current/minimized/saved
-
-#### Accessibility
-
-- [ ] tab-able elements, tab groups that can change focus with arrows (AKA focus rings/focus layers or groups ([1](https://github.com/discord/focus-rings), [2](https://github.com/davidtheclark/focus-group)))
 
 #### App
 
@@ -69,6 +65,16 @@ npm test
 - [ ] load test
 - [ ] documentation
 - [ ] switch to browser i18n, move/configure texts
+
+#### CI
+
+- [ ] setup CD - [1](https://circleci.com/blog/continuously-deploy-a-chrome-extension/), [2](https://medium.com/slido-dev-blog/chrome-extensions-and-continuous-integration-392206f7e414)
+
+#### Wishlist
+
+- [ ] tab-able elements, tab groups that can change focus with arrows; AKA focus rings/focus layers or groups - [1](https://github.com/discord/focus-rings), [2](https://github.com/davidtheclark/focus-group)
+- [ ] Tooltip to suggest shortcut/middle/right click
+- [ ] Hide tabs - [1](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/hide)
 
 #### Pending
 
