@@ -66,6 +66,9 @@ npm test
 - [ ] implement undo stack
 - [ ] Search tab titles, urls
 - [ ] url/regex ignore list
+- [ ] load test
+- [ ] documentation
+- [ ] switch to browser i18n, move/configure texts
 
 #### Pending
 
