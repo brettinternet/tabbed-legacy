@@ -127,7 +127,7 @@
           secondary>Select file</FileButton
         >
         {#if isPopup}
-          <p class="text-gray-500 dark:text-gray-600 text-xs mt-2">
+          <p class="text-gray-500 text-xs mt-2">
             Using "Select file" may cause the popup to close. Try opening the
             extension in a new tab first.
           </p>

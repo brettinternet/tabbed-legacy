@@ -66,7 +66,7 @@
   class={cn(
     'modal bg-white dark:bg-gray-900 dark:text-white',
     'fixed z-modal top-0 left-0 right-0 bottom-0 overflow-hidden',
-    'lg:top-20 lg:left-1/2 lg:right-auto lg:bottom-auto lg:transform lg:-translate-x-1/2 lg:border lg:border-gray-400 lg:shadow-lg lg:rounded-sm',
+    'lg:top-20 lg:left-1/2 lg:right-auto lg:bottom-auto lg:transform lg:-translate-x-1/2 lg:border lg:border-gray-400 lg:shadow-lg lg:rounded-sm lg:dark:border-gray-600',
     'lg:w-full',
     stretchHeight ? 'lg:h-full lg:max-h-modal' : 'lg:h-auto',
     classNames
