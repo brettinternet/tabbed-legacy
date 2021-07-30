@@ -1,8 +1,9 @@
 <script lang="ts">
   import { isLoading } from 'svelte-i18n'
+  import { onMount } from 'svelte'
 
   import './scrollbar.css'
-  import 'src/components/app/listeners'
+  import { setupListeners } from 'src/components/app/listeners'
   import { isPopup } from 'src/components/app/store'
   import { modal, someModal } from 'src/components/modal/store'
   import { settings } from 'src/components/settings/store'
@@ -17,6 +18,8 @@
   import ContextMenu from 'src/components/context-menu/context-menu.svelte'
 
   const logContext = 'components/app/app.svelte'
+
+  onMount(setupListeners)
 
   const openSettings = () => {
     modal.settings.set(true)
