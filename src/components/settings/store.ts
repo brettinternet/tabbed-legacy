@@ -35,6 +35,17 @@ import {
 
 const logContext = 'components/settings/store'
 
+const openSessionEdit = async () => {
+  const sessionId = get(selectedSessionId)
+  if (sessionId) {
+    const session = await querySession({ sessionId })
+    if (session && session.type === sessionType.SAVED) {
+      editSession.set(session)
+      modal.sessionEdit.set(true)
+    }
+  }
+}
+
 const shortcutScopes = {
   ENABLED: 'enabled',
   DISABLED: 'disabled',
@@ -72,17 +83,7 @@ const setupShortcuts = (enabled: boolean) => {
             modal.importer.set(true)
             break
           case 'r': {
-            new Promise(async (resolve) => {
-              const sessionId = get(selectedSessionId)
-              if (sessionId) {
-                const session = await querySession({ sessionId })
-                if (session && session.type === sessionType.SAVED) {
-                  editSession.set(session)
-                  modal.sessionEdit.set(true)
-                }
-                resolve(true)
-              }
-            })
+            void openSessionEdit()
             break
           }
         }
