@@ -185,7 +185,7 @@ export const saveImportedSession = async (session: Session) => {
   if (session.type === sessionType.CURRENT) {
     session.type = sessionType.PREVIOUS
   }
-  let key = getLocalStorageKey(session.type)
+  const key = getLocalStorageKey(session.type)
   await saveSessionToCollection(key, session)
 }
 
