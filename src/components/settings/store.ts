@@ -18,11 +18,20 @@ import {
   MESSAGE_TYPE_UPDATE_LOG_LEVEL,
   MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
 } from 'src/utils/messages'
-import { readSettings, writeSetting } from 'src/utils/browser/storage'
+import {
+  readSettings,
+  sessionType,
+  writeSetting,
+} from 'src/utils/browser/storage'
 import { isPopup } from 'src/components/app/store'
 import { modal, someModal } from 'src/components/modal/store'
 import { updateLogLevel, log } from 'src/utils/logger'
-import { sortCurrentSession } from 'src/components/sessions/store'
+import {
+  sortCurrentSession,
+  selectedSessionId,
+  querySession,
+  editSession,
+} from 'src/components/sessions/store'
 
 const logContext = 'components/settings/store'
 
@@ -34,7 +43,7 @@ const setupShortcuts = (enabled: boolean) => {
   log.debug(logContext, 'setupShortcuts', enabled)
 
   if (enabled) {
-    hotkeys('shift+/,esc,/,`,i', shortcutScopes.ENABLED, (event, handler) => {
+    hotkeys('shift+/,esc,/,`,i,r', shortcutScopes.ENABLED, (event, handler) => {
       if (enabled) {
         event.preventDefault()
         switch (handler.key) {
@@ -62,6 +71,20 @@ const setupShortcuts = (enabled: boolean) => {
           case 'i':
             modal.importer.set(true)
             break
+          case 'r': {
+            new Promise(async (resolve) => {
+              const sessionId = get(selectedSessionId)
+              if (sessionId) {
+                const session = await querySession({ sessionId })
+                if (session && session.type === sessionType.SAVED) {
+                  editSession.set(session)
+                  modal.sessionEdit.set(true)
+                }
+                resolve(true)
+              }
+            })
+            break
+          }
         }
       }
     })

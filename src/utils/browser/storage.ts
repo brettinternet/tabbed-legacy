@@ -156,16 +156,12 @@ export const createSessionFromWindows = async (
  */
 export const saveNewSession = async (
   key: LocalStorageKey,
-  session: Session,
-  title?: string
+  session: Session
 ) => {
   const now = new Date().toJSON()
   session.id = uuidv4()
   session.lastModifiedDate = now
   session.type = getSessionType(key)
-  if (title) {
-    session.title = title
-  }
   if (key === localStorageKeys.CURRENT_SESSION) {
     await saveSingleSession(key, session)
   } else {

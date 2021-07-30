@@ -19,9 +19,8 @@ import {
   MESSAGE_TYPE_DISCARD_TABS,
   MESSAGE_TYPE_MOVE_TABS,
   MESSAGE_TYPE_DOWNLOAD_SESSIONS,
-  FindDuplicateSessionTabsMessage,
   MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS,
-  FindDuplicateSessionTabsResponse,
+  MESSAGE_TYPE_QUERY_SESSION,
 } from 'src/utils/messages'
 import type {
   GetSessionListsMessage,
@@ -45,6 +44,11 @@ import type {
   MoveTabsMessage,
   DownloadSessionsMessage,
   DownloadSessionsOptions,
+  FindDuplicateSessionTabsMessage,
+  FindDuplicateSessionTabsResponse,
+  QuerySessionMessage,
+  QuerySessionResponse,
+  SessionQuery,
 } from 'src/utils/messages'
 
 const logContext = 'components/sessions/store'
@@ -78,6 +82,18 @@ export const getSessionLists = async (): Promise<GetSessionListsResponse> => {
 
   const message: GetSessionListsMessage = {
     type: MESSAGE_TYPE_GET_SESSION_LISTS,
+  }
+  return await browser.runtime.sendMessage(message)
+}
+
+export const querySession = async (
+  query: SessionQuery
+): Promise<QuerySessionResponse> => {
+  log.debug(logContext, 'querySession()', query)
+
+  const message: QuerySessionMessage = {
+    type: MESSAGE_TYPE_QUERY_SESSION,
+    value: query,
   }
   return await browser.runtime.sendMessage(message)
 }

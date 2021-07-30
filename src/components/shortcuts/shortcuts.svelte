@@ -58,6 +58,10 @@
           <th class={th}><Kbd>i</Kbd></th>
           <td class={td}>Open import form</td>
         </tr>
+        <tr>
+          <th class={th}><Kbd>r</Kbd></th>
+          <td class={td}>Rename saved sessions</td>
+        </tr>
       </tbody>
     </table>
   </div>
