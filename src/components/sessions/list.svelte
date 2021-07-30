@@ -189,7 +189,7 @@
         {/if}
       {/each}
     {:else}
-      <p class="text-gray-500 p-4 xs:px-6 sm:px-10 py-4">None</p>
+      <p class="text-gray-500 text-center p-4 xs:px-6 sm:px-10 py-4">None</p>
     {/if}
   </menu>
 
