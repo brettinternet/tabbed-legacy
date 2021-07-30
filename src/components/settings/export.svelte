@@ -1,77 +1,99 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import copy from 'copy-to-clipboard'
 
   import Button from 'src/components/button/button.svelte'
+  import Select from 'src/components/select/select.svelte'
   import Textarea from 'src/components/input/textarea.svelte'
   import { downloadSessions } from 'src/components/sessions/store'
   import { getAllSessions } from 'src/components/settings/handlers'
-  import copy from 'copy-to-clipboard'
   import { isDefined, numberWithCommas, parseNum } from 'src/utils/helpers'
+  import type { Valueof } from 'src/utils/helpers'
+  import type { Session } from 'src/utils/browser/storage'
 
   export let headerId: string
 
   let errorMessage: string | undefined,
     format: HTMLSelectElement | null,
+    sessions: Session[] | undefined,
     exportString: string,
     sessionCount: number,
+    sizeKb: number,
     sizeApproximateKb: string,
     isLoading = true,
     isCopied = false
-  const formats = ['json']
+
+  const formats = {
+    JSON: 'json',
+  }
+
+  const handleChangeFormat = () => {
+    if (sessions) {
+      const selectedFormat = format?.value as Valueof<typeof formats>
+      switch (selectedFormat) {
+        case 'json':
+        default:
+          exportString = JSON.stringify(
+            {
+              sessions,
+            },
+            null,
+            '\t'
+          )
+          break
+      }
+
+      // https://stackoverflow.com/a/63805778
+      const size = new TextEncoder().encode(exportString).length
+      sizeKb = size / 1024
+      if (sizeKb) {
+        const sizeKbStr = sizeKb.toString()
+        const sizeNum = parseNum(sizeKbStr.slice(0, sizeKbStr.indexOf('.')))
+        if (sizeNum) {
+          sizeApproximateKb = numberWithCommas(sizeNum)
+        }
+      }
+      isLoading = false
+    }
+  }
 
   onMount(async () => {
-    const sessions = await getAllSessions()
+    sessions = await getAllSessions()
     sessionCount = sessions.length
-    exportString = JSON.stringify(
-      {
-        sessions,
-      },
-      null,
-      '\t'
-    )
-
-    // https://stackoverflow.com/a/63805778
-    const size = new TextEncoder().encode(exportString).length
-    const sizeKb = size / 1024
-    if (sizeKb) {
-      const sizeKbStr = sizeKb.toString()
-      const sizeNum = parseNum(sizeKbStr.slice(0, sizeKbStr.indexOf('.')))
-      if (sizeNum) {
-        sizeApproximateKb = numberWithCommas(sizeNum)
-      }
-    }
-    isLoading = false
+    handleChangeFormat()
   })
 
   const handleCopyToClipboard: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
-    () => {
+    (ev) => {
+      ev.preventDefault()
       if (exportString) {
         copy(exportString)
         isCopied = true
       }
     }
-  const handleSaveToFile: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
-    async () => {
-      await downloadSessions({})
-    }
+  const handleSaveToFile: svelte.JSX.FormEventHandler<HTMLFormElement> = async (
+    ev
+  ) => {
+    ev.preventDefault()
+    await downloadSessions({})
+  }
 </script>
 
 <h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">Export</h1>
 
-<div class="space-y-3">
+<form on:submit={handleSaveToFile} class="space-y-3">
   <div>
-    <label for="export-format" class="block mb-2">Format</label>
-    <select
-      bind:this={format}
+    <Select
+      label="Format"
+      options={Object.values(formats)}
+      selected={formats.JSON}
       id="export-format"
       name="format"
-      class="block px-2 py-1"
+      required
       disabled
-    >
-      {#each formats as f}
-        <option value={f}>{f}</option>
-      {/each}
-    </select>
+      onBlur={handleChangeFormat}
+      bind:select={format}
+    />
   </div>
 
   <Textarea
@@ -106,9 +128,14 @@
   {/if}
   <div class="flex flex-row items-center justify-end space-x-2">
     <Button onClick={handleCopyToClipboard} secondary>Copy to clipboard</Button>
-    <Button onClick={handleSaveToFile}>Save to file</Button>
+    <Button type="submit">Save to file</Button>
   </div>
+  {#if sizeKb > 500}
+    <p class="text-gray-500">
+      Copying a large amount of text may cause issues on your system.
+    </p>
+  {/if}
   {#if isCopied}
     <p class="text-gray-500">&#x2713; Copied</p>
   {/if}
-</div>
+</form>

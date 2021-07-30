@@ -8,12 +8,12 @@ describe('components/input/input.svelte', () => {
     const screen = render(Input, {
       props: {
         onChange: mockChangeHandler,
-        label: 'Name',
-        id: 'name',
+        label: 'Test',
+        id: 'my-input',
       },
     })
 
-    const input = screen.getByLabelText('Name')
+    const input = screen.getByLabelText('Test')
     await fireEvent.change(input, { target: { value: 'Johnny Bravo' } })
     expect(input).toHaveValue('Johnny Bravo')
     expect(mockChangeHandler).toHaveBeenCalled()
@@ -22,12 +22,12 @@ describe('components/input/input.svelte', () => {
   it('blurs input on escape key', async () => {
     const screen = render(Input, {
       props: {
-        label: 'Name',
-        id: 'name',
+        label: 'Test',
+        id: 'my-input',
       },
     })
 
-    const input = screen.getByLabelText('Name')
+    const input = screen.getByLabelText('Test')
     input.focus()
     expect(input).toHaveFocus()
     await fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' })

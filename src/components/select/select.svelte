@@ -2,16 +2,19 @@
   import cn from 'classnames'
 
   export let label: OptionalProp<string> = undefined,
+    options: string[],
+    selected: OptionalProp<string> = undefined,
     id: OptionalProp<string> = undefined,
     classNames: OptionalProp<string> = undefined,
-    onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLInputElement>> =
+    onBlur: OptionalProp<svelte.JSX.FocusEventHandler<HTMLSelectElement>> =
       undefined,
-    required: OptionalProp<boolean> = undefined
+    required: OptionalProp<boolean> = undefined,
+    select: any = undefined
 
   /**
    * Filter escape key to prevent closing popup, and blur the input instead
    */
-  const handleKeyDown: svelte.JSX.KeyboardEventHandler<HTMLInputElement> = (
+  const handleKeyDown: svelte.JSX.KeyboardEventHandler<HTMLSelectElement> = (
     ev
   ) => {
     if (ev.key === 'Escape') {
@@ -31,14 +34,19 @@
     {/if}
   </label>
 {/if}
-<input
+<select
   {id}
   class={cn(
     'rounded-sm border border-gray-800 px-2 py-1 dark:bg-gray-900 dark:border-gray-500 dark:text-white',
     classNames
   )}
-  on:change={onChange}
+  bind:this={select}
+  on:blur={onBlur}
   on:keydown={handleKeyDown}
   {required}
   {...$$restProps}
-/>
+>
+  {#each options as option}
+    <option value={option} selected={option === selected}>{option}</option>
+  {/each}
+</select>
