@@ -62,6 +62,10 @@
           <th class={th}><Kbd>r</Kbd></th>
           <td class={td}>Rename saved sessions</td>
         </tr>
+        <tr>
+          <th class={th}><Kbd>del</Kbd>, <Kbd>backspace</Kbd></th>
+          <td class={td}>Delete focused sessions, windows and tabs</td>
+        </tr>
       </tbody>
     </table>
   </div>

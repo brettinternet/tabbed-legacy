@@ -9,12 +9,12 @@
   import { layouts } from 'src/utils/settings'
   import type { Layout } from 'src/utils/settings'
   import type {
-    UpdateSessionsListMessage,
+    PushUpdateSessionListsMessage,
     OpenTabOptions,
     OpenWindowOptions,
     DownloadSessionsOptions,
   } from 'src/utils/messages'
-  import { MESSAGE_TYPE_UPDATE_SESSIONS_LIST } from 'src/utils/messages'
+  import { MESSAGE_TYPE_PUSH_UPDATE_SESSION_LISTS } from 'src/utils/messages'
   import { getActiveTabId } from 'src/utils/browser/query'
   import {
     currentWindowId,
@@ -305,8 +305,8 @@
     })
   }
 
-  const respondToSessionsUpdate = (message: UpdateSessionsListMessage) => {
-    if (message.type === MESSAGE_TYPE_UPDATE_SESSIONS_LIST) {
+  const respondToSessionsUpdate = (message: PushUpdateSessionListsMessage) => {
+    if (message.type === MESSAGE_TYPE_PUSH_UPDATE_SESSION_LISTS) {
       log.debug(logContext, 'respondToSessionsUpdate()', message.value)
 
       $sessionLists = message.value

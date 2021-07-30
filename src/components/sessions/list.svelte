@@ -6,7 +6,7 @@
   import cn from 'classnames'
 
   import type { SessionLists } from 'src/utils/browser/storage'
-  import { sessionType } from 'src/utils/browser/storage'
+  import { sessionTypes } from 'src/utils/browser/storage'
   import Down from 'src/components/icons/down.svelte'
   import type {
     OpenTabOptions,
@@ -212,7 +212,7 @@
           deleteSession={selectedSession.id !== sessionLists.current.id
             ? deleteSession
             : undefined}
-          openSessionEditor={selectedSession.type === sessionType.SAVED
+          openSessionEditor={selectedSession.type === sessionTypes.SAVED
             ? openSessionEditor
             : undefined}
           {downloadSessions}

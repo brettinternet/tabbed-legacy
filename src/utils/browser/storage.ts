@@ -34,12 +34,12 @@ export const writeSetting = async (settings: Partial<Settings>) => {
   })
 }
 
-export const sessionType = {
+export const sessionTypes = {
   CURRENT: 'current',
   PREVIOUS: 'previous',
   SAVED: 'saved',
 }
-export type SessionType = Valueof<typeof sessionType>
+export type SessionType = Valueof<typeof sessionTypes>
 
 export type Session = {
   id: string
@@ -60,22 +60,22 @@ export type SessionLists = {
 const getSessionType = (key: LocalStorageKey) => {
   switch (key) {
     case localStorageKeys.CURRENT_SESSION:
-      return sessionType.CURRENT
+      return sessionTypes.CURRENT
     case localStorageKeys.PREVIOUS_SESSIONS:
-      return sessionType.PREVIOUS
+      return sessionTypes.PREVIOUS
     case localStorageKeys.USER_SAVED_SESSIONS:
     default:
-      return sessionType.SAVED
+      return sessionTypes.SAVED
   }
 }
 
 const getLocalStorageKey = (key: SessionType) => {
   switch (key) {
-    case sessionType.CURRENT:
+    case sessionTypes.CURRENT:
       return localStorageKeys.CURRENT_SESSION
-    case sessionType.PREVIOUS:
+    case sessionTypes.PREVIOUS:
       return localStorageKeys.PREVIOUS_SESSIONS
-    case sessionType.SAVED:
+    case sessionTypes.SAVED:
     default:
       return localStorageKeys.USER_SAVED_SESSIONS
   }
@@ -178,8 +178,8 @@ export const saveNewSession = async (
  */
 export const saveImportedSession = async (session: Session) => {
   session.id = uuidv4()
-  if (session.type === sessionType.CURRENT) {
-    session.type = sessionType.PREVIOUS
+  if (session.type === sessionTypes.CURRENT) {
+    session.type = sessionTypes.PREVIOUS
   }
   const key = getLocalStorageKey(session.type)
   await saveSessionToCollection(key, session)

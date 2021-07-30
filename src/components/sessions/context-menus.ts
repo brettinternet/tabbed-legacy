@@ -1,6 +1,6 @@
 import { contextIds, contextMenu } from 'src/components/context-menu/store'
 import type { SessionLists } from 'src/utils/browser/storage'
-import { sessionType } from 'src/utils/browser/storage'
+import { sessionTypes } from 'src/utils/browser/storage'
 import { isDefined, parseNum } from 'src/utils/helpers'
 import type {
   DownloadSessionsOptions,
@@ -39,7 +39,7 @@ export const registerSessionsContextMenu = ({
   contextMenu.register(contextIds.SESSION, {
     items: (target) => {
       const sessionId = target.dataset.sessionId
-      const type = target.dataset.sessionType
+      const type = target.dataset.sessionTypes
 
       if (sessionId) {
         const handleOpen = () => {
@@ -74,7 +74,7 @@ export const registerSessionsContextMenu = ({
           {
             onClick: handleSave,
             Icon: Save,
-            text: type === sessionType.SAVED ? 'Duplicate' : 'Save',
+            text: type === sessionTypes.SAVED ? 'Duplicate' : 'Save',
           },
           {
             onClick: handleHighlightDuplicates,

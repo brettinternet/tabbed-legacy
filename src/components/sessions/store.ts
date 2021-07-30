@@ -86,6 +86,10 @@ export const getSessionLists = async (): Promise<GetSessionListsResponse> => {
   return await browser.runtime.sendMessage(message)
 }
 
+export const forceUpdateSessions = async () => {
+  sessionLists.set(await getSessionLists())
+}
+
 export const querySession = async (
   query: SessionQuery
 ): Promise<QuerySessionResponse> => {

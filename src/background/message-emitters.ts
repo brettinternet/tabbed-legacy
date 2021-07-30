@@ -1,16 +1,16 @@
-import { MESSAGE_TYPE_UPDATE_SESSIONS_LIST } from 'src/utils/messages'
-import type { UpdateSessionsListMessage } from 'src/utils/messages'
+import { MESSAGE_TYPE_PUSH_UPDATE_SESSION_LISTS } from 'src/utils/messages'
+import type { PushUpdateSessionListsMessage } from 'src/utils/messages'
 import { log } from 'src/utils/logger'
 
 const logContext = 'background/message-emitters'
 
 export const updateSessionMessage = async (
-  sessions: UpdateSessionsListMessage['value']
+  sessions: PushUpdateSessionListsMessage['value']
 ) => {
   log.debug(logContext, 'updateSessionMessage()', sessions)
 
-  const message: UpdateSessionsListMessage = {
-    type: MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
+  const message: PushUpdateSessionListsMessage = {
+    type: MESSAGE_TYPE_PUSH_UPDATE_SESSION_LISTS,
     value: sessions,
   }
   try {

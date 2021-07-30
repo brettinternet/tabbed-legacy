@@ -1,7 +1,4 @@
-import { tick } from 'svelte'
-import { writable, get } from 'svelte/store'
-import hotkeys from 'hotkeys-js'
-import { noop } from 'lodash'
+import { writable } from 'svelte/store'
 
 import { Settings, themes } from 'src/utils/settings'
 import { isDefined } from 'src/utils/helpers'
@@ -18,87 +15,13 @@ import {
   MESSAGE_TYPE_UPDATE_LOG_LEVEL,
   MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
 } from 'src/utils/messages'
-import {
-  readSettings,
-  sessionType,
-  writeSetting,
-} from 'src/utils/browser/storage'
+import { readSettings, writeSetting } from 'src/utils/browser/storage'
 import { isPopup } from 'src/components/app/store'
-import { modal, someModal } from 'src/components/modal/store'
 import { updateLogLevel, log } from 'src/utils/logger'
-import {
-  sortCurrentSession,
-  selectedSessionId,
-  querySession,
-  editSession,
-} from 'src/components/sessions/store'
+import { sortCurrentSession } from 'src/components/sessions/store'
+import { setupShortcuts } from 'src/components/settings/hotkeys'
 
 const logContext = 'components/settings/store'
-
-const openSessionEdit = async () => {
-  const sessionId = get(selectedSessionId)
-  if (sessionId) {
-    const session = await querySession({ sessionId })
-    if (session && session.type === sessionType.SAVED) {
-      editSession.set(session)
-      modal.sessionEdit.set(true)
-    }
-  }
-}
-
-const shortcutScopes = {
-  ENABLED: 'enabled',
-  DISABLED: 'disabled',
-}
-const setupShortcuts = (enabled: boolean) => {
-  log.debug(logContext, 'setupShortcuts', enabled)
-
-  if (enabled) {
-    hotkeys('shift+/,esc,/,`,i,r', shortcutScopes.ENABLED, (event, handler) => {
-      if (enabled) {
-        event.preventDefault()
-        switch (handler.key) {
-          case 'shift+/': // `?` mark
-            modal.shortcuts.toggle()
-            break
-          case 'esc':
-            if (get(someModal)) {
-              modal.off()
-            } else if (isPopup) {
-              window.close()
-            }
-            break
-          case '/': {
-            modal.off()
-            const search = document.getElementById('search')
-            void tick().then(() => {
-              search?.focus()
-            })
-            break
-          }
-          case '`':
-            modal.settings.toggle()
-            break
-          case 'i':
-            modal.importer.set(true)
-            break
-          case 'r': {
-            void openSessionEdit()
-            break
-          }
-        }
-      }
-    })
-  } else {
-    hotkeys('', shortcutScopes.DISABLED, noop)
-  }
-
-  // https://github.com/jaywcjlove/hotkeys/issues/90
-  hotkeys.setScope(shortcutScopes[enabled ? 'ENABLED' : 'DISABLED'])
-  hotkeys.deleteScope(shortcutScopes[enabled ? 'DISABLED' : 'ENABLED'])
-
-  log.debug(logContext, `hotkeys scope: '${hotkeys.getScope()}'`)
-}
 
 const setTheme = (theme: Theme) => {
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches

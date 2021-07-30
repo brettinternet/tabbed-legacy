@@ -14,7 +14,7 @@
   export let headerId: string
 
   let errorMessage: string | undefined,
-    format: HTMLSelectElement | null,
+    format: HTMLSelectElement | undefined,
     sessions: Session[] | undefined,
     exportString: string,
     sessionCount: number,

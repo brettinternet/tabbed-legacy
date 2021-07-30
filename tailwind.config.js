@@ -36,10 +36,15 @@ module.exports = {
       margin: {
         outline: '2px', // to allow space for focus ring outline
       },
+      outline: {
+        selected: ['2px solid #000', '-2px'],
+      },
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      borderWidth: ['focus'],
+    },
   },
   plugins: [],
 }

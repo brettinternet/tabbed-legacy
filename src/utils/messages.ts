@@ -43,9 +43,10 @@ export type UpdatePopoutPositionMessage = MessageWithValue<
 >
 
 // session list
-export const MESSAGE_TYPE_UPDATE_SESSIONS_LIST = 'update_sessions'
-export type UpdateSessionsListMessage = MessageWithValue<
-  typeof MESSAGE_TYPE_UPDATE_SESSIONS_LIST,
+export const MESSAGE_TYPE_PUSH_UPDATE_SESSION_LISTS =
+  'push_update_session_lists'
+export type PushUpdateSessionListsMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_PUSH_UPDATE_SESSION_LISTS,
   SessionLists
 >
 
