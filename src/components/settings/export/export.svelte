@@ -97,7 +97,7 @@
   </div>
 
   <Textarea
-    classNames="w-full"
+    classNames="scroll w-full"
     rows="15"
     label="Config"
     id="export-config"
