@@ -18,6 +18,9 @@ export const updateSessionMessage = async (
   } catch (_err) {
     const err = browser.runtime.lastError
     // If client is not merely closed
+    // Potentially could use `runtime.connect` to determine if client is connected
+    // // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connect
+    // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/connect
     if (
       err?.message !==
       'Could not establish connection. Receiving end does not exist.'

@@ -5,7 +5,6 @@ import { updateLogLevel, log } from 'src/utils/logger'
 
 import { loadExtensionActions } from './configuration'
 import { setupListeners } from './listeners'
-// import { setupListeners } from './loadable-listeners'
 
 const logContext = 'background/index'
 
