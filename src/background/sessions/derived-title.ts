@@ -13,7 +13,7 @@ const getSortedOccurrences = (arr: string[]) => {
   return sorted
 }
 
-const SHOW_TITLE_COUNT = 2
+const SHOW_TITLE_COUNT = 3
 const formatTopTitlesAndMore = (titles: string[]) => {
   const sorted = getSortedOccurrences(titles)
   const top = sorted.slice(0, SHOW_TITLE_COUNT)
