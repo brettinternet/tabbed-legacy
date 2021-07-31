@@ -1,9 +1,9 @@
 import { writable, get } from 'svelte/store'
 
+import type { SessionLists, Session } from 'src/utils/browser/storage'
 import { log } from 'src/utils/logger'
 import { sortWindows } from 'src/utils/browser/query'
 import { getSessionLists } from 'src/components/sessions/send'
-import type { SessionLists, Session } from 'src/utils/browser/storage'
 
 const logContext = 'components/sessions/store'
 
@@ -12,6 +12,12 @@ export const currentTabId = writable<number | undefined>()
 export const sessionLists = writable<SessionLists | undefined>()
 export const selectedSessionId = writable<string | undefined>()
 export const editSession = writable<Session | undefined>()
+
+export type Duplicates = {
+  urls: string[]
+  sessionId: string
+}
+export const duplicates = writable<Duplicates | undefined>()
 
 export const sortCurrentSession = async (activeWindowId?: number) => {
   const session = get(sessionLists)

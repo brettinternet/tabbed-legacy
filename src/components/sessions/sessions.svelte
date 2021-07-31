@@ -8,38 +8,35 @@
   import { log } from 'src/utils/logger'
   import { layouts } from 'src/utils/settings'
   import type { Layout } from 'src/utils/settings'
-  import type {
-    PushUpdateSessionListsMessage,
-    OpenTabOptions,
-    OpenWindowOptions,
-    DownloadSessionsOptions,
-  } from 'src/utils/messages'
-  import { MESSAGE_TYPE_PUSH_UPDATE_SESSION_LISTS } from 'src/utils/messages'
-  import { getActiveTabId } from 'src/utils/browser/query'
   import {
     currentWindowId,
     currentTabId,
     sessionLists,
     selectedSessionId,
     editSession,
-    sortCurrentSession,
+    duplicates,
   } from 'src/components/sessions/store'
   import {
-    getSessionLists,
-    saveExistingSession,
-    saveWindow,
-    openSession,
-    openWindow,
-    openTab,
-    deleteSession,
-    removeWindow,
-    removeTab,
-    renameSession,
-    patchWindow,
-    patchTab,
-    downloadSessions,
-    findDuplicateTabs,
-  } from 'src/components/sessions/send'
+    handleHighlightDuplicateTabUrls,
+    updateSessions,
+    openSessionEditor,
+    closeSessionEditor,
+    handleOpenSession,
+    handleSaveSession,
+    handleDeleteSession,
+    handleRenameSession,
+    handleOpenWindow,
+    handleSaveWindow,
+    handleRemoveWindow,
+    handleOpenTab,
+    handleCloseTab,
+    handleMinimizeWindow,
+    handlePinTab,
+    handleDownloadSessions,
+    handleToggleSession,
+    handleSelectSession,
+  } from 'src/components/sessions/handlers'
+  import { setupListeners } from 'src/components/sessions/listeners'
   import {
     registerSessionsContextMenu,
     registerWindowContextMenu,
@@ -55,42 +52,10 @@
 
   export let currentLayout: Layout
 
-  let firstUpdateComplete = false
-  let duplicates: { urls: string[]; sessionId: string } | undefined
-
-  const handleHighlightDuplicateTabUrls = async (sessionId?: string) => {
-    try {
-      if (sessionId) {
-        const urls = await findDuplicateTabs(sessionId)
-        if (urls) {
-          duplicates = { urls, sessionId }
-          return
-        }
-      }
-      duplicates = undefined
-    } catch (err) {
-      log.error(err)
-    }
-  }
-
-  const updateSessions = async () => {
-    try {
-      $sessionLists = await getSessionLists()
-      if (duplicates) {
-        await handleHighlightDuplicateTabUrls(duplicates.sessionId)
-      }
-    } catch (err) {
-      log.error(err)
-      // TODO: handle error presentation
-    }
-  }
-
   const fetch = async () => {
-    log.debug(logContext, 'fetch()')
-
     await updateSessions()
 
-    if (!$selectedSessionId && !firstUpdateComplete) {
+    if (!$selectedSessionId) {
       $selectedSessionId = $sessionLists?.current.id
     }
 
@@ -103,180 +68,6 @@
 
   void fetch()
 
-  const openSessionEditor = () => {
-    modal.sessionEdit.set(true)
-  }
-
-  const closeSessionEditor = () => {
-    modal.sessionEdit.set(false)
-    $editSession = undefined
-  }
-
-  const handleOpenSession = async (sessionId: string) => {
-    log.debug(logContext, 'handleOpenSession()', sessionId)
-
-    try {
-      await openSession(sessionId)
-      $selectedSessionId = sessionId
-    } catch (err) {
-      log.error(err)
-    }
-
-    await updateSessions()
-  }
-
-  const handleSaveSession = async (sessionId: string) => {
-    log.debug(logContext, 'handleSaveSession()', sessionId)
-
-    try {
-      await saveExistingSession(sessionId)
-      $selectedSessionId = sessionId
-    } catch (err) {
-      log.error(err)
-    }
-
-    await updateSessions()
-  }
-
-  const handleDeleteSession = async (sessionId: string) => {
-    log.debug(logContext, 'handleDeleteSession()', sessionId)
-
-    try {
-      await deleteSession(sessionId)
-    } catch (err) {
-      log.error(err)
-    }
-
-    await updateSessions()
-    if ($selectedSessionId === sessionId) {
-      $selectedSessionId = undefined
-    }
-  }
-
-  const handleRenameSession = async (sessionId: string, name: string) => {
-    log.debug(logContext, 'handleRenameSession()', sessionId)
-
-    try {
-      // TODO: name validation here
-      await renameSession(sessionId, name)
-    } catch (err) {
-      log.error(err)
-    }
-
-    await updateSessions()
-  }
-
-  const handleOpenWindow = async (
-    sessionId: string,
-    windowId: number,
-    options?: OpenWindowOptions
-  ) => {
-    log.debug(logContext, 'handleOpenWindow()', sessionId, windowId)
-
-    try {
-      await openWindow(sessionId, windowId, options)
-    } catch (err) {
-      log.error(err)
-    }
-
-    await updateSessions()
-    $selectedSessionId = sessionId
-  }
-
-  const handleSaveWindow = async (sessionId: string, windowId: number) => {
-    log.debug(logContext, 'handleSaveWindow()', sessionId)
-
-    try {
-      await saveWindow(sessionId, windowId)
-    } catch (err) {
-      log.error(err)
-    }
-
-    await updateSessions()
-    $selectedSessionId = sessionId
-  }
-
-  const handleRemoveWindow = async (sessionId: string, windowId: number) => {
-    log.debug(logContext, 'handleRemoveWindow()', sessionId)
-
-    try {
-      await removeWindow(sessionId, windowId)
-    } catch (err) {
-      log.error(err)
-    }
-
-    await updateSessions()
-  }
-
-  const handleOpenTab = async (
-    sessionId: string,
-    windowId: number,
-    tabId: number,
-    options?: OpenTabOptions
-  ) => {
-    try {
-      await openTab(sessionId, windowId, tabId, options)
-    } catch (err) {
-      log.error(err)
-    }
-
-    await updateSessions()
-  }
-
-  const handleCloseTab = async (
-    sessionId: string,
-    windowId: number,
-    tabId: number
-  ) => {
-    try {
-      await removeTab(sessionId, windowId, tabId)
-    } catch (err) {
-      log.error(err)
-    }
-
-    await updateSessions()
-  }
-
-  const handleMinimizeWindow = async (
-    sessionId: string,
-    windowId: number,
-    minimized: boolean
-  ) => {
-    try {
-      await patchWindow(sessionId, windowId, {
-        state: minimized ? 'minimized' : 'normal',
-      })
-      // TODO: push update from backend only if action isn't on current session
-    } catch (err) {
-      log.error(err)
-    }
-
-    await updateSessions()
-  }
-
-  const handlePinTab = async (
-    sessionId: string,
-    windowId: number,
-    tabId: number,
-    pinned: boolean
-  ) => {
-    try {
-      await patchTab(sessionId, windowId, tabId, { pinned })
-    } catch (err) {
-      log.error(err)
-    }
-
-    await updateSessions()
-  }
-
-  const handleDownloadSessions = async (options: DownloadSessionsOptions) => {
-    try {
-      await downloadSessions(options)
-    } catch (err) {
-      log.error(err)
-    }
-  }
-
   $: if ($sessionLists) {
     const currentSessionId = $sessionLists.current.id
     if (!(currentSessionId in $contextMenu)) {
@@ -287,7 +78,7 @@
         deleteSession: handleDeleteSession,
         downloadSessions: handleDownloadSessions,
         highlightDuplicateTabUrls: handleHighlightDuplicateTabUrls,
-        isHighlightDuplicatesActive: !!duplicates,
+        isHighlightDuplicatesActive: !!$duplicates,
       })
     }
 
@@ -307,58 +98,13 @@
     })
   }
 
-  const respondToSessionsUpdate = (message: PushUpdateSessionListsMessage) => {
-    if (message.type === MESSAGE_TYPE_PUSH_UPDATE_SESSION_LISTS) {
-      log.debug(logContext, 'respondToSessionsUpdate()', message.value)
-
-      $sessionLists = message.value
-    }
-
-    return false // no reply
-  }
-
-  browser.runtime.onMessage.addListener(respondToSessionsUpdate)
-
-  const handleToggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (
-    ev
-  ) => {
-    const nextId = ev.currentTarget.dataset.sessionId
-    $selectedSessionId = $selectedSessionId === nextId ? undefined : nextId
-  }
-
-  const handleSelectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement> = (
-    ev
-  ) => {
-    const nextId = ev.currentTarget.dataset.sessionId
-    $selectedSessionId = nextId
-  }
-
-  const handleActiveTabChange = (info: browser.tabs._OnActivatedActiveInfo) => {
-    $currentWindowId = info.windowId
-    $currentTabId = info.tabId
-  }
-
-  const handleFocusWindowChange = async (activeWindowId: number) => {
-    if (activeWindowId > 0) {
-      const tabId = await getActiveTabId(activeWindowId)
-      $currentWindowId = activeWindowId
-      $currentTabId = tabId
-      await sortCurrentSession(activeWindowId)
-    } else {
-      $currentWindowId = undefined
-      $currentTabId = undefined
-    }
-  }
-
-  browser.tabs.onActivated.addListener(handleActiveTabChange)
-  browser.windows.onFocusChanged.addListener(handleFocusWindowChange)
-
   onDestroy(() => {
     contextMenu.unregister(contextIds.SESSION)
-    browser.runtime.onMessage.removeListener(respondToSessionsUpdate)
-    browser.tabs.onActivated.removeListener(handleActiveTabChange)
-    browser.windows.onFocusChanged.removeListener(handleFocusWindowChange)
+    contextMenu.unregister(contextIds.WINDOW)
+    contextMenu.unregister(contextIds.TAB)
   })
+
+  setupListeners()
 
   $: log.debug(logContext, `sessionLists:`, $sessionLists)
 </script>
@@ -381,7 +127,7 @@
       openWindow={handleOpenWindow}
       {openSessionEditor}
       downloadSessions={handleDownloadSessions}
-      duplicateTabUrls={duplicates?.urls}
+      duplicateTabUrls={$duplicates?.urls}
     />
   {/if}
 
