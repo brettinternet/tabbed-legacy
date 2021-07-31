@@ -33,7 +33,7 @@
         duplicateTabUrls && // TODO: accessible attribute to indicate highlighted?
           url &&
           duplicateTabUrls.includes(url || '') &&
-          'bg-yellow-100'
+          'bg-yellow-100 dark:bg-yellow-800'
       )}
     >
       {#if url}
