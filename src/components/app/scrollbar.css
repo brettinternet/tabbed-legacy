@@ -24,19 +24,19 @@
 }
 
 html.dark .scroll::-webkit-scrollbar {
-  @apply bg-gray-900;
-}
-
-html.dark .scroll::-webkit-scrollbar-thumb {
   @apply bg-gray-800;
 }
 
-html.dark .scroll::-webkit-scrollbar-thumb:hover {
+html.dark .scroll::-webkit-scrollbar-thumb {
   @apply bg-gray-700;
 }
 
-html.dark .scroll::-webkit-scrollbar-thumb:active {
+html.dark .scroll::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-600;
+}
+
+html.dark .scroll::-webkit-scrollbar-thumb:active {
+  @apply bg-gray-500;
 }
 
 body {
