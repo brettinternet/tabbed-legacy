@@ -32,14 +32,10 @@
       const button = ev.currentTarget
       if (button.dataset.windowId) {
         const windowId: number | undefined = parseInt(button.dataset.windowId)
+        const isMiddleClick = ev.button === 1
         const ariaDisabled = button.getAttribute('aria-disabled') === 'true'
-        if (windowId && !ariaDisabled) {
-          await openWindow(
-            sessionId,
-            windowId,
-            // middle-click
-            { noFocus: ev.button === 1 }
-          )
+        if (windowId && (isMiddleClick || !ariaDisabled)) {
+          await openWindow(sessionId, windowId, { noFocus: isMiddleClick })
         }
       }
     }
