@@ -2,7 +2,7 @@ import { MESSAGE_TYPE_PUSH_UPDATE_SESSION_LISTS } from 'src/utils/messages'
 import type { PushUpdateSessionListsMessage } from 'src/utils/messages'
 import { log } from 'src/utils/logger'
 
-const logContext = 'background/message-emitters'
+const logContext = 'background/send'
 
 export const updateSessionMessage = async (
   sessions: PushUpdateSessionListsMessage['value']

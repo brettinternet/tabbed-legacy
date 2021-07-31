@@ -1,3 +1,5 @@
+import { debounce } from 'lodash'
+
 import {
   openExtensionPopup,
   openExtensionSidebar,
@@ -8,17 +10,26 @@ import {
 import { popupUrl, sidebarUrl } from 'src/utils/env'
 import { Settings, extensionClickActions } from 'src/utils/settings'
 import { log } from 'src/utils/logger'
-import { saveCurrentSession } from 'src/background/sessions'
+import { saveCurrentSession } from 'src/background/sessions/create'
+import { writeSetting } from 'src/utils/browser/storage'
 
 const logContext = 'background/configuration'
 
+export const updatePopoutPosition = async (
+  popoutState: Settings['popoutState']
+) => {
+  await writeSetting({ popoutState })
+}
+
 const enablePopup = async () => {
   log.debug(logContext, 'enablePopup()')
+
   await browser.browserAction.setPopup({ popup: popupUrl })
 }
 
 const disablePopup = async () => {
   log.debug(logContext, 'disablePopup()')
+
   await browser.browserAction.setPopup({ popup: '' })
 }
 
@@ -88,10 +99,10 @@ const setupMenus = async (popupDisabled?: boolean) => {
 /**
  * Setup certain browser actions related to the browser toolbar
  */
-export const loadActions = async (
+export const loadExtensionActions = async (
   extensionClickAction: Settings['extensionClickAction']
 ) => {
-  log.debug(logContext, 'loadActions()', extensionClickAction)
+  log.debug(logContext, 'loadExtensionActions()', extensionClickAction)
 
   if (extensionClickAction === extensionClickActions.TAB) {
     await disablePopup()
@@ -114,4 +125,47 @@ export const loadActions = async (
   }
 
   await setupMenus(extensionClickAction !== extensionClickActions.POPUP)
+}
+
+const BADGE_BACKGROUND_COLOR = '#3b82f6'
+const updateTabCountBadge = async () => {
+  try {
+    log.debug(logContext, 'updateTabCountBadge()')
+    const tabs = await browser.tabs.query({})
+    const count = tabs.length
+    await browser.browserAction.setBadgeBackgroundColor({
+      color: BADGE_BACKGROUND_COLOR,
+    })
+    await browser.browserAction.setBadgeText({ text: count ? `${count}` : '' })
+  } catch (err) {
+    log.error(err)
+  }
+}
+
+const clearTabCountBadge = async () => {
+  await browser.browserAction.setBadgeText({ text: '' })
+}
+
+const updateTabCountDebounce = debounce(updateTabCountBadge, 250)
+
+export const loadTabCountListeners = (showTabCountBadge: boolean) => {
+  log.debug(logContext, 'loadTabCountListeners()', showTabCountBadge)
+
+  if (showTabCountBadge) {
+    void updateTabCountDebounce()
+    browser.tabs.onUpdated.addListener(updateTabCountDebounce)
+    browser.tabs.onRemoved.addListener(updateTabCountDebounce)
+    browser.tabs.onReplaced.addListener(updateTabCountDebounce)
+    browser.tabs.onDetached.addListener(updateTabCountDebounce)
+    browser.tabs.onAttached.addListener(updateTabCountDebounce)
+    browser.tabs.onMoved.addListener(updateTabCountDebounce)
+  } else {
+    void clearTabCountBadge()
+    browser.tabs.onUpdated.removeListener(updateTabCountDebounce)
+    browser.tabs.onRemoved.removeListener(updateTabCountDebounce)
+    browser.tabs.onReplaced.removeListener(updateTabCountDebounce)
+    browser.tabs.onDetached.removeListener(updateTabCountDebounce)
+    browser.tabs.onAttached.removeListener(updateTabCountDebounce)
+    browser.tabs.onMoved.removeListener(updateTabCountDebounce)
+  }
 }

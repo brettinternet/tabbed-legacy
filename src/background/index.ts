@@ -1,10 +1,11 @@
 import { readSettings } from 'src/utils/browser/storage'
 import { buildVersion, buildTime } from 'src/utils/env'
 import { concatTruthy } from 'src/utils/helpers'
-import { log } from 'src/utils/logger'
+import { updateLogLevel, log } from 'src/utils/logger'
 
-import { loadActions } from './configuration'
+import { loadExtensionActions } from './configuration'
 import { setupListeners } from './listeners'
+// import { setupListeners } from './loadable-listeners'
 
 const logContext = 'background/index'
 
@@ -12,10 +13,12 @@ const main = async () => {
   log.debug(logContext, 'main')
 
   const settings = await readSettings()
-  // "setup" fns are invoked on background startup
+  updateLogLevel(settings.debugMode)
+  // "setup" fns are invoked once on background startup
   setupListeners(settings)
-  // "load" fns are invoked on background startup and can be reloaded through messages from client
-  await loadActions(settings.extensionClickAction)
+  // "load" fns are invoked once on background startup and
+  // can be reloaded through messages from client
+  await loadExtensionActions(settings.extensionClickAction)
 
   const bytesUsed =
     browser.storage.local.getBytesInUse &&
