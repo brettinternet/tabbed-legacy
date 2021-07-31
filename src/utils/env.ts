@@ -37,3 +37,33 @@ export const attributions = [
     authors: 'Sasha Koss & Lesha Koss',
   },
 ]
+
+/**
+ * Supported browsers
+ */
+export const browsers = {
+  /**
+   * Chromium-based
+   */
+  CHROMIUM: 'chromium',
+  /**
+   * Firefox
+   */
+  FIREFOX: 'firefox',
+}
+
+const getBrowserRuntime = () => {
+  if (window.chrome?.app) {
+    return browsers.CHROMIUM
+  }
+
+  /**
+   * Only available on Firefox
+   * @source https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getBrowserInfo
+   */
+  if (browser.runtime.getBrowserInfo) {
+    return browsers.FIREFOX
+  }
+}
+
+export const browserRuntime = getBrowserRuntime()

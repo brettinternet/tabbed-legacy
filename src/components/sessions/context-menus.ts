@@ -16,7 +16,6 @@ import Expand from 'src/components/icons/expand.svelte'
 import Pin from 'src/components/icons/pin.svelte'
 import Download from 'src/components/icons/download.svelte'
 import HighlightDupes from 'src/components/icons/search-property.svelte'
-import { downloadSessions } from 'src/background/sessions'
 
 type RegisterSessionsContextMenuArgs = {
   currentSessionId: string
@@ -33,6 +32,7 @@ export const registerSessionsContextMenu = ({
   openSession,
   saveSession,
   deleteSession,
+  downloadSessions,
   highlightDuplicateTabUrls,
   isHighlightDuplicatesActive,
 }: RegisterSessionsContextMenuArgs) => {

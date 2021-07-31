@@ -3,8 +3,8 @@
 
   import X from 'src/components/icons/x.svelte'
   import About from 'src/components/settings/about.svelte'
-  import Options from 'src/components/settings/options.svelte'
-  import Export from 'src/components/settings/export.svelte'
+  import Options from 'src/components/settings/options/options.svelte'
+  import Export from 'src/components/settings/export/export.svelte'
   import Modal from 'src/components/modal/modal.svelte'
 
   export let close: () => void

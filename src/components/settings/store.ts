@@ -3,25 +3,23 @@ import { writable } from 'svelte/store'
 import { Settings, themes } from 'src/utils/settings'
 import { isDefined } from 'src/utils/helpers'
 import type { Theme } from 'src/utils/settings'
-import type {
-  ReloadActionsMessage,
-  ReloadTabListenersMessage,
-  UpdateLogLevelMessage,
-  ReloadClosedWindowListenerMessage,
-} from 'src/utils/messages'
-import {
-  MESSAGE_TYPE_RELOAD_ACTIONS,
-  MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
-  MESSAGE_TYPE_UPDATE_LOG_LEVEL,
-  MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
-} from 'src/utils/messages'
 import { readSettings, writeSetting } from 'src/utils/browser/storage'
 import { isPopup } from 'src/components/app/store'
 import { updateLogLevel, log } from 'src/utils/logger'
 import { sortCurrentSession } from 'src/components/sessions/store'
 import { setupShortcuts } from 'src/components/settings/hotkeys'
+import {
+  reloadTabListeners,
+  reloadExtensionActions,
+  updateBackgroundLogLevel,
+  reloadClosedWindowListeners,
+} from 'src/components/settings/send'
 
 const logContext = 'components/settings/store'
+
+const setFontSize = (size: number) => {
+  document.documentElement.style.fontSize = `${size}px`
+}
 
 const setTheme = (theme: Theme) => {
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -30,6 +28,11 @@ const setTheme = (theme: Theme) => {
   } else {
     document.documentElement.classList.remove('dark')
   }
+}
+
+const setBodySize = (width: number, height: number) => {
+  document.body.style.width = `${width}px`
+  document.body.style.height = `${height}px`
 }
 
 /**
@@ -44,7 +47,7 @@ const handleSettingsSideEffects = async <K extends keyof Settings>(
     case 'fontSize': {
       const { fontSize } = settings
       if (isDefined(fontSize)) {
-        document.documentElement.style.fontSize = `${fontSize.toString()}px`
+        setFontSize(fontSize)
       }
       break
     }
@@ -58,22 +61,14 @@ const handleSettingsSideEffects = async <K extends keyof Settings>(
     case 'showTabCountBadge': {
       const { showTabCountBadge } = settings
       if (updateBackgroundTasks && isDefined(showTabCountBadge)) {
-        const message: ReloadTabListenersMessage = {
-          type: MESSAGE_TYPE_RELOAD_TAB_LISTENERS,
-          value: showTabCountBadge,
-        }
-        await browser.runtime.sendMessage(message)
+        void reloadTabListeners(showTabCountBadge)
       }
       break
     }
     case 'extensionClickAction': {
       const { extensionClickAction } = settings
       if (updateBackgroundTasks && isDefined(extensionClickAction)) {
-        const message: ReloadActionsMessage = {
-          type: MESSAGE_TYPE_RELOAD_ACTIONS,
-          value: extensionClickAction,
-        }
-        await browser.runtime.sendMessage(message)
+        void reloadExtensionActions(extensionClickAction)
       }
       break
     }
@@ -81,8 +76,7 @@ const handleSettingsSideEffects = async <K extends keyof Settings>(
       const width = settings.popupDimensions?.width // TODO: fix typing
       const height = settings.popupDimensions?.height
       if (isPopup && width && height) {
-        document.body.style.width = `${width}px`
-        document.body.style.height = `${height}px`
+        setBodySize(width, height)
       }
       break
     }
@@ -97,30 +91,20 @@ const handleSettingsSideEffects = async <K extends keyof Settings>(
       const { debugMode } = settings
       updateLogLevel(debugMode)
       if (updateBackgroundTasks && isDefined(debugMode)) {
-        const message: UpdateLogLevelMessage = {
-          type: MESSAGE_TYPE_UPDATE_LOG_LEVEL,
-          value: debugMode,
-        }
-        await browser.runtime.sendMessage(message)
+        void updateBackgroundLogLevel(debugMode)
       }
       break
     }
     case 'saveClosedWindows': {
       const { saveClosedWindows } = settings
       if (updateBackgroundTasks && isDefined(saveClosedWindows)) {
-        const message: ReloadClosedWindowListenerMessage = {
-          type: MESSAGE_TYPE_RELOAD_CLOSED_WINDOW_LISTENER,
-          value: saveClosedWindows,
-        }
-        await browser.runtime.sendMessage(message)
+        void reloadClosedWindowListeners(saveClosedWindows)
       }
       break
     }
     case 'sortFocusedWindowFirst':
       await sortCurrentSession()
       break
-    default:
-      return
   }
 }
 

@@ -17,9 +17,9 @@
   import { modal } from 'src/components/modal/store'
   import Upload from 'src/components/icons/upload.svelte'
   import ViewButton from './view-button.svelte'
-  import WindowList from './window-list.svelte'
-  import SessionControl from './control.svelte'
+  import WindowList from './windows-list.svelte'
   import Meta from './meta.svelte'
+  import SessionControl from '../control.svelte'
 
   export let selectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
     toggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,

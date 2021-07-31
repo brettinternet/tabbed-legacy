@@ -5,136 +5,33 @@
   import Input from 'src/components/input/input.svelte'
   import Radio from 'src/components/radio/radio.svelte'
   import Button from 'src/components/button/button.svelte'
-  import {
-    extensionClickActions,
-    layouts,
-    themes,
-    defaultSettings,
-  } from 'src/utils/settings'
-  import type { Theme, ExtensionClickAction, Layout } from 'src/utils/settings'
-  import { updateSettings, settings } from 'src/components/settings/store'
+  import { extensionClickActions, layouts, themes } from 'src/utils/settings'
+  import { settings } from 'src/components/settings/store'
   import { isSidebarSupported } from 'src/components/app/store'
-  import { modal } from 'src/components/modal/store'
-  import { getBrowser, browsers } from 'src/utils/browser/query'
-  import { purgeAllStorage } from 'src/utils/browser/storage'
+  import { browserRuntime, browsers } from 'src/utils/env'
   import { isProd } from 'src/utils/env'
+  import {
+    handleChangeLayout,
+    handleChangeToggleExtensionClickAction,
+    handleChangeRadioExtensionClickAction,
+    handleChangeSaveClosedWindow,
+    handleChangeSaveIncognito,
+    handleChangeTabCountBadge,
+    handleChangeShortcuts,
+    handleChangeFontSize,
+    handleChangePopupDimension,
+    handleChangeTheme,
+    handleChangeDebugMode,
+    handleClickReset,
+    handlePurgeAllStorage,
+    handleChangeSortFocusedWindowFirst,
+    handleOpenShortcuts,
+    handleOpenOptions,
+  } from 'src/components/settings/options/handlers'
   import Description from './description.svelte'
   import SectionTitle from './section-title.svelte'
 
   export let headerId: string
-
-  const browserRuntime = getBrowser()
-
-  const handleChangeLayout: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      await updateSettings({ layout: ev.currentTarget.value as Layout })
-    }
-
-  const handleChangeToggleExtensionClickAction: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      const checked = ev.currentTarget.checked
-      await updateSettings({
-        extensionClickAction: extensionClickActions[checked ? 'TAB' : 'POPUP'],
-      })
-    }
-
-  const handleChangeRadioExtensionClickAction: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      await updateSettings({
-        extensionClickAction: ev.currentTarget.value as ExtensionClickAction,
-      })
-    }
-
-  const handleChangeSaveClosedWindow: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      await updateSettings({
-        saveClosedWindows: ev.currentTarget.checked,
-      })
-    }
-
-  const handleChangeSaveIncognito: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      await updateSettings({
-        saveIncognito: ev.currentTarget.checked,
-      })
-    }
-
-  const handleChangeTabCountBadge: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      await updateSettings({
-        showTabCountBadge: ev.currentTarget.checked,
-      })
-    }
-
-  const handleChangeShortcuts: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      await updateSettings({
-        shortcuts: ev.currentTarget.checked,
-      })
-    }
-
-  const handleChangeFontSize: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      await updateSettings({
-        fontSize: parseInt(ev.currentTarget.value),
-      })
-    }
-
-  const handleChangePopupDimension: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      await updateSettings({
-        popupDimensions: {
-          ...$settings.popupDimensions,
-          [ev.currentTarget.name]: parseInt(ev.currentTarget.value),
-        },
-      })
-    }
-
-  const handleChangeTheme: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      await updateSettings({
-        theme: ev.currentTarget.value as Theme,
-      })
-    }
-
-  const handleChangeDebugMode: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      await updateSettings({
-        debugMode: ev.currentTarget.checked,
-      })
-    }
-
-  const handleClickReset: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
-    async () => {
-      await updateSettings(defaultSettings)
-    }
-
-  const handlePurgeAllStorage: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
-    async () => {
-      await purgeAllStorage()
-      window.location.reload()
-    }
-
-  const handleChangeSortFocusedWindowFirst: svelte.JSX.FormEventHandler<HTMLInputElement> =
-    async (ev) => {
-      await updateSettings({
-        sortFocusedWindowFirst: ev.currentTarget.checked,
-      })
-    }
-
-  const handleOpenShortcuts: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
-    () => {
-      modal.shortcuts.set(true)
-    }
-
-  const handleOpenOptions: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
-    async () => {
-      if (browserRuntime === browsers.CHROMIUM) {
-        await browser.tabs.create({
-          url: `chrome://extensions/?id=${browser.runtime.id}`,
-        })
-      }
-    }
 </script>
 
 <h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">Options</h1>
@@ -246,7 +143,8 @@
         />
       </div>
       <Description id="save-closed-window-description">
-        Saves a single window session when windows are closed.
+        Saves a single window session when windows are closed. This option may
+        clutter up your "Previous" sessions.
       </Description>
     </div>
     <div class="mb-6">

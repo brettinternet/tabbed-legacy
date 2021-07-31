@@ -1,34 +1,6 @@
 import { readSettings } from 'src/utils/browser/storage'
 
 /**
- * Supported browsers
- */
-export const browsers = {
-  /**
-   * Chromium-based
-   */
-  CHROMIUM: 'chromium',
-  /**
-   * Firefox
-   */
-  FIREFOX: 'firefox',
-}
-
-export const getBrowser = () => {
-  if (window.chrome?.app) {
-    return browsers.CHROMIUM
-  }
-
-  /**
-   * Only available on Firefox
-   * @source https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/getBrowserInfo
-   */
-  if (browser.runtime.getBrowserInfo) {
-    return browsers.FIREFOX
-  }
-}
-
-/**
  * `pendingUrl` for Chrome browsers where status === 'loading'
  * See `browser.d.ts`
  */

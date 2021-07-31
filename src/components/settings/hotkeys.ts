@@ -9,12 +9,14 @@ import { log } from 'src/utils/logger'
 import {
   selectedSessionId,
   forceUpdateSessions,
-  querySession,
   editSession,
+} from 'src/components/sessions/store'
+import {
+  querySession,
   deleteSession,
   removeTab,
   removeWindow,
-} from 'src/components/sessions/store'
+} from 'src/components/sessions/send'
 import { parseNum, isDefined } from 'src/utils/helpers'
 import { sessionTypes } from 'src/utils/browser/storage'
 

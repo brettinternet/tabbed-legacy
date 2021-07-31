@@ -23,6 +23,8 @@
     selectedSessionId,
     editSession,
     sortCurrentSession,
+  } from 'src/components/sessions/store'
+  import {
     getSessionLists,
     saveExistingSession,
     saveWindow,
@@ -37,7 +39,7 @@
     patchTab,
     downloadSessions,
     findDuplicateTabs,
-  } from 'src/components/sessions/store'
+  } from 'src/components/sessions/send'
   import {
     registerSessionsContextMenu,
     registerWindowContextMenu,
@@ -46,7 +48,7 @@
   import { contextIds, contextMenu } from 'src/components/context-menu/store'
   import { modal } from 'src/components/modal/store'
   import EditModal from './edit-modal.svelte'
-  import List from './list.svelte'
+  import List from './list/list.svelte'
   import Grid from './grid.svelte'
 
   const logContext = 'components/sessions/sessions.svelte'
