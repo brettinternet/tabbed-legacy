@@ -27,7 +27,7 @@
     handleChangeSortFocusedWindowFirst,
     handleOpenShortcuts,
     handleOpenOptions,
-  } from 'src/components/settings/options/handlers'
+  } from 'src/components/settings/options/handlers.svelte'
   import Description from './description.svelte'
   import SectionTitle from './section-title.svelte'
 

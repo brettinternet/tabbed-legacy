@@ -1,8 +1,5 @@
-import 'svelte2tsx/svelte-jsx'
-
 declare namespace svelte.JSX {
-  interface HTMLAttributes {
+  interface HTMLAttributes<T> {
     onclickAway?: (ev: MouseEvent) => void
-    portal?: string | undefined
   }
 }
