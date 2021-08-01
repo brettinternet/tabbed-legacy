@@ -59,12 +59,18 @@ npm test
 
 #### App
 
+- [ ] add session alert messages on failure
+- [ ] use alert component to add hints to functionality
 - [ ] implement undo stack
 - [ ] Search tab titles, urls
 - [ ] url/regex ignore list
 - [ ] load test
 - [ ] documentation
 - [ ] switch to browser i18n, move/configure texts
+
+#### Bugs
+
+- [ ] check that all windows are narrowed down by session first
 
 #### CI
 
