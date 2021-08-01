@@ -38,12 +38,14 @@ module.exports = {
       },
       outline: {
         selected: ['2px solid #000', '-2px'],
+        'selected-white': ['2px solid #fff', '-2px'],
       },
     },
   },
   variants: {
     extend: {
       borderWidth: ['focus'],
+      outline: ['dark'],
     },
   },
   plugins: [],

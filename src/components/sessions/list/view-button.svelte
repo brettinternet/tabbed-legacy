@@ -56,7 +56,7 @@
   style="height:70px;"
   class={cn(
     'p-4 xs:px-6 sm:px-10 py-4 flex justify-between items-center text-left w-full overflow-hidden whitespace-nowrap lg:rounded-sm lg:px-6',
-    'focus:outline-selected',
+    'focus:outline-selected dark:focus:outline-selected-white',
     selected
       ? 'bg-blue-600 text-white dark:bg-blue-400 dark:text-gray-900'
       : 'bg-gray-100 dark:bg-gray-800 dark:text-gray-100'
