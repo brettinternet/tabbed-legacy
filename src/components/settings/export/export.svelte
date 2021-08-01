@@ -123,7 +123,7 @@
           sessions,
         {/if}
       </span>
-      {sizeApproximateKb} kB
+      approx. {sizeApproximateKb} kB
     </p>
   {/if}
   <div class="flex flex-row items-center justify-end space-x-2">
