@@ -6,8 +6,7 @@
   import Options from 'src/components/settings/options/options.svelte'
   import Export from 'src/components/settings/export/export.svelte'
   import Modal from 'src/components/modal/modal.svelte'
-
-  export let close: () => void
+  import { modal } from 'src/components/modal/store'
 
   const tabs = [
     { name: 'options', component: Options },
@@ -21,7 +20,7 @@
 </script>
 
 <Modal
-  {close}
+  close={modal.off}
   ariaLabelledby={headerId}
   stretchHeight
   classNames="lg:max-w-screen-sm"
@@ -44,7 +43,7 @@
       {/each}
     </nav>
     <button
-      on:click={close}
+      on:click={modal.off}
       class="py-2 px-3 rounded-sm"
       title={`Close ${selectedTab.name}`}
       aria-label={`Close ${selectedTab.name}`}

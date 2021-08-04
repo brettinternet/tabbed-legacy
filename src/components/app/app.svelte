@@ -5,7 +5,7 @@
   import './scrollbar.css'
   import { setupListeners } from 'src/components/app/listeners'
   import { isPopup } from 'src/components/app/store'
-  import { modal, someModal } from 'src/components/modal/store'
+  import { modal, someModal, whichModal } from 'src/components/modal/store'
   import { settings } from 'src/components/settings/store'
   import { log } from 'src/utils/logger'
   import AppLayout from 'src/components/layout/layout.svelte'
@@ -13,7 +13,7 @@
   import Sessions from 'src/components/sessions/sessions.svelte'
   import SettingsModal from 'src/components/settings/settings.svelte'
   import ShortcutsModal from 'src/components/shortcuts/shortcuts.svelte'
-  import UploaderModal from 'src/components/import/import.svelte'
+  import ImportModal from 'src/components/import/import.svelte'
   import Overlay from 'src/components/modal/overlay.svelte'
   import ContextMenu from 'src/components/context-menu/context-menu.svelte'
 
@@ -32,6 +32,17 @@
     console.log(search?.value)
   }
 
+  const getActiveModal = () => {
+    switch ($whichModal) {
+      case 'settings':
+        return SettingsModal
+      case 'shortcuts':
+        return ShortcutsModal
+      case 'importer':
+        return ImportModal
+    }
+  }
+
   $: log.debug(logContext, $settings, 'some', $someModal)
 </script>
 
@@ -46,15 +57,7 @@
   >
     <Sessions currentLayout={$settings.layout} />
   </AppLayout>
-  {#if $modal.settings}
-    <SettingsModal close={modal.off} />
-  {/if}
-  {#if $modal.shortcuts}
-    <ShortcutsModal close={modal.off} />
-  {/if}
-  {#if $modal.importer}
-    <UploaderModal />
-  {/if}
+  <svelte:component this={getActiveModal()} />
   {#if $someModal}
     <Overlay />
   {/if}

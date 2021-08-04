@@ -1,5 +1,8 @@
 import { writable, derived } from 'svelte/store'
 
+/**
+ * Mutually exclusive modal state
+ */
 const createModalWritable = () => {
   const initial = {
     settings: false,
@@ -49,3 +52,10 @@ export const modal = createModalWritable()
 export const someModal = derived(modal, ($modal) =>
   Object.values($modal).some(Boolean)
 )
+export const whichModal = derived(modal, ($modal) => {
+  for (const key in $modal) {
+    if ($modal[key as keyof typeof $modal]) {
+      return key
+    }
+  }
+})

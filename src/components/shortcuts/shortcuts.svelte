@@ -2,8 +2,7 @@
   import Header from 'src/components/modal/header.svelte'
   import Modal from 'src/components/modal/modal.svelte'
   import Kbd from 'src/components/kbd/kbd.svelte'
-
-  export let close: () => void
+  import { modal } from 'src/components/modal/store'
 
   const headerId = 'shortcuts-h1'
   const headerHeight = 76
@@ -11,10 +10,14 @@
   const td = 'text-gray-600 dark:text-gray-300'
 </script>
 
-<Modal {close} ariaLabelledby={headerId} classNames="lg:max-w-screen-sm">
+<Modal
+  close={modal.off}
+  ariaLabelledby={headerId}
+  classNames="lg:max-w-screen-sm"
+>
   <Header
     headerStyle={`height:${headerHeight}px`}
-    onClickClose={close}
+    onClickClose={modal.off}
     title="Shortcuts"
     {headerId}
   />
