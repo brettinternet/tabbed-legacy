@@ -16,6 +16,8 @@
   import ImportModal from 'src/components/import/import.svelte'
   import Overlay from 'src/components/modal/overlay.svelte'
   import ContextMenu from 'src/components/context-menu/context-menu.svelte'
+  import Sortable, { MultiDrag } from 'sortablejs'
+  Sortable.mount(new MultiDrag())
 
   const logContext = 'components/app/app.svelte'
 

@@ -8,6 +8,7 @@
   import type { OpenTabOptions, OpenWindowOptions } from 'src/utils/messages'
   import WindowTitle from './window-title.svelte'
   import TabItem from './tab-item.svelte'
+  import SortableComponent from 'src/components/sortable/sortable.svelte'
 
   export let windows: browser.windows.Window[],
     ariaLabelledby: string,
@@ -29,6 +30,7 @@
 
   const handleWindowClick: svelte.JSX.MouseEventHandler<HTMLButtonElement> =
     async (ev) => {
+      ev.stopPropagation()
       const button = ev.currentTarget
       if (button.dataset.windowId) {
         const windowId: number | undefined = parseInt(button.dataset.windowId)
@@ -42,6 +44,7 @@
 
   const handleTabLinkClick: svelte.JSX.MouseEventHandler<HTMLAnchorElement> =
     async (ev) => {
+      ev.stopPropagation()
       const anchor = ev.currentTarget
       if (anchor.dataset.tabId && anchor.dataset.windowId) {
         const tabId: number | undefined = parseInt(anchor.dataset.tabId)
@@ -68,15 +71,18 @@
       />
       {#if win.tabs}
         <ol role="grid" class="overflow-hidden">
-          {#each win.tabs as tab (tab.id)}
-            <TabItem
-              {tab}
+          <!-- {#each win.tabs as tab (tab.id)} -->
+          <SortableComponent items={win.tabs} let:item>
+            <svelte:component
+              this={TabItem}
+              tab={item}
               {sessionId}
               {currentTabId}
               onClickAnchor={handleTabLinkClick}
               {duplicateTabUrls}
             />
-          {/each}
+          </SortableComponent>
+          <!-- {/each} -->
         </ol>
       {/if}
     </div>
