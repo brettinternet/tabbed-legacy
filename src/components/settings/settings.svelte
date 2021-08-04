@@ -16,7 +16,6 @@
 
   let selectedTab = tabs[0]
   const headerId = 'settings-h1'
-  const headerHeight = 76
 </script>
 
 <Modal
@@ -25,10 +24,7 @@
   stretchHeight
   classNames="lg:max-w-screen-sm"
 >
-  <header
-    class="flex flex-row justify-between p-5"
-    style={`height:${headerHeight}px`}
-  >
+  <header class="flex flex-row justify-between items-start p-3 xs:p-5">
     <nav>
       {#each tabs as { name }, i (name)}
         <button
@@ -36,7 +32,7 @@
             selectedTab = tabs[i]
           }}
           class={cn(
-            'mr-3 capitalize p-2 rounded-sm border-b-2',
+            'mr-3 capitalize p-2 rounded-sm border-b-2 mb-2 xxs:mb-0',
             selectedTab.name === name && 'border-blue-700 dark:border-blue-400'
           )}>{name}</button
         >
@@ -51,10 +47,7 @@
       <X />
     </button>
   </header>
-  <div
-    class="p-7 overflow-y-auto scroll"
-    style={`height:calc(100% - ${headerHeight}px);`}
-  >
+  <div class="overflow-y-auto scroll flex-1 p-3 xs:px-7 xs:py-5">
     <svelte:component this={selectedTab.component} {headerId} />
   </div>
 </Modal>

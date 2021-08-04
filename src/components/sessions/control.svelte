@@ -5,7 +5,7 @@
    */
   import { locale } from 'svelte-i18n'
   import { formatDistanceToNow } from 'date-fns'
-  import cn from 'classnames'
+  import cn, { Argument as ClassnamesArgument } from 'classnames'
 
   import { getDateLocale } from 'src/i18n'
   import { editSession } from 'src/components/sessions/store'
@@ -23,7 +23,8 @@
     saveSession: OptionalProp<(sessionId: string) => Promise<void>> = undefined,
     openSession: OptionalProp<(sessionId: string) => Promise<void>> = undefined,
     openSessionEditor: OptionalProp<() => void> = undefined,
-    downloadSessions: (options: DownloadSessionsOptions) => Promise<void>
+    downloadSessions: (options: DownloadSessionsOptions) => Promise<void>,
+    rootClassNames: OptionalProp<ClassnamesArgument> = undefined
 
   const handleOpenSessionEditor = () => {
     if (openSessionEditor) {
@@ -45,7 +46,11 @@
 </script>
 
 <div
-  class="flex justify-between items-center h-9 bg-gray-100 dark:bg-gray-800 mx-0.5"
+  class={cn(
+    'flex justify-between items-center h-9 bg-gray-100 dark:bg-gray-800',
+    'pr-4 xs:pr-6 sm:pr-10 lg:pr-0 pl-2 xs:pl-4 sm:pl-8 lg:pl-0 py-2 lg:py-0',
+    rootClassNames
+  )}
 >
   <div class="flex items-center">
     {#if openSession}
@@ -103,20 +108,22 @@
 
     {#if openSessionEditor}
       <button
-        class={cn('flex flex-row items-center', buttonClassName)}
+        class={cn('flex flex-row items-center max-w-xs', buttonClassName)}
         aria-label="Edit session"
         title="Edit session"
         on:click={handleOpenSessionEditor}
       >
-        <span class={cn(session.title && 'mr-2')}><Edit /></span>
+        <span class={cn(session.title && 'lg:mr-2')}><Edit /></span>
         {#if session.title}
-          {session.title}
+          <span class="hidden lg:inline">
+            {session.title}
+          </span>
         {/if}
       </button>
     {/if}
   </div>
 
-  <div class="text-gray-400 dark:text-gray-500 pr-3">
+  <div class="hidden xs:block text-gray-400 dark:text-gray-500 lg:pr-3">
     <time>{getDateStr(createdDate, 'created')}</time>
   </div>
 </div>

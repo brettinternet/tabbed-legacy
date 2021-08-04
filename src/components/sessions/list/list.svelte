@@ -89,7 +89,6 @@
       />
       {#if selectedSessionId === session.id}
         <div
-          class="lg:hidden p-4 xs:px-6 sm:px-10 py-4"
           data-context-id={contextIds.SESSION}
           data-session-id={session.id}
           data-session-type={session.type}
@@ -100,17 +99,20 @@
             {saveSession}
             deleteSession={i !== 0 ? deleteSession : undefined}
             {downloadSessions}
+            rootClassNames="block lg:hidden"
           />
-          <WindowList
-            windows={session.windows}
-            sessionId={session.id}
-            ariaLabelledby={session.id}
-            {currentWindowId}
-            {currentTabId}
-            {openWindow}
-            {openTab}
-            {duplicateTabUrls}
-          />
+          <div class="lg:hidden px-4 pb-4 xs:px-6 sm:px-10">
+            <WindowList
+              windows={session.windows}
+              sessionId={session.id}
+              ariaLabelledby={session.id}
+              {currentWindowId}
+              {currentTabId}
+              {openWindow}
+              {openTab}
+              {duplicateTabUrls}
+            />
+          </div>
         </div>
       {/if}
 
@@ -162,7 +164,6 @@
         />
         {#if selectedSessionId === session.id}
           <div
-            class="lg:hidden p-4 xs:px-6 sm:px-10 py-4"
             data-context-id={contextIds.SESSION}
             data-session-id={session.id}
             data-session-type={session.type}
@@ -174,17 +175,20 @@
               {deleteSession}
               {openSessionEditor}
               {downloadSessions}
+              rootClassNames="block lg:hidden"
             />
-            <WindowList
-              windows={session.windows}
-              sessionId={session.id}
-              ariaLabelledby={session.id}
-              {currentWindowId}
-              {currentTabId}
-              {openWindow}
-              {openTab}
-              {duplicateTabUrls}
-            />
+            <div class="lg:hidden px-4 pb-4 xs:px-6 sm:px-10">
+              <WindowList
+                windows={session.windows}
+                sessionId={session.id}
+                ariaLabelledby={session.id}
+                {currentWindowId}
+                {currentTabId}
+                {openWindow}
+                {openTab}
+                {duplicateTabUrls}
+              />
+            </div>
           </div>
         {/if}
       {/each}
@@ -196,13 +200,11 @@
   {#if selectedSession && selectedSession.id === selectedSessionId}
     <article
       class="scroll hidden lg:col-span-8 xl:col-span-9 pb-10 h-main overflow-y-auto lg:flex lg:flex-col"
+      data-context-id={contextIds.SESSION}
+      data-session-id={selectedSession.id}
+      data-session-type={selectedSession.type}
     >
-      <div
-        class="flex-1"
-        data-context-id={contextIds.SESSION}
-        data-session-id={selectedSession.id}
-        data-session-type={selectedSession.type}
-      >
+      <div class="flex-1">
         <SessionControl
           session={selectedSession}
           openSession={selectedSession.id !== sessionLists.current.id
