@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 /**
  * https://github.com/tailwindlabs/tailwindcss/discussions/1077#discussioncomment-528222
  *
@@ -7,11 +9,14 @@ module.exports = {
   purge: ['./src/popup/**/*.{svelte,html}'],
   darkMode: 'class',
   theme: {
+    screens: {
+      xxs: '320px',
+      xs: '481px',
+      // existing breakpoints: https://tailwindcss.com/docs/responsive-design
+      // extending screens: https://tailwindcss.com/docs/breakpoints#extending-the-default-breakpoints
+      ...defaultTheme.screens
+    },
     extend: {
-      screens: {
-        xxs: '320px',
-        xs: '481px',
-      },
       zIndex: {
         header: 100,
         'menu-accordion': 80,
