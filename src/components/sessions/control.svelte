@@ -48,7 +48,7 @@
 <div
   class={cn(
     'flex justify-between items-center h-9 bg-gray-100 dark:bg-gray-800',
-    'pr-4 xs:pr-6 sm:pr-10 lg:pr-0 pl-2 xs:pl-4 sm:pl-8 lg:pl-0 py-2 lg:py-0',
+    'pr-4 xs:pr-6 sm:pr-10 lg:pr-3 pl-2 xs:pl-4 sm:pl-8 lg:pl-2 py-2 lg:py-0',
     rootClassNames
   )}
 >
@@ -123,7 +123,7 @@
     {/if}
   </div>
 
-  <div class="hidden xs:block text-gray-400 dark:text-gray-500 lg:pr-3">
+  <div class="hidden xs:block text-gray-400 dark:text-gray-500">
     <time>{getDateStr(createdDate, 'created')}</time>
   </div>
 </div>

@@ -68,7 +68,7 @@
   )
 </script>
 
-<section class="w-full lg:grid lg:gap-10 lg:grid-cols-12 lg:px-4">
+<section class="w-full lg:grid lg:grid-cols-12 lg:px-4">
   <menu
     id="menu"
     class="scroll relative p-0 m-0 lg:col-span-4 xl:col-span-3 z-menu-accordion lg:h-main lg:overflow-y-auto"
@@ -204,21 +204,21 @@
       data-session-id={selectedSession.id}
       data-session-type={selectedSession.type}
     >
-      <div class="flex-1">
-        <SessionControl
-          session={selectedSession}
-          openSession={selectedSession.id !== sessionLists.current.id
-            ? openSession
-            : undefined}
-          {saveSession}
-          deleteSession={selectedSession.id !== sessionLists.current.id
-            ? deleteSession
-            : undefined}
-          openSessionEditor={selectedSession.type === sessionTypes.SAVED
-            ? openSessionEditor
-            : undefined}
-          {downloadSessions}
-        />
+    <SessionControl
+      session={selectedSession}
+      openSession={selectedSession.id !== sessionLists.current.id
+        ? openSession
+        : undefined}
+      {saveSession}
+      deleteSession={selectedSession.id !== sessionLists.current.id
+        ? deleteSession
+        : undefined}
+      openSessionEditor={selectedSession.type === sessionTypes.SAVED
+        ? openSessionEditor
+        : undefined}
+      {downloadSessions}
+    />
+      <div class="flex-1 pl-10">
         <WindowList
           windows={selectedSession.windows}
           sessionId={selectedSession.id}
@@ -230,7 +230,7 @@
           {duplicateTabUrls}
         />
       </div>
-      <div class="mt-8">
+      <div class="mt-8 pl-10">
         <Meta session={selectedSession} />
       </div>
     </article>
