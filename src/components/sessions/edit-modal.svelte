@@ -58,12 +58,14 @@
     }
 
   const headerId = 'session-editing'
+  const inputId = 'session-name'
 </script>
 
 <Modal
   close={handleClose}
   ariaLabelledby={headerId}
   classNames="lg:max-w-screen-xxs"
+  focusSelector={`#${inputId}`}
 >
   <Header onClickClose={handleClose} title="Session" {headerId} />
   <form
@@ -73,6 +75,7 @@
   >
     <div class="w-full">
       <Input
+        id={inputId}
         label="Name"
         type="text"
         value={session.title}

@@ -13,7 +13,8 @@
   export let close: () => void,
     ariaLabelledby: string,
     stretchHeight = false,
-    classNames: OptionalProp<ClassnamesArgument> = undefined
+    classNames: OptionalProp<ClassnamesArgument> = undefined,
+    focusSelector: OptionalProp<string> = undefined
 
   let trap: FocusTrap, modal: HTMLElement | null, main: HTMLElement | null
 
@@ -34,6 +35,12 @@
           trap.activate()
         } catch (err) {
           log.error(err)
+        }
+        if (focusSelector) {
+          const el = modal.querySelector(focusSelector)
+          if (el instanceof HTMLElement) {
+            el.focus()
+          }
         }
       }
     }

@@ -121,7 +121,7 @@
       {/if}
     {/each}
     {#if sessionLists.previous.length - 1 > limit}
-      <div class="flex justify-end px-2 xs:px-4 sm:px-8">
+      <div class="flex justify-end px-2 xs:px-4 sm:px-8 lg:px-4">
         <button
           class="p-2 flex items-center text-gray-400 dark:text-gray-500"
           on:click={toggleViewAll}
@@ -204,20 +204,20 @@
       data-session-id={selectedSession.id}
       data-session-type={selectedSession.type}
     >
-    <SessionControl
-      session={selectedSession}
-      openSession={selectedSession.id !== sessionLists.current.id
-        ? openSession
-        : undefined}
-      {saveSession}
-      deleteSession={selectedSession.id !== sessionLists.current.id
-        ? deleteSession
-        : undefined}
-      openSessionEditor={selectedSession.type === sessionTypes.SAVED
-        ? openSessionEditor
-        : undefined}
-      {downloadSessions}
-    />
+      <SessionControl
+        session={selectedSession}
+        openSession={selectedSession.id !== sessionLists.current.id
+          ? openSession
+          : undefined}
+        {saveSession}
+        deleteSession={selectedSession.id !== sessionLists.current.id
+          ? deleteSession
+          : undefined}
+        openSessionEditor={selectedSession.type === sessionTypes.SAVED
+          ? openSessionEditor
+          : undefined}
+        {downloadSessions}
+      />
       <div class="flex-1 pl-10">
         <WindowList
           windows={selectedSession.windows}
