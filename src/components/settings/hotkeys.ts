@@ -19,6 +19,7 @@ import {
 } from 'src/components/sessions/send'
 import { parseNum, isDefined } from 'src/utils/helpers'
 import { sessionTypes } from 'src/utils/browser/storage'
+import { toast } from 'src/components/toast/store'
 
 const logContext = 'components/settings/hotkeys'
 
@@ -32,10 +33,13 @@ const handleDelete = async (ev: KeyboardEvent) => {
       const tabId = parseNum(target.dataset.tabId)
       if (isDefined(tabId) && isDefined(windowId)) {
         await removeTab(sessionId, windowId, tabId)
+        toast.push({ message: 'Tab removed' })
       } else if (isDefined(windowId)) {
         await removeWindow(sessionId, windowId)
+        toast.push({ message: 'Window removed' })
       } else if (sessionType !== sessionTypes.CURRENT) {
         await deleteSession(sessionId)
+        toast.push({ message: 'Session deleted' })
       }
       await forceUpdateSessions()
     }
