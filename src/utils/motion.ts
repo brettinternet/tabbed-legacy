@@ -24,11 +24,10 @@ export const tweened = (
   options: Options<number>
 ): PausableTweened<number> => {
   const store = nativeTweened<number>(initial, options)
-  const set = store.set
   let lastSet = initial
 
   const reset = async () => {
-    await set(initial, { duration: 0 })
+    await store.set(initial, { duration: 0 })
   }
 
   return {
@@ -36,7 +35,7 @@ export const tweened = (
     reset,
     pause: async () => {
       const value = get(store)
-      await set(value, { duration: 0 })
+      await store.set(value, { duration: 0 })
     },
     continue: async () => {
       const value = get(store)
@@ -45,16 +44,16 @@ export const tweened = (
         const remaining =
           options.duration - options.duration * percentageCompleted
 
-        await set(lastSet, { duration: remaining })
+        await store.set(lastSet, { duration: remaining })
       }
     },
     replay: async () => {
       await reset()
-      await set(lastSet, options)
+      await store.set(lastSet, options)
     },
     set: async (newValue, options) => {
       lastSet = newValue
-      await set(newValue, options)
+      await store.set(newValue, options)
     },
   }
 }

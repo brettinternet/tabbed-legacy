@@ -17,11 +17,11 @@
   const close = () => {
     toast.pop(item.id)
   }
-  tweenedProgress.set(0).then(close)
+  void tweenedProgress.set(0).then(close)
 
   const handleMouseover = tweenedProgress.pause
-  const handleMouseout = async () => {
-    tweenedProgress.continue().then(close)
+  const handleMouseout = () => {
+    void tweenedProgress.continue().then(close)
   }
 
   const getThemedStyles = (level: ToastLevel) => {
