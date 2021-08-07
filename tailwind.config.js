@@ -14,7 +14,7 @@ module.exports = {
       xs: '481px',
       // existing breakpoints: https://tailwindcss.com/docs/responsive-design
       // extending screens: https://tailwindcss.com/docs/breakpoints#extending-the-default-breakpoints
-      ...defaultTheme.screens
+      ...defaultTheme.screens,
     },
     extend: {
       zIndex: {
@@ -23,6 +23,7 @@ module.exports = {
         modal: 150,
         overlay: 140,
         'context-menu': 200,
+        toast: 1000,
       },
       fontSize: {
         xxs: '.6rem',
