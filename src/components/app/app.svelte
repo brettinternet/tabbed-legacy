@@ -16,6 +16,7 @@
   import ImportModal from 'src/components/import/import.svelte'
   import Overlay from 'src/components/modal/overlay.svelte'
   import ContextMenu from 'src/components/context-menu/context-menu.svelte'
+  import ToastProvider from 'src/components/toast/toasts.svelte'
 
   const logContext = 'components/app/app.svelte'
 
@@ -62,4 +63,5 @@
     <Overlay />
   {/if}
   <ContextMenu />
+  <ToastProvider />
 {/if}
