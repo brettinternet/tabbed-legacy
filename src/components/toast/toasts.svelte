@@ -8,8 +8,9 @@
    */
   import { fly, scale } from 'svelte/transition'
   import { flip } from 'svelte/animate'
-  import { toast, toastLevels } from 'src/components/toast/store'
+
   import type { ToastLevel } from 'src/components/toast/store'
+  import { toast, toastLevels } from 'src/components/toast/store'
   import Item from './item.svelte'
 
   const shouldInterruptAssistive = (level: ToastLevel) =>

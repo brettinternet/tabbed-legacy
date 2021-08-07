@@ -22,6 +22,7 @@ export type ToastOptions = {
   actions?: ToastAction[]
   duration?: number
   dismissable?: boolean
+  autoDismiss?: boolean
 }
 
 export type Toast = {
@@ -32,6 +33,7 @@ export type Toast = {
   actions?: ToastAction[]
   duration: number
   dismissable: boolean
+  autoDismiss: boolean
 }
 
 const defaultOptions: ToastOptions = {
@@ -39,6 +41,7 @@ const defaultOptions: ToastOptions = {
   level: toastLevels.INFO,
   duration: 4000,
   dismissable: true,
+  autoDismiss: true,
 }
 
 const createToast = () => {

@@ -8,20 +8,37 @@
   import X from 'src/components/icons/x.svelte'
 
   export let item: Toast
+  const {
+    id,
+    title,
+    message,
+    level,
+    actions,
+    duration,
+    autoDismiss,
+    dismissable,
+  } = item
 
-  const tweenedProgress = tweened(1, {
-    duration: item.duration,
-    easing: linear,
-  })
+  const progress = autoDismiss
+    ? tweened(1, {
+        duration: duration,
+        easing: linear,
+      })
+    : undefined
 
   const close = () => {
-    toast.pop(item.id)
+    toast.pop(id)
   }
-  void tweenedProgress.set(0).then(close)
 
-  const handleMouseover = tweenedProgress.pause
+  if (progress) {
+    void progress.set(0).then(close)
+  }
+
+  const handleMouseover = progress?.pause
   const handleMouseout = () => {
-    void tweenedProgress.continue().then(close)
+    if (progress) {
+      void progress.continue().then(close)
+    }
   }
 
   const getThemedStyles = (level: ToastLevel) => {
@@ -46,7 +63,7 @@
     }
   }
 
-  const { bg } = getThemedStyles(item.level)
+  const { bg } = getThemedStyles(level)
 </script>
 
 <div
@@ -59,15 +76,15 @@
   on:mouseout={handleMouseout}
 >
   <div class="py-3 px-2 flex-1">
-    {#if item.title}
-      <h1>{item.title}</h1>
+    {#if title}
+      <h1>{title}</h1>
     {/if}
     <p>
-      {item.message}
+      {message}
     </p>
-    {#if item.actions}
+    {#if actions}
       <div class="flex justify-end">
-        {#each item.actions as { text, onClick } (text)}
+        {#each actions as { text, onClick } (text)}
           <button
             on:click={onClick}
             class="px-3 py-2 ml-2 bg-white text-black dark:bg-gray-800 dark:text-gray-300"
@@ -79,17 +96,19 @@
     {/if}
   </div>
 
-  {#if item.dismissable}
+  {#if dismissable}
     <button class="w-8 h-8 flex items-center justify-center" on:click={close}>
       <X />
     </button>
   {/if}
 
   <!-- This native element doesn't look great on Firefox... -->
-  <progress
-    class="block appearance-none border-none absolute bottom-0 w-full bg-transparent h-1"
-    value={$tweenedProgress}
-  />
+  {#if progress}
+    <progress
+      class="block appearance-none border-none absolute bottom-0 w-full bg-transparent h-1"
+      value={$progress}
+    />
+  {/if}
 </div>
 
 <style>
