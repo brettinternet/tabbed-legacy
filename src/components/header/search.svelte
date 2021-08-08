@@ -5,10 +5,6 @@
   // TODO: add dropdown to narrow search to all/previous/saved
 </script>
 
-<form
-  role="search"
-  on:submit={onSubmitSearch}
-  aria-label="Sessions, windows and tabs"
->
+<form role="search" on:submit={onSubmitSearch} aria-label="Sessions and tabs">
   <Input id="search" classNames="w-full" type="text" placeholder="Search" />
 </form>
