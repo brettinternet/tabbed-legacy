@@ -34,8 +34,17 @@ import {
   findDuplicateTabs,
 } from 'src/components/sessions/send'
 import { modal } from 'src/components/modal/store'
+import { toast } from 'src/components/toast/store'
 
 const logContext = 'components/sessions/handlers'
+
+const handleError = (error: unknown) => {
+  log.error(error)
+  const { message } = error as browser.runtime._LastError
+  if (message) {
+    toast.push({ message, level: 'error' })
+  }
+}
 
 export const handleHighlightDuplicateTabUrls = async (sessionId?: string) => {
   try {
@@ -48,7 +57,7 @@ export const handleHighlightDuplicateTabUrls = async (sessionId?: string) => {
     }
     duplicates.set(undefined)
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 }
 
@@ -60,8 +69,7 @@ export const updateSessions = async () => {
       await handleHighlightDuplicateTabUrls(_duplicates.sessionId)
     }
   } catch (err) {
-    log.error(err)
-    // TODO: handle error presentation
+    handleError(err)
   }
 }
 
@@ -81,7 +89,7 @@ export const handleOpenSession = async (sessionId: string) => {
     await openSession(sessionId)
     selectedSessionId.set(sessionId)
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 
   await updateSessions()
@@ -94,7 +102,7 @@ export const handleSaveSession = async (sessionId: string) => {
     await saveExistingSession(sessionId)
     selectedSessionId.set(sessionId)
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 
   await updateSessions()
@@ -106,7 +114,7 @@ export const handleDeleteSession = async (sessionId: string) => {
   try {
     await deleteSession(sessionId)
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 
   await updateSessions()
@@ -122,7 +130,7 @@ export const handleRenameSession = async (sessionId: string, name: string) => {
     // TODO: name validation here
     await renameSession(sessionId, name)
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 
   await updateSessions()
@@ -138,7 +146,7 @@ export const handleOpenWindow = async (
   try {
     await openWindow(sessionId, windowId, options)
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 
   await updateSessions()
@@ -151,7 +159,7 @@ export const handleSaveWindow = async (sessionId: string, windowId: number) => {
   try {
     await saveWindow(sessionId, windowId)
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 
   await updateSessions()
@@ -167,7 +175,7 @@ export const handleRemoveWindow = async (
   try {
     await removeWindow(sessionId, windowId)
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 
   await updateSessions()
@@ -182,7 +190,7 @@ export const handleOpenTab = async (
   try {
     await openTab(sessionId, windowId, tabId, options)
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 
   await updateSessions()
@@ -196,7 +204,7 @@ export const handleCloseTab = async (
   try {
     await removeTab(sessionId, windowId, tabId)
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 
   await updateSessions()
@@ -211,9 +219,8 @@ export const handleMinimizeWindow = async (
     await patchWindow(sessionId, windowId, {
       state: minimized ? 'minimized' : 'normal',
     })
-    // TODO: push update from backend only if action isn't on current session
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 
   await updateSessions()
@@ -228,7 +235,7 @@ export const handlePinTab = async (
   try {
     await patchTab(sessionId, windowId, tabId, { pinned })
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 
   await updateSessions()
@@ -240,7 +247,7 @@ export const handleDownloadSessions = async (
   try {
     await downloadSessions(options)
   } catch (err) {
-    log.error(err)
+    handleError(err)
   }
 }
 
