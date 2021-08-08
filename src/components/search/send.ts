@@ -5,7 +5,7 @@ import type {
 import { MESSAGE_TYPE_SEARCH_SESSIONS } from 'src/utils/messages'
 import { log } from 'src/utils/logger'
 
-const logContext = 'components/app/send'
+const logContext = 'components/search/send'
 
 export const searchSessions = async (
   text: string

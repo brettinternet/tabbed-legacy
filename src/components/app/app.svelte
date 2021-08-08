@@ -7,7 +7,6 @@
   import { modal, someModal, whichModal } from 'src/components/modal/store'
   import { settings } from 'src/components/settings/store'
   import { log } from 'src/utils/logger'
-  import { searchSessions } from 'src/components/app/send'
   import AppLayout from 'src/components/layout/layout.svelte'
   import PageLoader from 'src/components/loader/page-loader.svelte'
   import Sessions from 'src/components/sessions/sessions.svelte'
@@ -25,18 +24,6 @@
   const openSettings = () => {
     modal.settings.set(true)
   }
-
-  const handleSearchSubmit: svelte.JSX.FormEventHandler<HTMLFormElement> =
-    async (ev) => {
-      ev.preventDefault()
-      const search: HTMLInputElement | null =
-        ev.currentTarget.querySelector('#search')
-      const query = search?.value
-      if (query?.trim()) {
-        const results = await searchSessions(query)
-        console.log('results: ', results)
-      }
-    }
 
   const getActiveModal = () => {
     switch ($whichModal) {
@@ -56,7 +43,6 @@
   <AppLayout
     onClickSettings={openSettings}
     currentLayout={$settings.layout}
-    onSubmitSearch={handleSearchSubmit}
     height={isPopup ? $settings.popupDimensions?.height : undefined}
   >
     <Sessions currentLayout={$settings.layout} />

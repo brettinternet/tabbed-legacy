@@ -3,8 +3,7 @@
   import { appName } from 'src/utils/env'
   import type { Layout } from 'src/utils/settings'
 
-  export let onSubmitSearch: svelte.JSX.FormEventHandler<HTMLFormElement>,
-    pageTitle: OptionalProp<string> = undefined,
+  export let pageTitle: OptionalProp<string> = undefined,
     currentLayout: OptionalProp<Layout> = undefined,
     onClickSettings: OptionalProp<() => void> = undefined,
     height: OptionalProp<number> = undefined
@@ -16,13 +15,13 @@
 
 {#if height}
   <div id="popup" style={`height:${height}px;`} class="scroll overflow-y-auto">
-    <Header {currentLayout} {onClickSettings} {onSubmitSearch} />
+    <Header {currentLayout} {onClickSettings} />
     <main id="main" class="mx-auto max-w-screen-2xl">
       <slot />
     </main>
   </div>
 {:else}
-  <Header {currentLayout} {onClickSettings} {onSubmitSearch} />
+  <Header {currentLayout} {onClickSettings} />
   <main id="main" class="mx-auto max-w-screen-2xl">
     <slot />
   </main>

@@ -7,11 +7,10 @@
   import type { Layout } from 'src/utils/settings'
   import Cog from 'src/components/icons/cog.svelte'
   import { layouts } from 'src/utils/settings'
-  import Search from './search.svelte'
+  import Search from '../search/search.svelte'
 
   export let onClickSettings: OptionalProp<() => void> = undefined,
-    currentLayout: OptionalProp<Layout> = undefined,
-    onSubmitSearch: svelte.JSX.FormEventHandler<HTMLFormElement>
+    currentLayout: OptionalProp<Layout> = undefined
 </script>
 
 <header
@@ -31,7 +30,7 @@
           : 'md:ml-auto md:mr-0 md:max-w-xs'
       )}
     >
-      <Search {onSubmitSearch} />
+      <Search />
     </li>
     {#if onClickSettings}
       <li

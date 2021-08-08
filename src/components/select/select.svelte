@@ -9,7 +9,7 @@
     onBlur: OptionalProp<svelte.JSX.FocusEventHandler<HTMLSelectElement>> =
       undefined,
     required: OptionalProp<boolean> = undefined,
-    select: OptionalProp<HTMLSelectElement> = undefined
+    ref: OptionalProp<HTMLSelectElement> = undefined
 
   /**
    * Filter escape key to prevent closing popup, and blur the input instead
@@ -40,7 +40,7 @@
     'rounded-sm border border-gray-800 px-2 py-1 dark:bg-gray-900 dark:border-gray-500 dark:text-white',
     classNames
   )}
-  bind:this={select}
+  bind:this={ref}
   on:blur={onBlur}
   on:keydown={handleKeyDown}
   {required}

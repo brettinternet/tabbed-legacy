@@ -6,7 +6,10 @@
     classNames: OptionalProp<string> = undefined,
     onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLInputElement>> =
       undefined,
-    required: OptionalProp<boolean> = undefined
+    onInput: OptionalProp<svelte.JSX.FormEventHandler<HTMLInputElement>> =
+      undefined,
+    required: OptionalProp<boolean> = undefined,
+    ref: OptionalProp<HTMLInputElement> = undefined
 
   /**
    * Filter escape key to prevent closing popup, and blur the input instead
@@ -32,6 +35,7 @@
   </label>
 {/if}
 <input
+  bind:this={ref}
   {id}
   class={cn(
     'rounded-sm border border-gray-800 px-2 py-1 dark:bg-gray-900 dark:border-gray-500 dark:text-white',
@@ -39,6 +43,7 @@
   )}
   on:change={onChange}
   on:keydown={handleKeyDown}
+  on:input={onInput}
   {required}
   {...$$restProps}
 />

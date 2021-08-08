@@ -92,7 +92,7 @@
       required
       disabled
       onBlur={handleChangeFormat}
-      bind:select={format}
+      bind:ref={format}
     />
   </div>
 
