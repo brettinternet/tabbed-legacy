@@ -44,25 +44,15 @@ npm test
 
 ### Todo
 
-#### Sessions, windows & tabs
+#### Before launch
 
-- [ ] Get recently closed sessions and consolidate with previous?
+- [ ] display session search results with highlights
+- [ ] implement undo stack
+- [ ] documentation wiki
 - [ ] multi-select sessions, windows, and tabs
   - [ ] select box (left) - also move active indicator, context menu for tab actions
   - [ ] merge multiple sessions & windows
   - [ ] drag and drop tabs to reorder tabs or assign to new window
-
-#### Layouts
-
-- [ ] Grid layout - [1](https://github.com/isaacHagoel/svelte-dnd-action), [2](https://github.com/vaheqelyan/svelte-grid)
-  - [ ] zones to move window groups to? current/minimized/saved
-
-#### App
-
-- [ ] add session alert messages on failure
-- [ ] Search tab titles, urls
-- [ ] implement undo stack
-- [ ] documentation wiki
 
 #### Bugs
 
@@ -75,6 +65,7 @@ npm test
 
 #### Wishlist
 
+- [ ] Get recently closed sessions and consolidate with previous?
 - [ ] add i18n English
 - [ ] Extension landing page with feature descriptions
 - [ ] tab-able elements, tab groups that can change focus with arrows; AKA focus rings/focus layers or groups - [1](https://github.com/discord/focus-rings), [2](https://github.com/davidtheclark/focus-group)
@@ -82,6 +73,8 @@ npm test
 - [ ] Tooltip to suggest shortcut/middle/right click
 - [ ] Hide tabs - [1](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/hide)
 - [ ] use alert component to add hints to functionality
+- [ ] Grid layout - [1](https://github.com/isaacHagoel/svelte-dnd-action), [2](https://github.com/vaheqelyan/svelte-grid)
+  - [ ] zones to move window groups to? current/minimized/saved
 
 #### Pending
 
