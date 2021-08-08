@@ -31,13 +31,14 @@ const handleDelete = async (ev: KeyboardEvent) => {
       const sessionType = target.dataset.sessionType
       const windowId = parseNum(target.dataset.windowId)
       const tabId = parseNum(target.dataset.tabId)
+      const isCurrent = sessionType !== sessionTypes.CURRENT
       if (isDefined(tabId) && isDefined(windowId)) {
         await removeTab(sessionId, windowId, tabId)
-        toast.push({ message: 'Tab removed' })
+        toast.push({ message: `Tab ${isCurrent ? 'closed' : 'removed'}` })
       } else if (isDefined(windowId)) {
         await removeWindow(sessionId, windowId)
-        toast.push({ message: 'Window removed' })
-      } else if (sessionType !== sessionTypes.CURRENT) {
+        toast.push({ message: `Window ${isCurrent ? 'closed' : 'removed'}` })
+      } else if (isCurrent) {
         await deleteSession(sessionId)
         toast.push({ message: 'Session deleted' })
       }
