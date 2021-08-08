@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { isLoading } from 'svelte-i18n'
   import { onMount } from 'svelte'
 
   import './scrollbar.css'
@@ -47,9 +46,7 @@
   $: log.debug(logContext, $settings, 'some', $someModal)
 </script>
 
-{#if $isLoading}
-  <PageLoader hideLabel />
-{:else if $settings}
+{#if $settings}
   <AppLayout
     onClickSettings={openSettings}
     currentLayout={$settings.layout}
@@ -64,4 +61,6 @@
   {/if}
   <ContextMenu />
   <ToastProvider />
+{:else}
+  <PageLoader />
 {/if}

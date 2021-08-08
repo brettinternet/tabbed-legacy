@@ -3,14 +3,13 @@
    * @accessibility Potentially best to keep aria-label and text identical and use both attributes
    * https://www.deque.com/blog/text-links-practices-screen-readers/
    */
-  import { locale } from 'svelte-i18n'
   import { formatDistanceToNow } from 'date-fns'
   import cn, { Argument as ClassnamesArgument } from 'classnames'
 
-  import { getDateLocale } from 'src/i18n'
-  import { editSession } from 'src/components/sessions/store'
   import type { Session } from 'src/utils/browser/storage'
   import type { DownloadSessionsOptions } from 'src/utils/messages'
+  import { locale, getDateLocale } from 'src/utils/i18n'
+  import { editSession } from 'src/components/sessions/store'
   import Open from 'src/components/icons/open.svelte'
   import Save from 'src/components/icons/save.svelte'
   import Bin from 'src/components/icons/bin.svelte'
@@ -35,7 +34,7 @@
 
   const getDateStr = (date: Date, prefix?: string) => {
     const timeStr = formatDistanceToNow(date, {
-      locale: getDateLocale($locale),
+      locale: getDateLocale(locale),
       addSuffix: true,
     })
     return prefix ? `${prefix} ${timeStr}` : timeStr

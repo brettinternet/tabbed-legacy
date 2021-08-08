@@ -4,7 +4,7 @@
    * https://blog.chromium.org/2021/05/update-on-user-agent-string-reduction.html
    * @reference https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
    */
-  import { locale } from 'svelte-i18n'
+  import { locale } from 'src/utils/i18n'
   import {
     appName,
     buildVersion,
@@ -38,7 +38,7 @@
     </tr>
     <tr>
       <th style={thStyle} class={thClassName}>Language</th>
-      <td>{$locale}</td>
+      <td>{locale}</td>
     </tr>
     <tr>
       <th style={thStyle} class={thClassName}>User Agent</th>

@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { locale } from 'svelte-i18n'
   import cn from 'classnames'
   import { formatDistanceToNow } from 'date-fns'
   import { onDestroy } from 'svelte'
 
   import Window from 'src/components/icons/window.svelte'
-  import { getDateLocale } from 'src/i18n'
+  import { locale, getDateLocale } from 'src/utils/i18n'
   import type { Session } from 'src/utils/browser/storage'
   import { contextIds } from 'src/components/context-menu/store'
 
@@ -19,7 +18,7 @@
 
   const getDateStr = (date: Date) => {
     const timeStr = formatDistanceToNow(date, {
-      locale: getDateLocale($locale),
+      locale: getDateLocale(locale),
       addSuffix: true,
     })
     return datePrefix ? `${datePrefix} ${timeStr}` : timeStr

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { _ } from 'svelte-i18n'
   import cn, { Argument as ClassnamesArgument } from 'classnames'
 
   export let hideLabel = false,
@@ -36,7 +35,7 @@
       {#if label}
         {label}
       {:else}
-        {$_('common.loader_label', { default: 'Loading…' })}
+        Loading…
       {/if}
     </p>
   {/if}

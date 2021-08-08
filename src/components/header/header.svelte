@@ -2,7 +2,6 @@
   /**
    * @accessibility https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/Search_role
    */
-  import { _ } from 'svelte-i18n'
   import cn from 'classnames'
 
   import Cog from 'src/components/icons/cog.svelte'
@@ -41,7 +40,7 @@
           id="search"
           classNames="w-full"
           type="text"
-          placeholder={$_('common.search_placeholder', { default: 'Search' })}
+          placeholder="Search"
         />
       </form>
     </li>
@@ -55,12 +54,8 @@
         <button
           class="px-4 py-1 h-full rounded-sm"
           on:click={onClickSettings}
-          aria-label={$_('common.settings.open_button', {
-            default: 'Open settings',
-          })}
-          title={$_('common.settings.open_button', {
-            default: 'Open settings',
-          })}><Cog /></button
+          aria-label="Open settings"
+          title="Open settings"><Cog /></button
         >
       </li>
     {/if}

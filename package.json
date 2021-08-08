@@ -30,7 +30,6 @@
     "loglevel": "^1.7.1",
     "postcss": "^8.3.5",
     "svelte": "^3.38.3",
-    "svelte-i18n": "^3.3.9",
     "tailwindcss": "^2.2.4",
     "uuid": "^8.3.2"
   },
