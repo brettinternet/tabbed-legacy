@@ -32,7 +32,7 @@
       const search: HTMLInputElement | null =
         ev.currentTarget.querySelector('#search')
       const query = search?.value
-      if (query) {
+      if (query?.trim()) {
         const results = await searchSessions(query)
         console.log('results: ', results)
       }
