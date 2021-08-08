@@ -60,16 +60,13 @@ npm test
 #### App
 
 - [ ] add session alert messages on failure
-- [ ] use alert component to add hints to functionality
-- [ ] implement undo stack
 - [ ] Search tab titles, urls
-- [ ] url/regex ignore list
-- [ ] load test
-- [ ] documentation
-- [ ] switch to browser i18n, move/configure texts
+- [ ] implement undo stack
+- [ ] documentation wiki
 
 #### Bugs
 
+- [ ] tabbing skips over radio input component
 - [ ] check that all windows are narrowed down by session first
 
 #### CI
@@ -78,9 +75,13 @@ npm test
 
 #### Wishlist
 
+- [ ] add i18n English
+- [ ] Extension landing page with feature descriptions
 - [ ] tab-able elements, tab groups that can change focus with arrows; AKA focus rings/focus layers or groups - [1](https://github.com/discord/focus-rings), [2](https://github.com/davidtheclark/focus-group)
+- [ ] url/regex ignore list
 - [ ] Tooltip to suggest shortcut/middle/right click
 - [ ] Hide tabs - [1](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/hide)
+- [ ] use alert component to add hints to functionality
 
 #### Pending
 
