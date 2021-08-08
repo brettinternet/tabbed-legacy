@@ -1,6 +1,6 @@
 import type { Settings } from 'src/utils/settings'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
-import type { SearchResults } from 'src/background/search/search'
+import type { SearchSessionsResults } from 'src/background/search/sessions'
 
 type MessageWithValue<T, U = undefined> = {
   type: T
@@ -215,4 +215,4 @@ export type SearchSessionsMessage = MessageWithValue<
   typeof MESSAGE_TYPE_SEARCH_SESSIONS,
   { text: string }
 >
-export type SearchSessionsResponse = SearchResults
+export type SearchSessionsResponse = SearchSessionsResults
