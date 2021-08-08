@@ -30,6 +30,14 @@ export const attributions = [
     authors: 'Kirollos Risk',
   },
   {
+    projectUrl: 'https://github.com/sveltejs/svelte',
+    projectName: 'svelte',
+    licenseType: 'MIT License',
+    licenseUrl:
+      'https://github.com/sveltejs/svelte/blob/03f16140198d8dc63091d23485bac8a1169296ff/LICENSE.md',
+    authors: 'Rich Harris & contributors',
+  },
+  {
     projectUrl: 'https://teenyicons.com/',
     projectName: 'Teenyicons',
     licenseType: 'MIT License',
