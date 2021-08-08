@@ -17,7 +17,7 @@
 
 <div
   class={cn(
-    'flex flex-row items-center justify-between py-3 xl:justify-start',
+    'flex flex-row items-center justify-between py-3 lg:justify-start',
     currentWindowId === id
       ? 'text-green-500'
       : incognito
@@ -45,29 +45,29 @@
       {/if}
     </h2>
   </div>
-  {#if tabs}
-    <div
-      class="flex items-center text-gray-500 font-extralight whitespace-nowrap overflow-ellipsis overflow-hidden"
-    >
-      {#if incognito}
-        <span
-          class="mr-2 text-purple-600"
-          title="incognito"
-          aria-label="incognito"
-        >
-          <Incognito />
-        </span>
-      {/if}
-      {#if state === 'minimized'}
-        <span
-          class="mr-2 text-yellow-600"
-          title="minimized"
-          aria-label="minimized"
-        >
-          <Minimize />
-        </span>
-      {/if}
+  <div
+    class="flex items-center text-gray-500 font-extralight whitespace-nowrap overflow-ellipsis overflow-hidden"
+  >
+    {#if incognito}
+      <span
+        class="mr-2 text-purple-600"
+        title="incognito"
+        aria-label="incognito"
+      >
+        <Incognito />
+      </span>
+    {/if}
+    {#if state === 'minimized'}
+      <span
+        class="mr-2 text-yellow-600"
+        title="minimized"
+        aria-label="minimized"
+      >
+        <Minimize />
+      </span>
+    {/if}
+    {#if tabs}
       {tabs.length} tabs
-    </div>
-  {/if}
+    {/if}
+  </div>
 </div>
