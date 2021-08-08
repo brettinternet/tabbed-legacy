@@ -4,10 +4,10 @@
    */
   import cn from 'classnames'
 
-  import Cog from 'src/components/icons/cog.svelte'
-  import Input from 'src/components/input/input.svelte'
-  import { layouts } from 'src/utils/settings'
   import type { Layout } from 'src/utils/settings'
+  import Cog from 'src/components/icons/cog.svelte'
+  import { layouts } from 'src/utils/settings'
+  import Search from './search.svelte'
 
   export let onClickSettings: OptionalProp<() => void> = undefined,
     currentLayout: OptionalProp<Layout> = undefined,
@@ -20,7 +20,7 @@
   <ul
     class={cn(
       'w-full m-0 flex p-4',
-      currentLayout === layouts.LIST && 'lg:grid lg:gap-10 lg:grid-cols-12'
+      currentLayout === layouts.LIST && 'lg:grid lg:grid-cols-12'
     )}
   >
     <li
@@ -31,18 +31,7 @@
           : 'md:ml-auto md:mr-0 md:max-w-xs'
       )}
     >
-      <form
-        role="search"
-        on:submit={onSubmitSearch}
-        aria-label="Windows and tabs"
-      >
-        <Input
-          id="search"
-          classNames="w-full"
-          type="text"
-          placeholder="Search"
-        />
-      </form>
+      <Search {onSubmitSearch} />
     </li>
     {#if onClickSettings}
       <li
