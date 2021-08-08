@@ -40,7 +40,8 @@
   <div class="mb-10">
     <SectionTitle>App</SectionTitle>
 
-    <div class="mb-6">
+    <!-- WIP -->
+    <!-- <div class="mb-6">
       <fieldset class="mb-3 space-y-2" aria-describedby="layout-description">
         <legend>Layout</legend>
         <div class="flex flex-row items-center space-x-6">
@@ -61,7 +62,7 @@
         </div>
       </fieldset>
       <Description id="layout-description">Choose a layout.</Description>
-    </div>
+    </div> -->
     <div class="mb-6">
       <fieldset class="mb-3 space-y-2" aria-describedby="theme-description">
         <legend>Theme</legend>
