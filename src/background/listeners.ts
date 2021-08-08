@@ -23,6 +23,7 @@ import {
   setupSessionListeners,
   loadClosedWindowListener,
 } from './sessions/listeners'
+import { setupSearchListeners } from './search/listeners'
 
 const logContext = 'background/listeners'
 
@@ -81,4 +82,5 @@ export const setupListeners = (settings: Settings) => {
   void setupSessionListeners()
   void loadTabCountListeners(settings.showTabCountBadge)
   void loadClosedWindowListener(settings.saveClosedWindows)
+  void setupSearchListeners()
 }

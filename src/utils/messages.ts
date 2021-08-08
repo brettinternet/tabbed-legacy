@@ -1,5 +1,6 @@
 import type { Settings } from 'src/utils/settings'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
+import type { SearchResults } from 'src/background/search/search'
 
 type MessageWithValue<T, U = undefined> = {
   type: T
@@ -207,3 +208,11 @@ export type ImportSessionsFromTextMessage = MessageWithValue<
   typeof MESSAGE_TYPE_IMPORT_SESSIONS_FROM_TEXT,
   { content: string }
 >
+
+// search
+export const MESSAGE_TYPE_SEARCH_SESSIONS = 'search_sessions'
+export type SearchSessionsMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_SEARCH_SESSIONS,
+  { text: string }
+>
+export type SearchSessionsResponse = SearchResults
