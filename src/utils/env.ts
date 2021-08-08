@@ -36,6 +36,14 @@ export const attributions = [
       'https://github.com/date-fns/date-fns/blob/41211030571fe373612a58ba9bcf32ea21db8156/LICENSE.md',
     authors: 'Sasha Koss & Lesha Koss',
   },
+  {
+    projectUrl: 'https://github.com/krisk/fuse',
+    projectName: 'fuse.js',
+    licenseType: 'Apache License 2.0',
+    licenseUrl:
+      'https://github.com/krisk/Fuse/blob/e5e3abb44e004662c98750d0964d2d9a73b87848/LICENSE',
+    authors: 'Kirollos Risk',
+  },
 ]
 
 /**
