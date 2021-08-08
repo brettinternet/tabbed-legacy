@@ -5,13 +5,17 @@
   import Input from 'src/components/input/input.svelte'
   import Radio from 'src/components/radio/radio.svelte'
   import Button from 'src/components/button/button.svelte'
-  import { extensionClickActions, layouts, themes } from 'src/utils/settings'
+  import {
+    extensionClickActions,
+    // layouts,
+    themes,
+  } from 'src/utils/settings'
   import { settings } from 'src/components/settings/store'
   import { isSidebarSupported } from 'src/components/app/store'
   import { browserRuntime, browsers } from 'src/utils/env'
   import { isProd } from 'src/utils/env'
   import {
-    handleChangeLayout,
+    // handleChangeLayout,
     handleChangeToggleExtensionClickAction,
     handleChangeRadioExtensionClickAction,
     handleChangeSaveClosedWindow,
