@@ -58,7 +58,7 @@
 </script>
 
 <div role="region" aria-labelledby={ariaLabelledby}>
-  {#each windows as win, windowIndex (win.id)}
+  {#each windows as win, windowIndex (sessionId + win.id)}
     <div class={cn(windowIndex !== 0 && 'mt-4')}>
       <WindowTitle
         onClick={handleWindowClick}
@@ -68,7 +68,7 @@
       />
       {#if win.tabs}
         <ol role="grid" class="overflow-hidden">
-          {#each win.tabs as tab (tab.id)}
+          {#each win.tabs as tab (sessionId + tab.id)}
             <TabItem
               {tab}
               {sessionId}
