@@ -44,6 +44,7 @@ const defaultOptions: ToastOptions = {
   autoDismiss: true,
 }
 
+const MAX_TOASTS = 3
 const createToast = () => {
   const { subscribe, update } = writable<Toast[]>([])
   let count = 0
@@ -56,7 +57,12 @@ const createToast = () => {
         ...options,
         id: ++count,
       } as Toast
-      update((toasts) => [...toasts, newToast])
+      update((toasts) => {
+        if (toasts.length > MAX_TOASTS - 1) {
+          toasts.splice(0, toasts.length - (MAX_TOASTS - 1))
+        }
+        return [...toasts, newToast]
+      })
       return count
     },
     update: (id: number, options: ToastOptions) => {
