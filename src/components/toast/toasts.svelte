@@ -11,7 +11,10 @@
 
   import type { ToastLevel } from 'src/components/toast/store'
   import { toast, toastLevels } from 'src/components/toast/store'
+  import { setupListeners } from 'src/components/toast/listeners'
   import Item from './item.svelte'
+
+  setupListeners()
 
   const shouldInterruptAssistive = (level: ToastLevel) =>
     level === toastLevels.ERROR

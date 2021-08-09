@@ -69,7 +69,7 @@
 <div
   class={cn(
     'root',
-    'w-52 h-auto min-w-5 mb-2 shadow-md rounded-md relative flex items-center overflow-hidden',
+    'w-52 h-auto min-w-5 mb-2 shadow-md rounded-md relative flex overflow-hidden',
     bg
   )}
   on:mouseover={handleMouseover}
@@ -97,7 +97,10 @@
   </div>
 
   {#if dismissable}
-    <button class="w-8 h-8 flex items-center justify-center" on:click={close}>
+    <button
+      class="w-8 h-7 my-1.5 flex items-center justify-center"
+      on:click={close}
+    >
       <X />
     </button>
   {/if}

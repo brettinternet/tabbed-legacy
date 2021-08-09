@@ -1,6 +1,7 @@
 import type { Settings } from 'src/utils/settings'
 import type { SessionLists, Session } from 'src/utils/browser/storage'
 import type { SearchSessionsResults } from 'src/background/search/sessions'
+import type { ToastOptions } from 'src/components/toast/store'
 
 type MessageWithValue<T, U = undefined> = {
   type: T
@@ -10,6 +11,8 @@ type MessageWithValue<T, U = undefined> = {
 type Message<T> = {
   type: T
 }
+
+// TODO: add detailed comments describing each message's usage
 
 // settings
 export const MESSAGE_TYPE_RELOAD_ACTIONS = 'reload_actions'
@@ -223,3 +226,11 @@ export type UndoMessage = Message<typeof MESSAGE_TYPE_UNDO>
 
 export const MESSAGE_TYPE_REDO = 'redo'
 export type RedoMessage = Message<typeof MESSAGE_TYPE_REDO>
+
+
+// toast from background
+export const MESSAGE_TYPE_TOAST = 'toast'
+export type ToastMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_TOAST,
+  ToastOptions
+>
