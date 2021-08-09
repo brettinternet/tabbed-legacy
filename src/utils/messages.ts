@@ -216,3 +216,10 @@ export type SearchSessionsMessage = MessageWithValue<
   { text: string }
 >
 export type SearchSessionsResponse = SearchSessionsResults
+
+// undo
+export const MESSAGE_TYPE_UNDO = 'undo'
+export type UndoMessage = Message<typeof MESSAGE_TYPE_UNDO>
+
+export const MESSAGE_TYPE_REDO = 'redo'
+export type RedoMessage = Message<typeof MESSAGE_TYPE_REDO>
