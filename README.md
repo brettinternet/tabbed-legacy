@@ -46,8 +46,10 @@ npm test
 
 #### Before launch
 
+- [ ] add tests for newly implemented features such as undo
+- [ ] push undo/redo actions to undo stack for backend session actions
+- [ ] use different "current window" indicator for previous/saved sessions
 - [ ] display session search results with highlights
-- [ ] implement undo stack
 - [ ] documentation wiki
 - [ ] multi-select sessions, windows, and tabs
   - [ ] select box (left) - also move active indicator, context menu for tab actions
@@ -56,6 +58,7 @@ npm test
 
 #### Bugs
 
+- [ ] Firefox not rendering popup and sidebar
 - [ ] tabbing skips over radio input component
 - [ ] check that all windows are narrowed down by session first
 
