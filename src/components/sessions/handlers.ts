@@ -9,8 +9,8 @@ import type {
 import { getActiveTabId } from 'src/utils/browser/query'
 import { log } from 'src/utils/logger'
 import {
-  currentWindowId,
-  currentTabId,
+  activeWindowId,
+  activeTabId,
   sessionLists,
   selectedSessionId,
   editSession,
@@ -268,18 +268,18 @@ export const handleSelectSession: EventHandler<MouseEvent, HTMLButtonElement> =
 export const handleActiveTabChange = (
   info: browser.tabs._OnActivatedActiveInfo
 ) => {
-  currentWindowId.set(info.windowId)
-  currentTabId.set(info.tabId)
+  activeWindowId.set(info.windowId)
+  activeTabId.set(info.tabId)
 }
 
-export const handleFocusWindowChange = async (activeWindowId: number) => {
-  if (activeWindowId > 0) {
-    const tabId = await getActiveTabId(activeWindowId)
-    currentWindowId.set(activeWindowId)
-    currentTabId.set(tabId)
-    await sortCurrentSession(activeWindowId)
+export const handleFocusWindowChange = async (newActiveWindowId: number) => {
+  if (newActiveWindowId > 0) {
+    const tabId = await getActiveTabId(newActiveWindowId)
+    activeWindowId.set(newActiveWindowId)
+    activeTabId.set(tabId)
+    await sortCurrentSession(newActiveWindowId)
   } else {
-    currentWindowId.set(undefined)
-    currentTabId.set(undefined)
+    activeWindowId.set(undefined)
+    activeTabId.set(undefined)
   }
 }

@@ -8,8 +8,8 @@ import { toast } from 'src/components/toast/store'
 
 const logContext = 'components/sessions/store'
 
-export const currentWindowId = writable<number | undefined>()
-export const currentTabId = writable<number | undefined>()
+export const activeWindowId = writable<number | undefined>()
+export const activeTabId = writable<number | undefined>()
 export const sessionLists = writable<SessionLists | undefined>()
 export const selectedSessionId = writable<string | undefined>()
 export const editSession = writable<Session | undefined>()

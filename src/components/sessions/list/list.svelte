@@ -25,8 +25,8 @@
     toggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
     selectedSessionId: string | undefined,
     sessionLists: SessionLists,
-    currentWindowId: number | undefined,
-    currentTabId: number | undefined,
+    activeWindowId: number | undefined,
+    activeTabId: number | undefined,
     openSession: (sessionId: string) => Promise<void>,
     saveSession: (sessionId: string) => Promise<void>,
     deleteSession: (sessionId: string) => Promise<void>,
@@ -106,8 +106,8 @@
               windows={session.windows}
               sessionId={session.id}
               ariaLabelledby={session.id}
-              {currentWindowId}
-              {currentTabId}
+              {activeWindowId}
+              {activeTabId}
               {openWindow}
               {openTab}
               {duplicateTabUrls}
@@ -182,8 +182,8 @@
                 windows={session.windows}
                 sessionId={session.id}
                 ariaLabelledby={session.id}
-                {currentWindowId}
-                {currentTabId}
+                {activeWindowId}
+                {activeTabId}
                 {openWindow}
                 {openTab}
                 {duplicateTabUrls}
@@ -224,8 +224,8 @@
             windows={selectedSession.windows}
             sessionId={selectedSession.id}
             ariaLabelledby={selectedSession.id}
-            {currentWindowId}
-            {currentTabId}
+            {activeWindowId}
+            {activeTabId}
             {openWindow}
             {openTab}
             {duplicateTabUrls}

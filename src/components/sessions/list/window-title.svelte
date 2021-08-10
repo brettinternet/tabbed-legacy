@@ -10,7 +10,7 @@
   export let onClick: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
     sessionId: string | undefined,
     win: browser.windows.Window,
-    currentWindowId: number | undefined
+    activeWindowId: number | undefined
 
   const { id, tabs, incognito, state } = win
 </script>
@@ -18,7 +18,7 @@
 <div
   class={cn(
     'flex flex-row items-center justify-between py-3 lg:justify-start',
-    currentWindowId === id
+    activeWindowId === id
       ? 'text-green-500'
       : incognito
       ? 'text-purple-600'
@@ -35,12 +35,12 @@
         data-minimized={state === 'minimized'}
         on:click={onClick}
         on:auxclick={onClick}
-        aria-disabled={currentWindowId === id}
+        aria-disabled={activeWindowId === id}
         class="overflow-ellipsis overflow-hidden m-outline"
       >
-        {#if currentWindowId === id}Current{' '}{/if}Window
+        {#if activeWindowId === id}Current{' '}{/if}Window
       </button>
-      {#if currentWindowId === id}
+      {#if activeWindowId === id}
         <span class="ml-2" aria-label="active" title="active"><Focused /></span>
       {/if}
     </h2>

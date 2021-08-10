@@ -9,8 +9,8 @@
   import { layouts } from 'src/utils/settings'
   import type { Layout } from 'src/utils/settings'
   import {
-    currentWindowId,
-    currentTabId,
+    activeWindowId,
+    activeTabId,
     sessionLists,
     selectedSessionId,
     editSession,
@@ -62,8 +62,8 @@
     const focusedWindow = $sessionLists?.current?.windows.find(
       ({ id, focused }) => focused || id === browser.windows.WINDOW_ID_CURRENT
     )
-    $currentWindowId = focusedWindow?.id
-    $currentTabId = focusedWindow?.tabs?.find(({ active }) => active)?.id
+    $activeWindowId = focusedWindow?.id
+    $activeTabId = focusedWindow?.tabs?.find(({ active }) => active)?.id
   }
 
   void fetch()
@@ -118,8 +118,8 @@
       selectSession={handleSelectSession}
       selectedSessionId={$selectedSessionId}
       sessionLists={$sessionLists}
-      currentWindowId={$currentWindowId}
-      currentTabId={$currentTabId}
+      activeWindowId={$activeWindowId}
+      activeTabId={$activeTabId}
       openSession={handleOpenSession}
       saveSession={handleSaveSession}
       deleteSession={handleDeleteSession}

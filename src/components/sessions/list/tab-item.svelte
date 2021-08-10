@@ -9,7 +9,7 @@
 
   export let tab: browser.tabs.Tab,
     sessionId: string | undefined,
-    currentTabId: number | undefined,
+    activeTabId: number | undefined,
     onClickAnchor: svelte.JSX.MouseEventHandler<HTMLAnchorElement>,
     duplicateTabUrls: string[] | undefined
 
@@ -29,7 +29,7 @@
       class={cn(
         'leading-5 inline-flex items-center',
         'overflow-hidden whitespace-pre',
-        id === currentTabId && 'text-green-500',
+        id === activeTabId && 'text-green-500',
         duplicateTabUrls && // TODO: accessible attribute to indicate highlighted?
           url &&
           duplicateTabUrls.includes(url || '') &&
@@ -47,11 +47,11 @@
           on:click={onClickAnchor}
           class={cn(
             'overflow-ellipsis overflow-hidden mx-outline',
-            id !== currentTabId && 'hover:underline'
+            id !== activeTabId && 'hover:underline'
           )}
           target="_blank"
           rel="noopener noreferrer"
-          aria-disabled={id === currentTabId}
+          aria-disabled={id === activeTabId}
         >
           {#if title}
             {title}
@@ -69,7 +69,7 @@
           ><Pin /></span
         >
       {/if}
-      {#if id === currentTabId}
+      {#if id === activeTabId}
         <span class="ml-2" aria-label="active" title="active"><Focused /></span>
       {/if}
     </div>

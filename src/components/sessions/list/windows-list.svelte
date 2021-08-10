@@ -12,8 +12,8 @@
   export let windows: browser.windows.Window[],
     ariaLabelledby: string,
     sessionId: string,
-    currentWindowId: number | undefined,
-    currentTabId: number | undefined,
+    activeWindowId: number | undefined,
+    activeTabId: number | undefined,
     openWindow: (
       sessionId: string,
       windowId: number,
@@ -64,7 +64,7 @@
         onClick={handleWindowClick}
         {sessionId}
         {win}
-        {currentWindowId}
+        {activeWindowId}
       />
       {#if win.tabs}
         <ol role="grid" class="overflow-hidden">
@@ -72,7 +72,7 @@
             <TabItem
               {tab}
               {sessionId}
-              {currentTabId}
+              {activeTabId}
               onClickAnchor={handleTabLinkClick}
               {duplicateTabUrls}
             />
