@@ -19,7 +19,7 @@
   import ViewButton from './view-button.svelte'
   import WindowList from './windows-list.svelte'
   import Meta from './meta.svelte'
-  import SessionControl from '../control.svelte'
+  import ActionBar from '../action-bar.svelte'
 
   export let selectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
     toggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
@@ -93,7 +93,7 @@
           data-session-id={session.id}
           data-session-type={session.type}
         >
-          <SessionControl
+          <ActionBar
             {session}
             openSession={i !== 0 ? openSession : undefined}
             {saveSession}
@@ -168,7 +168,7 @@
             data-session-id={session.id}
             data-session-type={session.type}
           >
-            <SessionControl
+            <ActionBar
               {session}
               {openSession}
               {saveSession}
@@ -204,7 +204,7 @@
       data-session-id={selectedSession.id}
       data-session-type={selectedSession.type}
     >
-      <SessionControl
+      <ActionBar
         session={selectedSession}
         openSession={selectedSession.id !== sessionLists.current.id
           ? openSession
