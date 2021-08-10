@@ -14,11 +14,11 @@
 </script>
 
 <header
-  class="justify-around items-center sticky top-0 bg-white border-b border-gray-300 z-header lg:static lg:border-none text-gray-800 dark:bg-gray-900 dark:text-white dark:border-gray-500 mx-auto max-w-screen-2xl"
+  class="h-header flex justify-around items-center sticky top-0 bg-white border-b border-gray-300 z-header lg:static lg:border-none text-gray-800 dark:bg-gray-900 dark:text-white dark:border-gray-500 mx-auto max-w-screen-2xl"
 >
   <ul
     class={cn(
-      'w-full m-0 flex p-4',
+      'w-full m-0 flex px-4',
       currentLayout === layouts.LIST && 'lg:grid lg:grid-cols-12'
     )}
   >
