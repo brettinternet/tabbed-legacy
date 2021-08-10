@@ -64,6 +64,10 @@ const handleSelectCurrentSession = () => {
   const current = get(sessionLists)?.current
   if (current) {
     selectedSessionId.set(current.id)
+    const currentButton: HTMLButtonElement | null = document.querySelector(
+      "[data-session-type='current']"
+    )
+    currentButton?.focus()
   }
 }
 
