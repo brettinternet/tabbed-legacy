@@ -6,6 +6,7 @@ import {
   saveNewSession,
   saveImportedSession,
 } from 'src/utils/browser/storage'
+import { filterTrivialTabs } from 'src/utils/browser/query'
 import { getWindowTitle } from './derived-title'
 import { getCurrentSession, findWindow, findSession } from './query'
 import { updateSessions } from './actions'
@@ -22,6 +23,11 @@ export const saveExistingSession = async ({
 
   const session = await findSession(sessionId)
   if (session) {
+    session.windows.forEach(({ tabs }) => {
+      if (tabs) {
+        tabs = tabs.filter(filterTrivialTabs)
+      }
+    })
     const newSession = await saveNewSession(
       localStorageKeys.USER_SAVED_SESSIONS,
       session
@@ -51,6 +57,7 @@ export const saveWindowAsSession = async ({
   if (session) {
     const win = findWindow(windowId, session)
     if (win?.tabs) {
+      win.tabs = win.tabs.filter(filterTrivialTabs)
       const title = getWindowTitle(win.tabs)
       const session = await createSessionFromWindows(
         localStorageKeys.USER_SAVED_SESSIONS,

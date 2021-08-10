@@ -1,11 +1,17 @@
 import { readSettings } from 'src/utils/browser/storage'
 import { isDefined } from 'src/utils/helpers'
+import { tabUrl } from 'src/utils/env'
 
 /**
  * `pendingUrl` for Chrome browsers where status === 'loading'
  * See `browser.d.ts`
  */
 export const getTabUrl = (tab: browser.tabs.Tab) => tab.pendingUrl || tab.url
+
+export const isExtensionUrl = (tab: browser.tabs.Tab) => {
+  const tabExtensionUrl = browser.runtime.getURL(tabUrl)
+  return getTabUrl(tab) === tabExtensionUrl
+}
 
 export const isBookmarkManagerTab = (tab: browser.tabs.Tab) =>
   tab.url && tab.url.startsWith('chrome://bookmarks/')
@@ -35,6 +41,14 @@ export const isNewTab = (tab: browser.tabs.Tab) => {
 
   return false
 }
+
+export const filterTrivialTabs = (tab: browser.tabs.Tab) =>
+  !(
+    isAuxiliaryTab(tab) ||
+    isBookmarkManagerTab(tab) ||
+    isNewTab(tab) ||
+    isExtensionUrl(tab)
+  )
 
 /**
  * Tab.id is an optional field, so compare other fields for a better estimation
