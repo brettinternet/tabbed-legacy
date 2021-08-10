@@ -44,7 +44,7 @@ export const addWindowToSession = async ({
   const { key, session } = await findSessionWithKey(sessionId)
   if (key && session) {
     if (key === localStorageKeys.CURRENT_SESSION) {
-      openWindow(win)
+      await openWindow(win)
     } else {
       if (isDefined(index)) {
         session.windows.splice(index, 0, win)
@@ -77,7 +77,7 @@ export const addTabToSessionWindow = async ({
       const url = getTabUrl(tab)
       const { pinned, windowId, incognito } = tab
       if (url) {
-        openTab({ url, pinned, windowId, incognito })
+        await openTab({ url, pinned, windowId, incognito })
       }
     } else {
       if (isDefined(index)) {

@@ -262,7 +262,7 @@ export const openTabOrFocus = async (
   } else {
     const { url, pinned } = query
     if (url) {
-      await openTab({ url, pinned }, incognito)
+      await openTab({ url, pinned, incognito })
     }
   }
 }

@@ -50,15 +50,10 @@ import {
   querySession,
 } from './query'
 import { importSessionsFromText } from './create'
-import { deleteSession, removeWindow, removeTab } from './delete'
 import { patchWindow, patchTab, discardTabs, moveTabs } from './put'
 import { downloadSessions } from './export'
 import { autoSaveSession, handleClosedWindow } from './autosave'
-import {
-  updateSessionsDebounce,
-  openSessionWindow,
-  openSessionTab,
-} from './actions'
+import { updateSessionsDebounce } from './actions'
 import {
   undoableDeleteSession,
   undoableOpenSession,

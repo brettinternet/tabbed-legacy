@@ -8,7 +8,7 @@ export const openExtensionSidebar = async () => browser.sidebarAction.open()
 
 export const openExtensionNewTab = async () => {
   const url = browser.runtime.getURL(tabUrl)
-  await openTab({ url }, browser.extension.inIncognitoContext)
+  await openTab({ url, incognito: browser.extension.inIncognitoContext })
 }
 
 export const openExtensionExistingTab = async () => {

@@ -1,5 +1,3 @@
-import { copy } from 'lodash'
-
 import { log } from 'src/utils/logger'
 import { closeTab, closeWindow } from 'src/utils/browser/query'
 import {

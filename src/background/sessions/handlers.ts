@@ -1,30 +1,5 @@
-import type { Settings } from 'src/utils/settings'
 import { log } from 'src/utils/logger'
-import { isProd } from 'src/utils/env'
-import {
-  MESSAGE_TYPE_GET_SESSION_LISTS,
-  MESSAGE_TYPE_SAVE_EXISTING_SESSION,
-  MESSAGE_TYPE_SAVE_WINDOW,
-  MESSAGE_TYPE_OPEN_SESSION,
-  MESSAGE_TYPE_OPEN_SESSION_WINDOW,
-  MESSAGE_TYPE_OPEN_SESSION_TAB,
-  MESSAGE_TYPE_DELETE_SESSION,
-  MESSAGE_TYPE_REMOVE_SESSION_WINDOW,
-  MESSAGE_TYPE_REMOVE_SESSION_TAB,
-  MESSAGE_TYPE_UPDATE_SESSION,
-  MESSAGE_TYPE_PATCH_TAB,
-  MESSAGE_TYPE_PATCH_WINDOW,
-  MESSAGE_TYPE_DISCARD_TABS,
-  MESSAGE_TYPE_MOVE_TABS,
-  MESSAGE_TYPE_DOWNLOAD_SESSIONS,
-  MESSAGE_TYPE_FIND_DUPLICATE_SESSION_TABS,
-  MESSAGE_TYPE_IMPORT_SESSIONS_FROM_TEXT,
-  MESSAGE_TYPE_GET_ALL_SESSIONS,
-  MESSAGE_TYPE_QUERY_SESSION,
-} from 'src/utils/messages'
 import type {
-  GetSessionListsMessage,
-  QuerySessionMessage,
   SaveExistingSessionMessage,
   SaveWindowMessage,
   OpenSessionMessage,
@@ -34,43 +9,32 @@ import type {
   RemoveSessionWindowMessage,
   RemoveSessionTabMessage,
   UpdateSessionMessage,
-  PatchWindowMessage,
-  PatchTabMessage,
-  DiscardTabsMessage,
-  MoveTabsMessage,
-  DownloadSessionsMessage,
-  FindDuplicateSessionTabsMessage,
-  ImportSessionsFromTextMessage,
-  GetAllSessionsMessage,
+  // PatchWindowMessage,
+  // PatchTabMessage,
+  // DiscardTabsMessage,
+  // MoveTabsMessage,
+  // DownloadSessionsMessage,
+  // FindDuplicateSessionTabsMessage,
+  // ImportSessionsFromTextMessage,
 } from 'src/utils/messages'
-import {
-  getSessionLists,
-  getAllSessions,
-  findDuplicateSessionTabs,
-  querySession,
-  findSession,
-  getCurrentSession,
-  findSessionWithKey,
-} from './query'
+import { findSession, getCurrentSession, findSessionWithKey } from './query'
 import {
   saveExistingSession,
   saveWindowAsSession,
-  importSessionsFromText,
+  // importSessionsFromText,
 } from './create'
 import { deleteSession, removeWindow, removeTab } from './delete'
 import {
   updateSession,
-  patchWindow,
-  patchTab,
-  discardTabs,
-  moveTabs,
+  // patchWindow,
+  // patchTab,
+  // discardTabs,
+  // moveTabs,
   addWindowToSession,
   addTabToSessionWindow,
 } from './put'
-import { downloadSessions } from './export'
-import { autoSaveSession, handleClosedWindow } from './autosave'
+// import { downloadSessions } from './export'
 import {
-  updateSessionsDebounce,
   openSession,
   openSessionWindow,
   openSessionTab,
