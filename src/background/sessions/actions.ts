@@ -35,12 +35,13 @@ export const updateSessions = async () => {
 }
 export const updateSessionsDebounce = debounce(updateSessions, 250)
 
-export const openSession = async (sessionId: string) => {
+export const openSession = async ({ sessionId }: { sessionId: string }) => {
   log.debug(logContext, 'openSession()', sessionId)
 
   const session = await findSession(sessionId)
   if (session) {
-    await openWindows(session.windows)
+    const windowIds = await openWindows(session.windows)
+    return windowIds
   } else {
     throwSessionId(sessionId)
   }
@@ -68,7 +69,8 @@ export const openSessionWindow = async ({
     if (session) {
       const win = findWindow(windowId, session)
       if (win) {
-        await openWindow(win)
+        const windowId = await openWindow(win)
+        return windowId
       } else {
         throwWindowId(windowId)
       }
@@ -108,13 +110,12 @@ export const openSessionTab = async ({
         if (tab) {
           const url = getTabUrl(tab)
           if (url) {
-            await openTab(
-              {
-                url,
-                pinned: tab.pinned,
-              },
-              win.incognito
-            )
+            const newTab = await openTab({
+              url,
+              pinned: tab.pinned,
+              incognito: win.incognito,
+            })
+            return newTab
           } else {
             throw Error(`No tab url found for tab ID ${tabId}`)
           }

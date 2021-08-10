@@ -1,9 +1,11 @@
 import {
   MESSAGE_TYPE_PUSH_UPDATE_SESSION_LISTS,
+  MESSAGE_TYPE_UPDATE_SELECTED_SESSION_ID,
   MESSAGE_TYPE_TOAST,
 } from 'src/utils/messages'
 import type {
   PushUpdateSessionListsMessage,
+  UpdateSelectedSessionIdMessage,
   ToastMessage,
 } from 'src/utils/messages'
 import { log } from 'src/utils/logger'
@@ -46,6 +48,22 @@ export const toast = async (value: ToastMessage['value']) => {
   const message: ToastMessage = {
     type: MESSAGE_TYPE_TOAST,
     value,
+  }
+  try {
+    await browser.runtime.sendMessage(message)
+  } catch (err) {
+    handleError(err)
+  }
+}
+
+export const updateSelectedSessionId = async (
+  sessionId: UpdateSelectedSessionIdMessage['value']
+) => {
+  log.debug(logContext, 'updateSelectedSessionId()', sessionId)
+
+  const message: UpdateSelectedSessionIdMessage = {
+    type: MESSAGE_TYPE_UPDATE_SELECTED_SESSION_ID,
+    value: sessionId,
   }
   try {
     await browser.runtime.sendMessage(message)

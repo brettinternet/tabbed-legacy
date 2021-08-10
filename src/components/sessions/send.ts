@@ -9,7 +9,7 @@ import {
   MESSAGE_TYPE_DELETE_SESSION,
   MESSAGE_TYPE_REMOVE_SESSION_WINDOW,
   MESSAGE_TYPE_REMOVE_SESSION_TAB,
-  MESSAGE_TYPE_RENAME_SESSION,
+  MESSAGE_TYPE_UPDATE_SESSION,
   MESSAGE_TYPE_PATCH_WINDOW,
   MESSAGE_TYPE_PATCH_TAB,
   MESSAGE_TYPE_DISCARD_TABS,
@@ -31,7 +31,7 @@ import type {
   RemoveSessionTabMessage,
   OpenWindowOptions,
   OpenTabOptions,
-  RenameSessionMessage,
+  UpdateSessionMessage,
   PatchWindowOptions,
   PatchWindowMessage,
   PatchTabOptions,
@@ -147,10 +147,10 @@ export const removeTab = async (
   await browser.runtime.sendMessage(message)
 }
 
-export const renameSession = async (sessionId: string, name: string) => {
-  const message: RenameSessionMessage = {
-    type: MESSAGE_TYPE_RENAME_SESSION,
-    value: { sessionId, name },
+export const renameSession = async (sessionId: string, title: string) => {
+  const message: UpdateSessionMessage = {
+    type: MESSAGE_TYPE_UPDATE_SESSION,
+    value: { sessionId, title },
   }
   await browser.runtime.sendMessage(message)
 }

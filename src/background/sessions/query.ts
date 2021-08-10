@@ -75,20 +75,27 @@ export const findSessionWithKey = async (sessionId: string) => {
     return {
       key: localStorageKeys.CURRENT_SESSION,
       session: sessionLists.current,
+      index: 0,
     }
   }
-  const previous = sessionLists.previous.find(({ id }) => id === sessionId)
+  const previousIndex = sessionLists.previous.findIndex(
+    ({ id }) => id === sessionId
+  )
+  const previous = sessionLists.previous[previousIndex]
   if (previous) {
     return {
       key: localStorageKeys.PREVIOUS_SESSIONS,
       session: previous,
+      index: previousIndex,
     }
   }
-  const saved = sessionLists.saved.find(({ id }) => id === sessionId)
+  const savedIndex = sessionLists.saved.findIndex(({ id }) => id === sessionId)
+  const saved = sessionLists.saved[savedIndex]
   if (saved) {
     return {
       key: localStorageKeys.USER_SAVED_SESSIONS,
       session: saved,
+      index: savedIndex,
     }
   }
 

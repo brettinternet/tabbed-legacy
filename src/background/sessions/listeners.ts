@@ -11,7 +11,7 @@ import {
   MESSAGE_TYPE_DELETE_SESSION,
   MESSAGE_TYPE_REMOVE_SESSION_WINDOW,
   MESSAGE_TYPE_REMOVE_SESSION_TAB,
-  MESSAGE_TYPE_RENAME_SESSION,
+  MESSAGE_TYPE_UPDATE_SESSION,
   MESSAGE_TYPE_PATCH_TAB,
   MESSAGE_TYPE_PATCH_WINDOW,
   MESSAGE_TYPE_DISCARD_TABS,
@@ -33,7 +33,7 @@ import type {
   DeleteSessionMessage,
   RemoveSessionWindowMessage,
   RemoveSessionTabMessage,
-  RenameSessionMessage,
+  UpdateSessionMessage,
   PatchWindowMessage,
   PatchTabMessage,
   DiscardTabsMessage,
@@ -49,27 +49,27 @@ import {
   findDuplicateSessionTabs,
   querySession,
 } from './query'
-import {
-  saveExistingSession,
-  saveWindowAsSession,
-  importSessionsFromText,
-} from './create'
+import { importSessionsFromText } from './create'
 import { deleteSession, removeWindow, removeTab } from './delete'
-import {
-  renameSession,
-  patchWindow,
-  patchTab,
-  discardTabs,
-  moveTabs,
-} from './put'
+import { patchWindow, patchTab, discardTabs, moveTabs } from './put'
 import { downloadSessions } from './export'
 import { autoSaveSession, handleClosedWindow } from './autosave'
 import {
   updateSessionsDebounce,
-  openSession,
   openSessionWindow,
   openSessionTab,
 } from './actions'
+import {
+  undoableDeleteSession,
+  undoableOpenSession,
+  undoableOpenSessionTab,
+  undoableOpenSessionWindow,
+  undoableRemoveTab,
+  undoableRemoveWindow,
+  undoableSaveExistingSession,
+  undoableSaveWindowAsSession,
+  undoableUpdateSession,
+} from './handlers'
 
 const logContext = 'background/sessions/listeners'
 
@@ -121,7 +121,7 @@ export const setupSessionListeners = () => {
   browser.runtime.onMessage.addListener(
     (message: SaveExistingSessionMessage) => {
       if (message.type === MESSAGE_TYPE_SAVE_EXISTING_SESSION) {
-        return saveExistingSession(message.value.sessionId)
+        return undoableSaveExistingSession(message.value)
       }
 
       return false
@@ -130,15 +130,15 @@ export const setupSessionListeners = () => {
 
   browser.runtime.onMessage.addListener((message: SaveWindowMessage) => {
     if (message.type === MESSAGE_TYPE_SAVE_WINDOW) {
-      return saveWindowAsSession(message.value)
+      return undoableSaveWindowAsSession(message.value)
     }
 
     return false
   })
 
-  browser.runtime.onMessage.addListener((message: RenameSessionMessage) => {
-    if (message.type === MESSAGE_TYPE_RENAME_SESSION) {
-      return renameSession(message.value)
+  browser.runtime.onMessage.addListener((message: UpdateSessionMessage) => {
+    if (message.type === MESSAGE_TYPE_UPDATE_SESSION) {
+      return undoableUpdateSession(message.value)
     }
 
     return false
@@ -146,7 +146,7 @@ export const setupSessionListeners = () => {
 
   browser.runtime.onMessage.addListener((message: OpenSessionMessage) => {
     if (message.type === MESSAGE_TYPE_OPEN_SESSION) {
-      return openSession(message.value.sessionId)
+      return undoableOpenSession(message.value)
     }
 
     return false
@@ -154,7 +154,7 @@ export const setupSessionListeners = () => {
 
   browser.runtime.onMessage.addListener((message: OpenSessionWindowMessage) => {
     if (message.type === MESSAGE_TYPE_OPEN_SESSION_WINDOW) {
-      return openSessionWindow(message.value)
+      return undoableOpenSessionWindow(message.value)
     }
 
     return false
@@ -162,7 +162,7 @@ export const setupSessionListeners = () => {
 
   browser.runtime.onMessage.addListener((message: OpenSessionTabMessage) => {
     if (message.type === MESSAGE_TYPE_OPEN_SESSION_TAB) {
-      return openSessionTab(message.value)
+      return undoableOpenSessionTab(message.value)
     }
 
     return false
@@ -170,7 +170,7 @@ export const setupSessionListeners = () => {
 
   browser.runtime.onMessage.addListener((message: DeleteSessionMessage) => {
     if (message.type === MESSAGE_TYPE_DELETE_SESSION) {
-      return deleteSession(message.value.sessionId)
+      return undoableDeleteSession(message.value)
     }
 
     return false
@@ -179,7 +179,7 @@ export const setupSessionListeners = () => {
   browser.runtime.onMessage.addListener(
     (message: RemoveSessionWindowMessage) => {
       if (message.type === MESSAGE_TYPE_REMOVE_SESSION_WINDOW) {
-        return removeWindow(message.value)
+        return undoableRemoveWindow(message.value)
       }
 
       return false
@@ -188,7 +188,7 @@ export const setupSessionListeners = () => {
 
   browser.runtime.onMessage.addListener((message: RemoveSessionTabMessage) => {
     if (message.type === MESSAGE_TYPE_REMOVE_SESSION_TAB) {
-      return removeTab(message.value)
+      return undoableRemoveTab(message.value)
     }
 
     return false

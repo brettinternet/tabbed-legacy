@@ -123,12 +123,12 @@ export const handleDeleteSession = async (sessionId: string) => {
   )
 }
 
-export const handleRenameSession = async (sessionId: string, name: string) => {
+export const handleRenameSession = async (sessionId: string, title: string) => {
   log.debug(logContext, 'handleRenameSession()', sessionId)
 
   try {
     // TODO: name validation here
-    await renameSession(sessionId, name)
+    await renameSession(sessionId, title)
   } catch (err) {
     handleError(err)
   }

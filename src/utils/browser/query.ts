@@ -1,4 +1,5 @@
 import { readSettings } from 'src/utils/browser/storage'
+import { isDefined } from 'src/utils/helpers'
 
 /**
  * `pendingUrl` for Chrome browsers where status === 'loading'
@@ -181,13 +182,20 @@ export const focusWindowTab = async (windowId: number, tabId: number) => {
 type OpenTabOptions = {
   url: string
   pinned?: boolean
+  windowId?: number
+  incognito?: boolean
 }
 
 /**
  * Find existing tab with matching query, otherwise
  * open with matching incognito state
  */
-export const openTab = async (options: OpenTabOptions, incognito?: boolean) => {
+export const openTab = async ({
+  url,
+  pinned,
+  windowId,
+  incognito,
+}: OpenTabOptions) => {
   const allowed = await browser.extension.isAllowedIncognitoAccess()
   if (incognito && !allowed) {
     /**
@@ -197,19 +205,21 @@ export const openTab = async (options: OpenTabOptions, incognito?: boolean) => {
     throw Error('No incognito access allowed')
   }
 
-  const { url, pinned } = options
+  let newTab: browser.tabs.Tab | undefined
   if (
-    (!incognito && browser.extension.inIncognitoContext) ||
-    (incognito && !browser.extension.inIncognitoContext)
+    !windowId &&
+    ((!incognito && browser.extension.inIncognitoContext) ||
+      (incognito && !browser.extension.inIncognitoContext))
   ) {
     const newWindow = await browser.windows.create({ url, incognito })
-    const newTabId = newWindow.tabs?.[0].id
-    if (pinned && newTabId) {
-      await browser.tabs.update(newTabId, { pinned })
+    newTab = newWindow.tabs?.[0]
+    if (pinned && newTab?.id) {
+      await browser.tabs.update(newTab.id, { pinned })
     }
   } else {
-    await browser.tabs.create({ url, pinned })
+    newTab = await browser.tabs.create({ url, pinned, windowId })
   }
+  return newTab
 }
 
 const openTabs = async (tabs: browser.tabs.Tab[], windowId?: number) => {
@@ -258,6 +268,9 @@ export const openTabOrFocus = async (
 }
 
 // TODO: Add find option to optionally search by ID
+/**
+ * @returns newly opened window ID
+ */
 export const openWindow = async (w: browser.windows.Window) => {
   const options: browser.windows._CreateCreateData = {
     state: w.state,
@@ -296,10 +309,17 @@ export const openWindow = async (w: browser.windows.Window) => {
     if (closeTabs) {
       await Promise.all(closeTabs)
     }
+    return createdWindow.id
   }
 }
 
-export const openWindows = async (windows: browser.windows.Window[]) => {
+/**
+ * @returns array of window IDs
+ */
+export const openWindows = async (
+  windows: browser.windows.Window[]
+): Promise<number[]> => {
   const tasks = windows.map(openWindow)
-  await Promise.all(tasks)
+  const results = await Promise.all(tasks)
+  return results.filter(isDefined)
 }

@@ -1,3 +1,5 @@
+import { copy } from 'lodash'
+
 import { log } from 'src/utils/logger'
 import { closeTab, closeWindow } from 'src/utils/browser/query'
 import {
@@ -11,12 +13,21 @@ import { throwSessionId, throwWindowId, throwTabId } from '../errors'
 
 const logContext = 'background/sessions/delete'
 
-export const deleteSession = async (sessionId: string) => {
+/**
+ * @returns deleted session
+ */
+export const deleteSession = async ({
+  sessionId,
+}: {
+  sessionId: string
+}): Promise<ReturnType<typeof findSessionWithKey> | undefined> => {
   log.debug(logContext, 'deleteSession()', sessionId)
 
-  const { key, session } = await findSessionWithKey(sessionId)
+  const sessionInfo = await findSessionWithKey(sessionId)
+  const { key, session } = sessionInfo
   if (key && session) {
     await deleteSessionInCollection(key, session.id)
+    return sessionInfo
   } else {
     throwSessionId(sessionId)
   }
@@ -31,13 +42,14 @@ export const removeWindow = async ({
 }) => {
   log.debug(logContext, 'removeWindow()', { sessionId, windowId })
 
-  const { key, session } = await findSessionWithKey(sessionId)
+  const sessionInfo = await findSessionWithKey(sessionId)
+  const { key, session } = sessionInfo
 
   if (key && session) {
+    const windowIndex = session.windows.findIndex(({ id }) => id === windowId)
     if (key === localStorageKeys.CURRENT_SESSION) {
       await closeWindow(windowId)
     } else {
-      const windowIndex = session.windows.findIndex(({ id }) => id === windowId)
       if (windowIndex > -1) {
         session.windows.splice(windowIndex, 1)
         await patchSessionInCollection(key, session)

@@ -112,12 +112,16 @@ export const patchSession = async (key: LocalStorageKey, session: Session) => {
 
 const saveSessionToCollection = async (
   key: LocalStorageKey,
-  session: Session
+  session: Session,
+  index?: number
 ) => {
   if (checkCollectionKey(key)) {
     const existing = await readSessionCollection(key)
     await browser.storage.local.set({
-      [key]: [session, ...(existing || [])],
+      [key]:
+        index && index > -1 && index < existing.length
+          ? existing.splice(index, 0, session)
+          : [session, ...(existing || [])],
     })
   } else {
     throw Error(`${key} is not a collection storage key`)
@@ -156,7 +160,8 @@ export const createSessionFromWindows = async (
  */
 export const saveNewSession = async (
   key: LocalStorageKey,
-  session: Session
+  session: Session,
+  index?: number
 ) => {
   const now = new Date().toJSON()
   session.id = uuidv4()
@@ -168,8 +173,9 @@ export const saveNewSession = async (
     if (key === localStorageKeys.USER_SAVED_SESSIONS) {
       session.userSavedDate = now
     }
-    await saveSessionToCollection(key, session)
+    await saveSessionToCollection(key, session, index)
   }
+  return session
 }
 
 /**

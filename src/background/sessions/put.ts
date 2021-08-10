@@ -6,24 +6,87 @@ import {
 } from 'src/utils/browser/storage'
 import { log } from 'src/utils/logger'
 import { isDefined } from 'src/utils/helpers'
+import { getTabUrl, openTab, openWindow } from 'src/utils/browser/query'
 import { findSessionWithKey } from './query'
 import { throwSessionId, throwWindowId, throwTabId } from '../errors'
 
 const logContext = 'background/sessions/put'
 
-export const renameSession = async ({
+export const updateSession = async ({
   sessionId,
-  name,
+  title,
 }: {
   sessionId: string
-  name: string
+  title: string | undefined
 }) => {
-  log.debug(logContext, 'renameSession()', { sessionId, name })
+  log.debug(logContext, 'updateSession()', { sessionId, title })
 
   const { key, session } = await findSessionWithKey(sessionId)
   if (key && session) {
-    session.title = name
+    session.title = title
     await patchSession(key, session)
+  } else {
+    throwSessionId(sessionId)
+  }
+}
+
+export const addWindowToSession = async ({
+  sessionId,
+  win,
+  index,
+}: {
+  sessionId: string
+  win: browser.windows.Window
+  index?: number
+}) => {
+  log.debug(logContext, 'addWindowToSession()', { sessionId, window, index })
+
+  const { key, session } = await findSessionWithKey(sessionId)
+  if (key && session) {
+    if (key === localStorageKeys.CURRENT_SESSION) {
+      openWindow(win)
+    } else {
+      if (isDefined(index)) {
+        session.windows.splice(index, 0, win)
+      } else {
+        session.windows.push(win)
+      }
+      await patchSession(key, session)
+    }
+  } else {
+    throwSessionId(sessionId)
+  }
+}
+
+export const addTabToSessionWindow = async ({
+  sessionId,
+  tab,
+  windowIndex,
+  index,
+}: {
+  sessionId: string
+  tab: browser.tabs.Tab
+  windowIndex: number
+  index?: number
+}) => {
+  log.debug(logContext, 'addTabToSessionWindow()', { sessionId, tab, index })
+
+  const { key, session } = await findSessionWithKey(sessionId)
+  if (key && session) {
+    if (key === localStorageKeys.CURRENT_SESSION) {
+      const url = getTabUrl(tab)
+      const { pinned, windowId, incognito } = tab
+      if (url) {
+        openTab({ url, pinned, windowId, incognito })
+      }
+    } else {
+      if (isDefined(index)) {
+        session.windows[windowIndex].tabs?.splice(index, 0, tab)
+      } else {
+        session.windows[windowIndex].tabs?.push(tab)
+      }
+      await patchSession(key, session)
+    }
   } else {
     throwSessionId(sessionId)
   }

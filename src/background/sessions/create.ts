@@ -13,12 +13,20 @@ import { throwSessionId, throwWindowId } from '../errors'
 
 const logContext = 'background/sessions/create'
 
-export const saveExistingSession = async (sessionId: string) => {
+export const saveExistingSession = async ({
+  sessionId,
+}: {
+  sessionId: string
+}) => {
   log.debug(logContext, 'saveExistingSession()', sessionId)
 
   const session = await findSession(sessionId)
   if (session) {
-    await saveNewSession(localStorageKeys.USER_SAVED_SESSIONS, session)
+    const newSession = await saveNewSession(
+      localStorageKeys.USER_SAVED_SESSIONS,
+      session
+    )
+    return newSession.id
   } else {
     throwSessionId(sessionId)
   }
@@ -26,7 +34,7 @@ export const saveExistingSession = async (sessionId: string) => {
 
 export const saveCurrentSession = async () => {
   const currentSession = await getCurrentSession()
-  await saveExistingSession(currentSession.id)
+  await saveExistingSession({ sessionId: currentSession.id })
   await updateSessions()
 }
 
@@ -44,11 +52,12 @@ export const saveWindowAsSession = async ({
     const win = findWindow(windowId, session)
     if (win?.tabs) {
       const title = getWindowTitle(win.tabs)
-      await createSessionFromWindows(
+      const session = await createSessionFromWindows(
         localStorageKeys.USER_SAVED_SESSIONS,
         [win],
         title
       )
+      return session.id
     } else {
       throwWindowId(windowId)
     }

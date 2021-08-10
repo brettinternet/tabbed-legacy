@@ -80,6 +80,14 @@ export type QuerySessionResponse = Session | undefined
 
 // session actions
 
+// update selected from background
+export const MESSAGE_TYPE_UPDATE_SELECTED_SESSION_ID =
+  'update_selected_session_id'
+export type UpdateSelectedSessionIdMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_UPDATE_SELECTED_SESSION_ID,
+  string
+>
+
 // save
 export const MESSAGE_TYPE_SAVE_EXISTING_SESSION = 'save_existing_session'
 export type SaveExistingSessionMessage = MessageWithValue<
@@ -143,10 +151,10 @@ export type RemoveSessionTabMessage = MessageWithValue<
 >
 
 // update
-export const MESSAGE_TYPE_RENAME_SESSION = 'rename_session'
-export type RenameSessionMessage = MessageWithValue<
-  typeof MESSAGE_TYPE_RENAME_SESSION,
-  { sessionId: string; name: string }
+export const MESSAGE_TYPE_UPDATE_SESSION = 'update_session'
+export type UpdateSessionMessage = MessageWithValue<
+  typeof MESSAGE_TYPE_UPDATE_SESSION,
+  { sessionId: string; title: string }
 >
 
 export type PatchWindowOptions = Pick<
@@ -227,6 +235,9 @@ export type UndoMessage = Message<typeof MESSAGE_TYPE_UNDO>
 export const MESSAGE_TYPE_REDO = 'redo'
 export type RedoMessage = Message<typeof MESSAGE_TYPE_REDO>
 
+export const MESSAGE_TYPE_CAN_UNDO_REDO = 'can_undo_redo'
+export type CanUndoRedoMessage = Message<typeof MESSAGE_TYPE_CAN_UNDO_REDO>
+export type CanUndoRedoResponse = { undo: boolean; redo: boolean }
 
 // toast from background
 export const MESSAGE_TYPE_TOAST = 'toast'

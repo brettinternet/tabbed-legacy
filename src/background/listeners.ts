@@ -24,6 +24,7 @@ import {
   loadClosedWindowListener,
 } from './sessions/listeners'
 import { setupSearchListeners } from './search/listeners'
+import { setupUndoListeners } from './undo/listeners'
 
 const logContext = 'background/listeners'
 
@@ -83,4 +84,5 @@ export const setupListeners = (settings: Settings) => {
   void loadTabCountListeners(settings.showTabCountBadge)
   void loadClosedWindowListener(settings.saveClosedWindows)
   void setupSearchListeners()
+  void setupUndoListeners()
 }
