@@ -53,16 +53,24 @@
           <td class={td}>Toggle settings display</td>
         </tr>
         <tr>
+          <th class={th}><Kbd>ctrl</Kbd> + <Kbd>z</Kbd></th>
+          <td class={td}>undo certain actions</td>
+        </tr>
+        <tr>
+          <th class={th}><Kbd>ctrl</Kbd> + <Kbd>y</Kbd></th>
+          <td class={td}>redo previous undone action</td>
+        </tr>
+        <tr>
+          <th class={th}><Kbd>del</Kbd>, <Kbd>backspace</Kbd></th>
+          <td class={td}>Delete focused sessions, windows and tabs</td>
+        </tr>
+        <tr>
           <th class={th}><Kbd>i</Kbd></th>
           <td class={td}>Open import form</td>
         </tr>
         <tr>
           <th class={th}><Kbd>r</Kbd></th>
           <td class={td}>Rename saved sessions</td>
-        </tr>
-        <tr>
-          <th class={th}><Kbd>del</Kbd>, <Kbd>backspace</Kbd></th>
-          <td class={td}>Delete focused sessions, windows and tabs</td>
         </tr>
       </tbody>
     </table>
