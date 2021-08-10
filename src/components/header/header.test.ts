@@ -8,7 +8,6 @@ describe('components/header/header.svelte', () => {
     const screen = render(Header, {
       props: {
         onClickSettings: mockHandleSettings,
-        onSubmitSearch: jest.fn(),
       },
     })
 
@@ -21,7 +20,6 @@ describe('components/header/header.svelte', () => {
     const screen = render(Header, {
       props: {
         onClickSettings: jest.fn(),
-        onSubmitSearch: jest.fn(),
       },
     })
 

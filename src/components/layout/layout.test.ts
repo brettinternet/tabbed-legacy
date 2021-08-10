@@ -6,7 +6,6 @@ describe('components/layout/layout.svelte', () => {
     render(Layout, {
       props: {
         pageTitle: 'Welcome',
-        onSubmitSearch: jest.fn(),
       },
     })
 
@@ -14,11 +13,7 @@ describe('components/layout/layout.svelte', () => {
   })
 
   it('renders a main element', () => {
-    const screen = render(Layout, {
-      props: {
-        onSubmitSearch: jest.fn(),
-      },
-    })
+    const screen = render(Layout)
 
     const main = screen.getByRole('main')
     expect(main).toBeInTheDocument()
