@@ -5,6 +5,7 @@ import { isProd } from 'src/utils/env'
 import type { Settings } from 'src/utils/settings'
 import type { Valueof } from 'src/utils/helpers'
 import { defaultSettings } from 'src/utils/settings'
+import { isDefined, insert } from 'src/utils/helpers'
 
 export const localStorageKeys = {
   SETTINGS: 'settings',
@@ -117,11 +118,11 @@ const saveSessionToCollection = async (
 ) => {
   if (checkCollectionKey(key)) {
     const existing = await readSessionCollection(key)
+    const newSessions = isDefined(index)
+      ? insert(existing, session, index)
+      : [session, ...existing]
     await browser.storage.local.set({
-      [key]:
-        index && index > -1 && index < existing.length
-          ? existing.splice(index, 0, session)
-          : [session, ...(existing || [])],
+      [key]: newSessions,
     })
   } else {
     throw Error(`${key} is not a collection storage key`)

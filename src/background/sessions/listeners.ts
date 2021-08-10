@@ -64,7 +64,7 @@ import {
   undoableSaveExistingSession,
   undoableSaveWindowAsSession,
   undoableUpdateSession,
-} from './handlers'
+} from './undo-handlers'
 
 const logContext = 'background/sessions/listeners'
 

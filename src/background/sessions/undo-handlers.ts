@@ -226,15 +226,21 @@ export const undoableDeleteSession = async (
         sessionInfo,
       },
       undo: async function () {
-        await saveNewSession(
+        const newSession = await saveNewSession(
           this.data.sessionInfo.key,
           this.data.sessionInfo.session,
           this.data.sessionInfo.index
         )
         await updateSessions()
+        const newSessionInfo = await findSessionWithKey(newSession.id)
+        if (newSessionInfo?.session) {
+          this.data.sessionInfo = newSessionInfo
+        }
       },
       redo: async function () {
-        const sessionInfo = await deleteSession(value)
+        const sessionInfo = await deleteSession({
+          sessionId: this.data.sessionInfo.session.id,
+        })
         await updateSessions()
         if (sessionInfo?.session) {
           this.data.sessionInfo = sessionInfo

@@ -50,3 +50,12 @@ export const findDuplicates = (arr: unknown[]) => {
  */
 export const numberWithCommas = (x: number) =>
   x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+export const insert = <T>(list: T[], item: T, index: number) => {
+  if (index > -1 && index < list.length) {
+    list.splice(index, 0, item)
+  } else {
+    throw Error('insert index exceeds list boundaries')
+  }
+  return list
+}
