@@ -20,6 +20,7 @@ import {
 import { parseNum, isDefined } from 'src/utils/helpers'
 import { sessionTypes } from 'src/utils/browser/storage'
 import { toast } from 'src/components/toast/store'
+import { undo, redo } from 'src/components/app/send'
 
 const logContext = 'components/settings/hotkeys'
 
@@ -63,55 +64,108 @@ const shortcutScopes = {
   DISABLED: 'disabled',
 }
 
+type ShortcutEntry = {
+  hotkey: string
+  display: string
+}
+type Shortcuts = Record<string, ShortcutEntry>
+export const shortcuts: Shortcuts = {
+  question: {
+    hotkey: 'shift+/', // `?` mark
+    display: '?',
+  },
+  escape: {
+    hotkey: 'esc',
+    display: 'Esc',
+  },
+  slash: {
+    hotkey: '/',
+    display: '/',
+  },
+  backtick: {
+    hotkey: '`',
+    display: '`',
+  },
+  i: {
+    hotkey: 'i',
+    display: 'i',
+  },
+  r: {
+    hotkey: 'r',
+    display: 'r',
+  },
+  delete: {
+    hotkey: 'delete',
+    display: 'Del',
+  },
+  backspace: {
+    hotkey: 'backspace',
+    display: 'Backspace',
+  },
+  ctrl_z: {
+    hotkey: 'ctrl+z',
+    display: 'Ctrl+z',
+  },
+  ctrl_y: {
+    hotkey: 'ctrl+y',
+    display: 'Ctrl+y',
+  },
+} as const
+
 /**
  * @docs https://github.com/jaywcjlove/hotkeys
  */
 export const setupShortcuts = (enabled: boolean) => {
   log.debug(logContext, 'setupShortcuts', enabled)
+  const hotkeyShortcuts = Object.values(shortcuts)
+    .map(({ hotkey }) => hotkey)
+    .join(',')
 
   if (enabled) {
-    hotkeys(
-      'shift+/,esc,/,`,i,r,delete,backspace',
-      shortcutScopes.ENABLED,
-      (event, handler) => {
-        if (enabled) {
-          event.preventDefault()
-          switch (handler.key) {
-            case 'shift+/': // `?` mark
-              modal.shortcuts.toggle()
-              break
-            case 'esc':
-              if (get(someModal)) {
-                modal.off()
-              } else if (isPopup) {
-                window.close()
-              }
-              break
-            case '/': {
+    hotkeys(hotkeyShortcuts, shortcutScopes.ENABLED, (event, handler) => {
+      if (enabled) {
+        event.preventDefault()
+        switch (handler.key) {
+          case shortcuts.question.hotkey:
+            modal.shortcuts.toggle()
+            break
+          case shortcuts.escape.hotkey:
+            if (get(someModal)) {
               modal.off()
-              const search = document.getElementById('search')
-              void tick().then(() => {
-                search?.focus()
-              })
-              break
+            } else if (isPopup) {
+              window.close()
             }
-            case '`':
-              modal.settings.toggle()
-              break
-            case 'i':
-              modal.importer.set(true)
-              break
-            case 'r':
-              void openSessionEdit()
-              break
-            case 'backspace':
-            case 'delete':
-              void handleDelete(event)
-              break
+            break
+          case shortcuts.slash.hotkey: {
+            modal.off()
+            const search = document.getElementById('search')
+            void tick().then(() => {
+              search?.focus()
+            })
+            break
           }
+          case shortcuts.backtick.hotkey:
+            modal.settings.toggle()
+            break
+          case shortcuts.i.hotkey:
+            modal.importer.set(true)
+            break
+          case shortcuts.r.hotkey:
+            void openSessionEdit()
+            break
+          case shortcuts.backspace.hotkey:
+          case shortcuts.delete.hotkey:
+            void handleDelete(event)
+            break
+          case shortcuts.ctrl_z.hotkey:
+            void undo()
+            break
+          case shortcuts.ctrl_y.hotkey:
+            void redo()
+            break
         }
       }
-    )
+    })
   } else {
     hotkeys('', shortcutScopes.DISABLED, noop)
   }
