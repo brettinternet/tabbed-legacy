@@ -199,7 +199,7 @@
 
   {#if selectedSession && selectedSession.id === selectedSessionId}
     <article
-      class="scroll hidden lg:col-span-8 xl:col-span-9 pb-10 h-main overflow-y-auto lg:flex lg:flex-col"
+      class="hidden lg:col-span-8 xl:col-span-9 pb-10 h-main lg:flex lg:flex-col"
       data-context-id={contextIds.SESSION}
       data-session-id={selectedSession.id}
       data-session-type={selectedSession.type}
@@ -218,20 +218,22 @@
           : undefined}
         {downloadSessions}
       />
-      <div class="flex-1 pl-10">
-        <WindowList
-          windows={selectedSession.windows}
-          sessionId={selectedSession.id}
-          ariaLabelledby={selectedSession.id}
-          {currentWindowId}
-          {currentTabId}
-          {openWindow}
-          {openTab}
-          {duplicateTabUrls}
-        />
-      </div>
-      <div class="mt-8 pl-10">
-        <Meta session={selectedSession} />
+      <div class="scroll overflow-y-auto flex flex-col h-full">
+        <div class="flex-1 pl-10">
+          <WindowList
+            windows={selectedSession.windows}
+            sessionId={selectedSession.id}
+            ariaLabelledby={selectedSession.id}
+            {currentWindowId}
+            {currentTabId}
+            {openWindow}
+            {openTab}
+            {duplicateTabUrls}
+          />
+        </div>
+        <div class="mt-8 pl-10">
+          <Meta session={selectedSession} />
+        </div>
       </div>
     </article>
   {/if}
