@@ -110,6 +110,7 @@
     <progress
       class="block appearance-none border-none absolute bottom-0 w-full bg-transparent h-1"
       value={$progress}
+      aria-label="Time until autodismiss"
     />
   {/if}
 </div>
