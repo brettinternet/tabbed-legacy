@@ -30,6 +30,7 @@ class Undo {
     this.stack.push(actionGroup)
     if (this.stack.length > MAX_STACK) {
       this.stack.splice(0, this.stack.length - MAX_STACK)
+      this.current = this.stack.length - 1
     }
   }
 
@@ -60,6 +61,10 @@ class Undo {
       log.warn('No actions to undo')
     }
 
+    const lower = -1
+    if (this.current < lower) {
+      this.current = lower
+    }
     log.debug(logContext, 'undo() - end', this.stack, this.current)
   }
 
@@ -86,6 +91,10 @@ class Undo {
       log.warn('No actions to redo')
     }
 
+    const upper = this.stack.length - 1
+    if (this.current > upper) {
+      this.current = upper
+    }
     log.debug(logContext, 'redo() - end', this.stack, this.current)
   }
 
