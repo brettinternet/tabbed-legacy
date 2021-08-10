@@ -23,10 +23,11 @@ export const saveExistingSession = async ({
 
   const session = await findSession(sessionId)
   if (session) {
-    session.windows.forEach(({ tabs }) => {
+    session.windows = session.windows.map(({ tabs, ...values }) => {
       if (tabs) {
         tabs = tabs.filter(filterTrivialTabs)
       }
+      return { ...values, tabs }
     })
     const newSession = await saveNewSession(
       localStorageKeys.USER_SAVED_SESSIONS,

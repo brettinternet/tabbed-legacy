@@ -13,15 +13,6 @@ export const isExtensionUrl = (tab: browser.tabs.Tab) => {
   return getTabUrl(tab) === tabExtensionUrl
 }
 
-export const isBookmarkManagerTab = (tab: browser.tabs.Tab) =>
-  tab.url && tab.url.startsWith('chrome://bookmarks/')
-
-export const isAuxiliaryTab = (tab: browser.tabs.Tab) =>
-  tab.url &&
-  (tab.url.startsWith('chrome:') ||
-    tab.url.startsWith('chrome-devtools:') ||
-    isBookmarkManagerTab(tab))
-
 export const isNewTab = (tab: browser.tabs.Tab) => {
   // Chrome
   const url = getTabUrl(tab)
@@ -43,12 +34,7 @@ export const isNewTab = (tab: browser.tabs.Tab) => {
 }
 
 export const filterTrivialTabs = (tab: browser.tabs.Tab) =>
-  !(
-    isAuxiliaryTab(tab) ||
-    isBookmarkManagerTab(tab) ||
-    isNewTab(tab) ||
-    isExtensionUrl(tab)
-  )
+  !(isNewTab(tab) || isExtensionUrl(tab))
 
 /**
  * Tab.id is an optional field, so compare other fields for a better estimation
