@@ -199,7 +199,7 @@
 
   {#if selectedSession && selectedSession.id === selectedSessionId}
     <article
-      class="hidden lg:col-span-8 xl:col-span-9 pb-10 h-main lg:flex lg:flex-col"
+      class="hidden lg:col-span-8 xl:col-span-9 h-main lg:flex lg:flex-col"
       data-context-id={contextIds.SESSION}
       data-session-id={selectedSession.id}
       data-session-type={selectedSession.type}
@@ -218,7 +218,7 @@
           : undefined}
         {downloadSessions}
       />
-      <div class="scroll overflow-y-auto flex flex-col h-full">
+      <div class="scroll overflow-y-auto pb-10 flex flex-col h-full">
         <div class="flex-1 pl-10">
           <WindowList
             windows={selectedSession.windows}
