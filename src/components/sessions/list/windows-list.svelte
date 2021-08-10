@@ -12,8 +12,8 @@
   export let windows: browser.windows.Window[],
     ariaLabelledby: string,
     sessionId: string,
-    activeWindowId: number | undefined,
-    activeTabId: number | undefined,
+    activeWindowId: OptionalProp<number> = undefined,
+    activeTabId: OptionalProp<number> = undefined,
     openWindow: (
       sessionId: string,
       windowId: number,

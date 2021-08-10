@@ -106,8 +106,8 @@
               windows={session.windows}
               sessionId={session.id}
               ariaLabelledby={session.id}
-              {activeWindowId}
-              {activeTabId}
+              activeWindowId={i === 0 ? activeWindowId : undefined}
+              activeTabId={i === 0 ? activeTabId : undefined}
               {openWindow}
               {openTab}
               {duplicateTabUrls}
@@ -182,8 +182,6 @@
                 windows={session.windows}
                 sessionId={session.id}
                 ariaLabelledby={session.id}
-                {activeWindowId}
-                {activeTabId}
                 {openWindow}
                 {openTab}
                 {duplicateTabUrls}
@@ -224,8 +222,12 @@
             windows={selectedSession.windows}
             sessionId={selectedSession.id}
             ariaLabelledby={selectedSession.id}
-            {activeWindowId}
-            {activeTabId}
+            activeWindowId={selectedSession.id === sessionLists.current.id
+              ? activeWindowId
+              : undefined}
+            activeTabId={selectedSession.id === sessionLists.current.id
+              ? activeTabId
+              : undefined}
             {openWindow}
             {openTab}
             {duplicateTabUrls}
