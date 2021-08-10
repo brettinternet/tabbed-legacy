@@ -52,11 +52,6 @@ const titleFromProperties = (
   if (hostname.includes('github.io')) {
     return hostname.split('.')[0]
   }
-
-  // terse titles might describe it best
-  if (title?.split(' ').length === 1) {
-    return title
-  }
 }
 
 const parseTitle = (tab: browser.tabs.Tab) => {
