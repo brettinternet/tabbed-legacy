@@ -13,7 +13,8 @@
   export let disabled = false,
     // Use `null` for text alignment to add margin where Icon would be
     Icon: OptionalProp<typeof SvelteComponent> | null = undefined,
-    text: OptionalProp<string> = undefined
+    text: OptionalProp<string> = undefined,
+    shortcut: OptionalProp<string> = undefined
 
   const dispatch = createEventDispatcher()
   const { dispatchClick } = getContext<DispatchClickContext>(key)
@@ -38,14 +39,23 @@
   on:click={handleClick}
 >
   {#if text}
-    {#if Icon}
-      <svelte:component this={Icon} size={12} />
-      <span class="ml-2">{text}</span>
-    {:else if Icon === null}
-      <span class="ml-icon">{text}</span>
-    {:else}
-      {text}
-    {/if}
+    <div class="flex justify-between items-center w-full">
+      <div class="flex items-center">
+        {#if Icon}
+          <svelte:component this={Icon} size={12} />
+          <span class="ml-2">{text}</span>
+        {:else if Icon === null}
+          <span class="ml-icon">{text}</span>
+        {:else}
+          {text}
+        {/if}
+      </div>
+      {#if shortcut}
+        <div class="text-gray-400 text-xs">
+          {shortcut}
+        </div>
+      {/if}
+    </div>
   {:else}
     <slot />
   {/if}
