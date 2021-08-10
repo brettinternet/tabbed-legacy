@@ -68,9 +68,9 @@ npm test
 
 #### Wishlist
 
-- [ ] duplicate import component as settings tab
 - [ ] Get recently closed sessions and consolidate with previous?
 - [ ] add i18n English
+- [ ] allow sort options for saved sessions - manual sorting
 - [ ] Extension landing page with feature descriptions
 - [ ] tab-able elements, tab groups that can change focus with arrows; AKA focus rings/focus layers or groups - [1](https://github.com/discord/focus-rings), [2](https://github.com/davidtheclark/focus-group)
 - [ ] url/regex ignore list
