@@ -48,7 +48,6 @@ npm test
 
 - [ ] add tests for newly implemented features such as undo
 - [ ] push undo/redo actions to undo stack for backend session actions
-- [ ] use different "current window" indicator for previous/saved sessions
 - [ ] display session search results with highlights
 - [ ] documentation wiki
 - [ ] multi-select sessions, windows, and tabs
@@ -58,6 +57,7 @@ npm test
 
 #### Bugs
 
+- [ ] undo action deleting too many windows?
 - [ ] Firefox not rendering popup and sidebar
 - [ ] tabbing skips over radio input component
 - [ ] check that all windows are narrowed down by session first
@@ -68,6 +68,7 @@ npm test
 
 #### Wishlist
 
+- [ ] duplicate import component as settings tab
 - [ ] Get recently closed sessions and consolidate with previous?
 - [ ] add i18n English
 - [ ] Extension landing page with feature descriptions
