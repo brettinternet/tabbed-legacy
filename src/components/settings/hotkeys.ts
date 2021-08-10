@@ -10,6 +10,7 @@ import {
   selectedSessionId,
   forceUpdateSessions,
   editSession,
+  sessionLists,
 } from 'src/components/sessions/store'
 import {
   querySession,
@@ -59,6 +60,13 @@ const openSessionEdit = async () => {
   }
 }
 
+const handleSelectCurrentSession = () => {
+  const current = get(sessionLists)?.current
+  if (current) {
+    selectedSessionId.set(current.id)
+  }
+}
+
 const shortcutScopes = {
   ENABLED: 'enabled',
   DISABLED: 'disabled',
@@ -86,14 +94,6 @@ export const shortcuts: Shortcuts = {
     hotkey: '`',
     display: '`',
   },
-  i: {
-    hotkey: 'i',
-    display: 'i',
-  },
-  r: {
-    hotkey: 'r',
-    display: 'r',
-  },
   delete: {
     hotkey: 'delete',
     display: 'Del',
@@ -109,6 +109,18 @@ export const shortcuts: Shortcuts = {
   ctrl_y: {
     hotkey: 'ctrl+y',
     display: 'Ctrl+y',
+  },
+  i: {
+    hotkey: 'i',
+    display: 'i',
+  },
+  r: {
+    hotkey: 'r',
+    display: 'r',
+  },
+  c: {
+    hotkey: 'c',
+    display: 'c',
   },
 } as const
 
@@ -162,6 +174,9 @@ export const setupShortcuts = (enabled: boolean) => {
             break
           case shortcuts.ctrl_y.hotkey:
             void redo()
+            break
+          case shortcuts.c.hotkey:
+            handleSelectCurrentSession()
             break
         }
       }

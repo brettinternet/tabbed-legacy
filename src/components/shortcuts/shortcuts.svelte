@@ -72,6 +72,10 @@
           <th class={th}><Kbd>r</Kbd></th>
           <td class={td}>Rename saved sessions</td>
         </tr>
+        <tr>
+          <th class={th}><Kbd>c</Kbd></th>
+          <td class={td}>Focus current session</td>
+        </tr>
       </tbody>
     </table>
   </div>
