@@ -12,7 +12,7 @@
   import Sessions from 'src/components/sessions/sessions.svelte'
   import SettingsModal from 'src/components/settings/settings.svelte'
   import ShortcutsModal from 'src/components/shortcuts/shortcuts.svelte'
-  import ImportModal from 'src/components/import/import.svelte'
+  import ImportModal from 'src/components/import/import-modal.svelte'
   import Overlay from 'src/components/modal/overlay.svelte'
   import ContextMenu from 'src/components/context-menu/context-menu.svelte'
   import ToastProvider from 'src/components/toast/toasts.svelte'
