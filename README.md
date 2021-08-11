@@ -69,6 +69,7 @@ npm test
 
 - [ ] Get recently closed sessions and consolidate with previous?
 - [ ] add i18n English
+- [ ] allow option to open tabs/windows in background (perhaps with middle click?)
 - [ ] allow sort options for saved sessions - manual sorting
 - [ ] Extension landing page with feature descriptions
 - [ ] tab-able elements, tab groups that can change focus with arrows; AKA focus rings/focus layers or groups - [1](https://github.com/discord/focus-rings), [2](https://github.com/davidtheclark/focus-group)
