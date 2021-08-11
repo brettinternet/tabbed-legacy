@@ -78,6 +78,14 @@ export const getActiveTabId = async (
 }
 
 /**
+ * get currently focused tab
+ */
+export const getActiveTabCurrentWindow = async () => {
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+  return tabs.find(({ active }) => active)
+}
+
+/**
  * @docs https://developer.chrome.com/docs/extensions/reference/i18n/#overview-predefined
  */
 export const getExtensionId = () => browser.i18n.getMessage('@@extension_id')

@@ -64,13 +64,14 @@ export const openSessionWindow = async ({
   const currentSession = await getCurrentSession()
   if (!options?.noFocus && sessionId === currentSession?.id) {
     await focusWindow(windowId)
+    return { windowId, created: false }
   } else {
     const session = await findSession(sessionId)
     if (session) {
       const win = findWindow(windowId, session)
       if (win) {
         const windowId = await openWindow(win)
-        return windowId
+        return { windowId, created: true }
       } else {
         throwWindowId(windowId)
       }
@@ -103,6 +104,8 @@ export const openSessionTab = async ({
   if (key && session) {
     if (!options?.noFocus && key === localStorageKeys.CURRENT_SESSION) {
       await focusWindowTab(windowId, tabId)
+      const tab = await browser.tabs.get(tabId)
+      return { tab, created: false }
     } else {
       const win = findWindow(windowId, session)
       if (win) {
@@ -115,7 +118,7 @@ export const openSessionTab = async ({
               pinned: tab.pinned,
               incognito: win.incognito,
             })
-            return newTab
+            return { tab: newTab, created: true }
           } else {
             throw Error(`No tab url found for tab ID ${tabId}`)
           }

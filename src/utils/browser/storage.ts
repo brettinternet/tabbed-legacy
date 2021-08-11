@@ -1,9 +1,9 @@
 // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/StorageArea/set
 import { v4 as uuidv4 } from 'uuid'
 
-import { isProd } from 'src/utils/env'
 import type { Settings } from 'src/utils/settings'
 import type { Valueof } from 'src/utils/helpers'
+import { isProd } from 'src/utils/env'
 import { defaultSettings } from 'src/utils/settings'
 import { isDefined, insert } from 'src/utils/helpers'
 
@@ -174,6 +174,30 @@ export const saveNewSession = async (
     if (key === localStorageKeys.USER_SAVED_SESSIONS) {
       session.userSavedDate = now
     }
+    await saveSessionToCollection(key, session, index)
+  }
+  return session
+}
+
+/**
+ * This does not set a new id, and expects session to already be qualified
+ *
+ * TODO: should we still reassign a new ID to ensure it's always unique?
+ */
+export const resaveSession = async (
+  key: LocalStorageKey,
+  session: Session,
+  index?: number
+) => {
+  if (!session.id) {
+    throw Error(`Invalid session ID: ${session.id}`)
+  }
+  if (session.type !== getSessionType(key)) {
+    throw Error(`Session type doesn't match local storage key: ${session.id}`)
+  }
+  if (key === localStorageKeys.CURRENT_SESSION) {
+    await saveSingleSession(key, session)
+  } else {
     await saveSessionToCollection(key, session, index)
   }
   return session

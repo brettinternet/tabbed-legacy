@@ -42,7 +42,12 @@ import {
 } from './actions'
 import { undoStack } from '../undo/stack'
 import { isDefined } from 'src/utils/helpers'
-import { saveNewSession } from 'src/utils/browser/storage'
+import { resaveSession } from 'src/utils/browser/storage'
+import {
+  focusWindow,
+  focusWindowTab,
+  getActiveTabCurrentWindow,
+} from 'src/utils/browser/query'
 
 const logContext = 'background/sessions/handlers'
 
@@ -158,16 +163,38 @@ export const undoableOpenSession = async (
 export const undoableOpenSessionWindow = async (
   value: OpenSessionWindowMessage['value']
 ) => {
-  const windowId = await openSessionWindow(value)
-  if (windowId) {
+  const result = await openSessionWindow(value)
+  const currentFocusedTab = await getActiveTabCurrentWindow()
+  if (result && isDefined(result.windowId)) {
     undoStack.push({
-      data: {},
-      undo: async () => {
-        const currentSession = await getCurrentSession()
-        await removeWindow({ sessionId: currentSession.id, windowId })
+      data: {
+        created: result.created,
+        windowId: result.windowId,
+        currentFocusedTab,
       },
-      redo: async () => {
-        await openSessionWindow(value)
+      undo: async function () {
+        const currentSession = await getCurrentSession()
+        if (this.data.created) {
+          await removeWindow({
+            sessionId: currentSession.id,
+            windowId: this.data.windowId,
+          })
+        } else if (
+          this.data.currentFocusedTab &&
+          isDefined(this.data.currentFocusedTab.windowId)
+        ) {
+          await focusWindow(this.data.currentFocusedTab.windowId)
+        }
+      },
+      redo: async function () {
+        const result = await openSessionWindow(value)
+        if (result && isDefined(result.windowId)) {
+          this.data = {
+            created: result.created,
+            windowId: result.windowId,
+            currentFocusedTab,
+          }
+        }
       },
     })
   } else {
@@ -175,7 +202,7 @@ export const undoableOpenSessionWindow = async (
       logContext,
       'undoableOpenSessionWindow()',
       'Unable to push actions to undo stack',
-      windowId
+      result
     )
   }
 }
@@ -183,26 +210,51 @@ export const undoableOpenSessionWindow = async (
 export const undoableOpenSessionTab = async (
   value: OpenSessionTabMessage['value']
 ) => {
-  const tab = await openSessionTab(value)
-  if (isDefined(tab) && isDefined(tab.id) && isDefined(tab.windowId)) {
+  const result = await openSessionTab(value)
+  const currentFocusedTab = await getActiveTabCurrentWindow()
+  if (
+    result?.tab &&
+    isDefined(result.tab.id) &&
+    isDefined(result.tab.windowId)
+  ) {
     undoStack.push({
       data: {
-        tabId: tab.id,
-        windowId: tab.windowId,
+        created: result.created,
+        tabId: result.tab.id,
+        windowId: result.tab.windowId,
+        currentFocusedTab,
       },
       undo: async function () {
         const currentSession = await getCurrentSession()
-        await removeTab({
-          sessionId: currentSession.id,
-          windowId: this.data.windowId,
-          tabId: this.data.tabId,
-        })
+        if (this.data.created) {
+          await removeTab({
+            sessionId: currentSession.id,
+            windowId: this.data.windowId,
+            tabId: this.data.tabId,
+          })
+        } else if (
+          this.data.currentFocusedTab?.windowId &&
+          isDefined(this.data.currentFocusedTab.id)
+        ) {
+          await focusWindowTab(
+            this.data.currentFocusedTab.windowId,
+            this.data.currentFocusedTab.id
+          )
+        }
       },
       redo: async function () {
-        const tab = await openSessionTab(value)
-        if (tab && isDefined(tab.id) && isDefined(tab.windowId)) {
-          this.data.tabId = tab.id
-          this.data.windowId = tab.windowId
+        const result = await openSessionTab(value)
+        if (
+          result?.tab &&
+          isDefined(result.tab.id) &&
+          isDefined(result.tab.windowId)
+        ) {
+          this.data = {
+            created: result.created,
+            tabId: result.tab.id,
+            windowId: result.tab.windowId,
+            currentFocusedTab,
+          }
         }
       },
     })
@@ -211,7 +263,7 @@ export const undoableOpenSessionTab = async (
       logContext,
       'undoableOpenSessionTab()',
       'Unable to push actions to undo stack',
-      tab
+      result
     )
   }
 }
@@ -226,25 +278,18 @@ export const undoableDeleteSession = async (
         sessionInfo,
       },
       undo: async function () {
-        const newSession = await saveNewSession(
+        await resaveSession(
           this.data.sessionInfo.key,
           this.data.sessionInfo.session,
           this.data.sessionInfo.index
         )
         await updateSessions()
-        const newSessionInfo = await findSessionWithKey(newSession.id)
-        if (newSessionInfo?.session) {
-          this.data.sessionInfo = newSessionInfo
-        }
       },
       redo: async function () {
-        const sessionInfo = await deleteSession({
+        await deleteSession({
           sessionId: this.data.sessionInfo.session.id,
         })
         await updateSessions()
-        if (sessionInfo?.session) {
-          this.data.sessionInfo = sessionInfo
-        }
       },
     })
   } else {
@@ -300,7 +345,7 @@ export const undoableRemoveWindow = async (
   } else {
     log.error(
       logContext,
-      'undoableDeleteSession()',
+      'undoableRemoveWindow()',
       'Unable to push actions to undo stack',
       sessionInfo
     )
@@ -359,7 +404,7 @@ export const undoableRemoveTab = async (
   } else {
     log.error(
       logContext,
-      'undoableDeleteSession()',
+      'undoableRemoveTab()',
       'Unable to push actions to undo stack',
       sessionInfo
     )
