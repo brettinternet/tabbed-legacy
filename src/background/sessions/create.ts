@@ -36,6 +36,7 @@ export const filterWindowTabs = async (windows: browser.windows.Window[]) => {
             excludedUrl.includes('*')
               ? !excludedUrl
                   .split('*')
+                  .filter(Boolean)
                   .every((segment) => url.includes(segment))
               : !matchingUrls(excludedUrl, url)
           )
