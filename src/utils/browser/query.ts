@@ -183,6 +183,7 @@ type OpenTabOptions = {
   pinned?: boolean
   windowId?: number
   incognito?: boolean
+  focus?: boolean
 }
 
 /**
@@ -194,6 +195,7 @@ export const openTab = async ({
   pinned,
   windowId,
   incognito,
+  focus = true,
 }: OpenTabOptions) => {
   const allowed = await browser.extension.isAllowedIncognitoAccess()
   if (incognito && !allowed) {
@@ -210,13 +212,17 @@ export const openTab = async ({
     ((!incognito && browser.extension.inIncognitoContext) ||
       (incognito && !browser.extension.inIncognitoContext))
   ) {
-    const newWindow = await browser.windows.create({ url, incognito })
+    const newWindow = await browser.windows.create({
+      url,
+      incognito,
+      focused: focus,
+    })
     newTab = newWindow.tabs?.[0]
     if (pinned && newTab?.id) {
-      await browser.tabs.update(newTab.id, { pinned })
+      await browser.tabs.update(newTab.id, { pinned, active: focus })
     }
   } else {
-    newTab = await browser.tabs.create({ url, pinned, windowId })
+    newTab = await browser.tabs.create({ url, pinned, windowId, active: focus })
   }
   return newTab
 }
