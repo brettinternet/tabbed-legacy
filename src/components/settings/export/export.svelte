@@ -127,15 +127,19 @@
     </p>
   {/if}
   <div class="flex flex-row items-center justify-end space-x-2">
-    <Button onClick={handleCopyToClipboard} secondary>Copy to clipboard</Button>
+    <div class="flex items-center space-x-2">
+      {#if isCopied}
+        <p class="text-gray-500 text-right">&#x2713; Copied</p>
+      {/if}
+      <Button onClick={handleCopyToClipboard} secondary
+        >Copy to clipboard</Button
+      >
+    </div>
     <Button type="submit">Save to file</Button>
   </div>
   {#if sizeKb > 500}
-    <p class="text-gray-500">
+    <p class="text-gray-500 text-right">
       Copying a large amount of text may cause issues on your system.
     </p>
-  {/if}
-  {#if isCopied}
-    <p class="text-gray-500">&#x2713; Copied</p>
   {/if}
 </form>
