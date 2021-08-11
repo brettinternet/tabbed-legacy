@@ -144,11 +144,15 @@ export const changeExcludedUrls = async (
     const parsed = excludedUrls.raw.split(/[\s,]+/).filter(Boolean)
     let hasError = false
     const urls = parsed.map((url) => {
-      try {
-        return new URL(url).href
-      } catch (_err) {
-        hasError = true
+      if (url.includes('*')) {
         return url
+      } else {
+        try {
+          return new URL(url).href
+        } catch (_err) {
+          hasError = true
+          return url
+        }
       }
     })
     if (hasError) {

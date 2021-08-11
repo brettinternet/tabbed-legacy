@@ -8,7 +8,7 @@ import {
   saveImportedSession,
   LocalStorageKey,
 } from 'src/utils/browser/storage'
-import { filterTrivialTabs, getTabUrl } from 'src/utils/browser/query'
+import { isNewTab, getTabUrl } from 'src/utils/browser/query'
 import { readSettings } from 'src/utils/browser/storage'
 import { getSessionTitle, getWindowTitle } from './derived-title'
 import { getCurrentSession, findWindow, findSession } from './query'
@@ -31,9 +31,13 @@ export const filterWindowTabs = async (windows: browser.windows.Window[]) => {
     if (tabs) {
       tabs = tabs.filter((tab) => {
         const url = getTabUrl(tab)
-        if (url && filterTrivialTabs(tab)) {
-          return excludedUrls.parsed.every(
-            (excludedUrl) => !matchingUrls(excludedUrl, url)
+        if (url && !isNewTab(tab)) {
+          return excludedUrls.parsed.every((excludedUrl) =>
+            excludedUrl.includes('*')
+              ? !excludedUrl
+                  .split('*')
+                  .every((segment) => url.includes(segment))
+              : !matchingUrls(excludedUrl, url)
           )
         }
       })

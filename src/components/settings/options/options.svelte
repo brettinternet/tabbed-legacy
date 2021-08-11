@@ -223,8 +223,8 @@
         </div>
       </div>
       <Description id="excluded-urls-description">
-        Excludes tabs with matching URLs from saved sessions and windows.
-        Separate by new lines, spaces or commas.
+        Excludes tabs with matching URLs from saved sessions and windows. Use
+        "*" to match wildcard patterns. Separate by new lines, spaces or commas.
       </Description>
     </div>
 

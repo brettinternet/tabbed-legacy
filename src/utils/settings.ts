@@ -71,8 +71,9 @@ export const defaultSettings: Settings = {
   sortFocusedWindowFirst: false,
   saveIncognito: false,
   excludedUrls: {
-    raw: undefined,
-    parsed: [],
+    raw: `chrome://bookmarks
+chrome-extension://*`,
+    parsed: ['chrome://bookmarks', 'chrome-extension://*'],
     error: undefined,
   },
 }
