@@ -72,7 +72,6 @@ npm test
 - [ ] allow sort options for saved sessions - manual sorting
 - [ ] Extension landing page with feature descriptions
 - [ ] tab-able elements, tab groups that can change focus with arrows; AKA focus rings/focus layers or groups - [1](https://github.com/discord/focus-rings), [2](https://github.com/davidtheclark/focus-group)
-- [ ] url/regex ignore list
 - [ ] Tooltip to suggest shortcut/middle/right click
 - [ ] Hide tabs - [1](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/hide)
 - [ ] use alert component to add hints to functionality

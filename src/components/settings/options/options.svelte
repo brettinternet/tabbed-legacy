@@ -3,6 +3,7 @@
   import Range from 'src/components/range/range.svelte'
   import Toggle from 'src/components/toggle/toggle.svelte'
   import Input from 'src/components/input/input.svelte'
+  import Textarea from 'src/components/input/textarea.svelte'
   import Radio from 'src/components/radio/radio.svelte'
   import Button from 'src/components/button/button.svelte'
   import {
@@ -31,11 +32,18 @@
     handleChangeSortFocusedWindowFirst,
     handleOpenShortcuts,
     handleOpenOptions,
+    changeExcludedUrls,
   } from 'src/components/settings/options/handlers'
   import Description from './description.svelte'
+  import Error from './error.svelte'
   import SectionTitle from './section-title.svelte'
 
   export let headerId: string
+
+  let excludedUrlsTextarea: HTMLTextAreaElement | undefined
+  const handleChangeExcludedUrls = async () => {
+    await changeExcludedUrls(excludedUrlsTextarea)
+  }
 </script>
 
 <h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">Options</h1>
@@ -187,6 +195,36 @@
       </div>
       <Description id="sort-focused-first-description">
         Sorts the focused window first in the current session window list.
+      </Description>
+    </div>
+    <div class="mb-6">
+      <div class="mb-3">
+        <Textarea
+          id="excluded-urls-textarea"
+          label="Excluded URLs"
+          classNames="w-full max-h-64 min-h-11"
+          placeholder="chrome://bookmarks, http://example.com"
+          spellcheck="false"
+          onChange={handleChangeExcludedUrls}
+          value={$settings.excludedUrls.raw}
+          aria-describedby="excluded-urls-description"
+          rows="3"
+          bind:ref={excludedUrlsTextarea}
+        />
+        <div class="flex mt-2 justify-between">
+          {#if $settings.excludedUrls.error}
+            <Error>
+              {$settings.excludedUrls.error}
+            </Error>
+          {:else}
+            <p class="text-gray-600 dark:text-gray-500">&#x2713; URLs</p>
+          {/if}
+          <Button onClick={handleChangeExcludedUrls}>Check</Button>
+        </div>
+      </div>
+      <Description id="excluded-urls-description">
+        Excludes tabs with matching URLs from saved sessions and windows.
+        Separate by new lines, spaces or commas.
       </Description>
     </div>
 

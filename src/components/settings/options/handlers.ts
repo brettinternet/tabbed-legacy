@@ -1,6 +1,7 @@
+import type { EventHandler } from 'src/utils/svelte'
 import { get } from 'svelte/store'
 
-import type { EventHandler } from 'src/utils/svelte'
+import type { Settings } from 'src/utils/settings'
 import { extensionClickActions, defaultSettings } from 'src/utils/settings'
 import { updateSettings, settings } from 'src/components/settings/store'
 import { modal } from 'src/components/modal/store'
@@ -129,3 +130,34 @@ export const handleOpenOptions: EventHandler<MouseEvent, HTMLButtonElement> =
       })
     }
   }
+
+export const changeExcludedUrls = async (
+  textarea: HTMLTextAreaElement | undefined
+) => {
+  const excludedUrls: Settings['excludedUrls'] = {
+    raw: textarea?.value.trim(),
+    parsed: [],
+    error: undefined,
+  }
+  if (excludedUrls.raw) {
+    // Split on whitespace and commas https://stackoverflow.com/a/650037
+    const parsed = excludedUrls.raw.split(/[\s,]+/).filter(Boolean)
+    let hasError = false
+    const urls = parsed.map((url) => {
+      try {
+        return new URL(url).href
+      } catch (_err) {
+        hasError = true
+        return url
+      }
+    })
+    if (hasError) {
+      excludedUrls.error = 'One or more URLs may be invalid.'
+    }
+    // Still assign parse even despite possible error in order to rely on user
+    excludedUrls.parsed = urls
+  }
+  await updateSettings({
+    excludedUrls,
+  })
+}

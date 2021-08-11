@@ -32,6 +32,9 @@ module.exports = {
         header: '60px',
         main: 'calc(100vh - 60px)',
       },
+      minHeight: {
+        11: '2.75rem', // 44px - textarea in options.svelte
+      },
       maxHeight: {
         modal: 'calc(100vh - 10rem)',
         'import-textarea': 'calc(100vh - 30rem)',

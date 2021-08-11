@@ -54,6 +54,7 @@
     type="text"
     placeholder="Search"
     onInput={debouncedChange}
+    spellcheck="false"
     bind:ref={input}
   />
   {#if $searchValue}

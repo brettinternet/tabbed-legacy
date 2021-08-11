@@ -42,6 +42,11 @@ export type Settings = {
   saveClosedWindows: boolean
   sortFocusedWindowFirst: boolean
   saveIncognito: boolean
+  excludedUrls: {
+    raw: string | undefined
+    parsed: string[]
+    error: string | undefined
+  }
 }
 
 export const defaultSettings: Settings = {
@@ -65,4 +70,9 @@ export const defaultSettings: Settings = {
   saveClosedWindows: false,
   sortFocusedWindowFirst: false,
   saveIncognito: false,
+  excludedUrls: {
+    raw: undefined,
+    parsed: [],
+    error: undefined,
+  },
 }

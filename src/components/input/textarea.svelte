@@ -6,7 +6,8 @@
     classNames: OptionalProp<string> = undefined,
     onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLTextAreaElement>> =
       undefined,
-    required: OptionalProp<boolean> = undefined
+    required: OptionalProp<boolean> = undefined,
+    ref: OptionalProp<HTMLTextAreaElement> = undefined
 
   /**
    * Filter escape key to prevent closing popup, and blur the input instead
@@ -39,6 +40,7 @@
   )}
   on:change={onChange}
   on:keydown={handleKeyDown}
+  bind:this={ref}
   {required}
   {...$$restProps}
 />

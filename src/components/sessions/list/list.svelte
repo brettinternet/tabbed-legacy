@@ -216,7 +216,7 @@
           : undefined}
         {downloadSessions}
       />
-      <div class="scroll overflow-y-auto pb-10 flex flex-col h-full">
+      <div class="scroll overflow-y-auto pb-6 flex flex-col h-full">
         <div class="flex-1 pl-10">
           <WindowList
             windows={selectedSession.windows}

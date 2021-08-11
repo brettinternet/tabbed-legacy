@@ -1,14 +1,11 @@
 import { log } from 'src/utils/logger'
-import { isNewTab } from 'src/utils/browser/query'
 import {
   localStorageKeys,
-  createSessionFromWindows,
-  saveNewSession,
   readSession,
   removeSession,
   readSettings,
 } from 'src/utils/browser/storage'
-import { getSessionTitle, getWindowTitle } from './derived-title'
+import { saveWindow, saveSession } from './create'
 import { updateSessionsDebounce } from './actions'
 import { getCurrentSession } from './query'
 
@@ -35,34 +32,18 @@ export const autoSaveSession = async (closedWindowId?: number) => {
     )
 
     if (closedWindow && !(!settings.saveIncognito && closedWindow.incognito)) {
-      // if matching window from cached current session in `readSession`
-      const tabIds = (await browser.tabs.query({}))?.map(({ id }) => id)
-
-      // filter by newtab or if tab exists elsewhere now then it was only moved
-      const tabsToSave = closedWindow?.tabs?.filter(
-        (tab) => !isNewTab(tab) && !tabIds.includes(tab.id)
+      // When tabs are moved they can trigger the closed window handler
+      const currentTabIds = (await browser.tabs.query({}))?.map(({ id }) => id)
+      closedWindow.tabs = closedWindow.tabs?.filter(
+        (tab) => !currentTabIds.includes(tab.id)
       )
-
-      if (tabsToSave && tabsToSave.length === 0) {
-        // if there are no meaningful tabs for autosave to store
-        log.debug(
-          logContext,
-          'autoSaveSession',
-          'note: ignoring closed window',
-          closedWindow
-        )
-        return
-      }
-
       if (closedWindow.tabs) {
-        const title = getWindowTitle(closedWindow.tabs)
-        await createSessionFromWindows(
-          localStorageKeys.PREVIOUS_SESSIONS,
-          [closedWindow],
-          title
-        )
-        return
+        await saveWindow({
+          key: localStorageKeys.PREVIOUS_SESSIONS,
+          win: closedWindow,
+        })
       }
+      return
     }
   }
 
@@ -74,13 +55,12 @@ export const autoSaveSession = async (closedWindowId?: number) => {
     }
 
     // otherwise save the entire session
-    // TODO: possibly compare current session to be saved with most recent to determine if session is unique enough to be saved?
     // TODO: consolidate with browser.sessions.getRecentlyClosed() https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/sessions/getRecentlyClosed
-    const title = getSessionTitle(currentSession.windows)
-    if (!currentSession.title) {
-      currentSession.title = title
-    }
-    await saveNewSession(localStorageKeys.PREVIOUS_SESSIONS, currentSession)
+    await saveSession({
+      key: localStorageKeys.PREVIOUS_SESSIONS,
+      session: currentSession,
+      generateTitle: true,
+    })
     await removeSession(localStorageKeys.CURRENT_SESSION)
   }
 }
