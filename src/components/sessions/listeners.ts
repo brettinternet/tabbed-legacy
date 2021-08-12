@@ -33,6 +33,12 @@ export const setupListeners = () => {
       log.debug(logContext, 'respondToSessionsUpdate()', message.value)
 
       selectedSessionId.set(message.value)
+      const button: HTMLButtonElement | null = document.querySelector(
+        `button#${message.value}`
+      )
+      if (button) {
+        button.focus()
+      }
     }
 
     return false
