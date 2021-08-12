@@ -166,7 +166,7 @@
       <div class="mb-3">
         <Toggle
           id="save-incognito-window-toggle"
-          label="Save incognito windows"
+          label="Save closed incognito windows"
           onChange={handleChangeSaveIncognito}
           checked={$settings.saveIncognito}
           aria-describedby="save-incognito-window-description"
