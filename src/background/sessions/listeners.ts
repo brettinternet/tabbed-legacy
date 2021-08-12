@@ -50,7 +50,7 @@ import {
   querySession,
 } from './query'
 import { importSessionsFromText } from './create'
-import { patchWindow, patchTab, discardTabs, moveTabs } from './put'
+import { discardTabs, moveTabs } from './put'
 import { downloadSessions } from './export'
 import { autoSaveSession, handleClosedWindow } from './autosave'
 import { updateSessionsDebounce } from './actions'

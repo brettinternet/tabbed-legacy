@@ -180,13 +180,15 @@ export const patchTab = async (
   await browser.runtime.sendMessage(message)
 }
 
-export const moveTabs = async (
-  tabIds: number | number[],
-  options: browser.tabs._MoveMoveProperties
-) => {
+export const moveTabs = async (value: {
+  sessionId: string
+  windowId: number
+  tabIds: number | number[]
+  index: browser.tabs._MoveMoveProperties['index']
+}) => {
   const message: MoveTabsMessage = {
     type: MESSAGE_TYPE_MOVE_TABS,
-    value: { tabIds, options },
+    value,
   }
   await browser.runtime.sendMessage(message)
 }

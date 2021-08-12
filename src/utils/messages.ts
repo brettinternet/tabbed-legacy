@@ -186,7 +186,12 @@ export type PatchTabMessage = MessageWithValue<
 export const MESSAGE_TYPE_MOVE_TABS = 'move_tabs'
 export type MoveTabsMessage = MessageWithValue<
   typeof MESSAGE_TYPE_MOVE_TABS,
-  { tabIds: number | number[]; options: browser.tabs._MoveMoveProperties }
+  {
+    sessionId: string
+    windowId: number
+    tabIds: number | number[]
+    index: browser.tabs._MoveMoveProperties['index']
+  }
 >
 
 export const MESSAGE_TYPE_DISCARD_TABS = 'discard_tabs'
