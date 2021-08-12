@@ -18,7 +18,7 @@ const production = !process.env.ROLLUP_WATCH
 const environment = production ? 'production' : 'staging'
 
 export default {
-  input: 'src/manifest.json',
+  input: production ? 'src/manifest.json' : 'src/manifest-dev.json',
   output: {
     // TODO: add banner license
     // banner: '/*  */',
