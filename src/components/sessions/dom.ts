@@ -23,3 +23,23 @@ export const replaceImageError = (node: HTMLImageElement) => {
     },
   }
 }
+
+/**
+ * Briefly highlight element
+ */
+export const flash = (element: HTMLElement) => {
+  requestAnimationFrame(() => {
+    const bg = ['bg-yellow-200', 'dark:bg-yellow-700']
+    const noTransition = 'transition-none'
+    element.classList.add(...bg, noTransition)
+
+    setTimeout(() => {
+      element.classList.remove(...bg, noTransition)
+      const bgTransition = ['transition-colors', 'duration-1000']
+      element.classList.add(...bgTransition)
+      setTimeout(() => {
+        element.classList.remove(...bgTransition)
+      }, 1000)
+    }, 250)
+  })
+}

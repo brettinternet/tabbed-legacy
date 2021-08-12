@@ -1,12 +1,13 @@
 <script lang="ts">
   import cn from 'classnames'
   import { formatDistanceToNow } from 'date-fns'
-  import { onDestroy } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
 
+  import type { Session } from 'src/utils/browser/storage'
   import Window from 'src/components/icons/window.svelte'
   import { locale, getDateLocale } from 'src/utils/i18n'
-  import type { Session } from 'src/utils/browser/storage'
   import { contextIds } from 'src/components/context-menu/store'
+  import { flash } from 'src/components/sessions/dom'
 
   export let session: Session,
     toggleSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
@@ -14,7 +15,16 @@
     selected: boolean,
     title: OptionalProp<string> = session.title,
     date: OptionalProp<string> = undefined,
-    datePrefix: OptionalProp<string> = undefined
+    datePrefix: OptionalProp<string> = undefined,
+    flashHighlight: OptionalProp<boolean> = false
+
+  let button: HTMLButtonElement | undefined
+
+  onMount(() => {
+    if (flashHighlight && button) {
+      flash(button)
+    }
+  })
 
   const getDateStr = (date: Date) => {
     const timeStr = formatDistanceToNow(date, {
@@ -46,6 +56,7 @@
 </script>
 
 <button
+  bind:this={button}
   data-session-id={session.id}
   data-context-id={contextIds.SESSION}
   data-session-type={session.type}

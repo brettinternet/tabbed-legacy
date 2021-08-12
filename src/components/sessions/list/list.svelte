@@ -4,6 +4,7 @@
    * https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html
    */
   import cn from 'classnames'
+  import { onMount } from 'svelte'
 
   import type { SessionLists } from 'src/utils/browser/storage'
   import { sessionTypes } from 'src/utils/browser/storage'
@@ -16,6 +17,7 @@
   import { contextIds } from 'src/components/context-menu/store'
   import { modal } from 'src/components/modal/store'
   import Upload from 'src/components/icons/upload.svelte'
+  import { isDefined } from 'src/utils/helpers'
   import ViewButton from './view-button.svelte'
   import WindowList from './windows-list.svelte'
   import Meta from './meta.svelte'
@@ -52,7 +54,13 @@
   ].find(({ id }) => id === selectedSessionId)
 
   let viewAllPrevious = false
-  const limit = 5
+  const limitPrevious = 5
+
+  let previousLength: number | undefined, savedLength: number | undefined
+  onMount(() => {
+    previousLength = sessionLists.previous.length
+    savedLength = sessionLists.saved.length
+  })
 
   const toggleViewAll = () => {
     viewAllPrevious = !viewAllPrevious
@@ -64,7 +72,7 @@
 
   $: unsavedSessions = [sessionLists.current, ...sessionLists.previous].slice(
     0,
-    viewAllPrevious ? sessionLists.previous.length + 1 : limit
+    viewAllPrevious ? sessionLists.previous.length + 1 : limitPrevious
   )
 </script>
 
@@ -86,6 +94,9 @@
         datePrefix={session.id === sessionLists.current.id
           ? 'updated'
           : 'created'}
+        flashHighlight={session.id !== sessionLists.current.id &&
+          isDefined(previousLength) &&
+          sessionLists.previous.length !== previousLength}
       />
       {#if selectedSessionId === session.id}
         <div
@@ -120,14 +131,14 @@
         <h2 class="p-4 xs:px-6 sm:px-10 pt-8 pb-4 lg:px-6">Previous</h2>
       {/if}
     {/each}
-    {#if sessionLists.previous.length - 1 > limit}
+    {#if sessionLists.previous.length - 1 > limitPrevious}
       <div class="flex justify-end px-2 xs:px-4 sm:px-8 lg:px-4">
         <button
           class="p-2 flex items-center text-gray-400 dark:text-gray-500"
           on:click={toggleViewAll}
           >{viewAllPrevious
             ? 'less'
-            : `${sessionLists.previous.length + 1 - limit} more`}
+            : `${sessionLists.previous.length + 1 - limitPrevious} more`}
           <span class={cn('ml-1', viewAllPrevious && 'transform rotate-180')}
             ><Down /></span
           >
@@ -161,6 +172,8 @@
             : false}
           date={session.userSavedDate || session.lastModifiedDate}
           datePrefix="saved"
+          flashHighlight={isDefined(savedLength) &&
+            sessionLists.saved.length !== savedLength}
         />
         {#if selectedSessionId === session.id}
           <div
