@@ -58,6 +58,7 @@ npm test
 #### Bugs
 
 - [ ] Firefox not rendering popup and sidebar
+- [ ] tab states not updating (on pinned)
 - [ ] tabbing skips over radio input component
 - [ ] check that all windows are narrowed down by session first
 

@@ -59,6 +59,8 @@ import {
   undoableOpenSession,
   undoableOpenSessionTab,
   undoableOpenSessionWindow,
+  undoablePatchTab,
+  undoablePatchWindow,
   undoableRemoveTab,
   undoableRemoveWindow,
   undoableSaveExistingSession,
@@ -191,7 +193,7 @@ export const setupSessionListeners = () => {
 
   browser.runtime.onMessage.addListener((message: PatchWindowMessage) => {
     if (message.type === MESSAGE_TYPE_PATCH_WINDOW) {
-      return patchWindow(message.value)
+      return undoablePatchWindow(message.value)
     }
 
     return false
@@ -199,7 +201,7 @@ export const setupSessionListeners = () => {
 
   browser.runtime.onMessage.addListener((message: PatchTabMessage) => {
     if (message.type === MESSAGE_TYPE_PATCH_TAB) {
-      return patchTab(message.value)
+      return undoablePatchTab(message.value)
     }
 
     return false

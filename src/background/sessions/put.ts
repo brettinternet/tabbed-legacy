@@ -5,7 +5,7 @@ import {
   patchSessionInCollection,
 } from 'src/utils/browser/storage'
 import { log } from 'src/utils/logger'
-import { isDefined } from 'src/utils/helpers'
+import { isDefined, move } from 'src/utils/helpers'
 import { getTabUrl, openTab, openWindow } from 'src/utils/browser/query'
 import { findSessionWithKey } from './query'
 import { throwSessionId, throwWindowId, throwTabId } from '../errors'
@@ -126,6 +126,7 @@ export const patchWindow = async ({
   }
 }
 
+// TODO: if not current, need to also move pinned tab to last index of pinned tabs
 export const patchTab = async ({
   sessionId,
   windowId,
@@ -179,13 +180,42 @@ export const discardTabs = async (tabIds: number | number[]) => {
 }
 
 export const moveTabs = async ({
+  sessionId,
+  windowId,
   tabIds,
-  options,
+  index,
 }: {
+  sessionId: string
+  windowId: number
   tabIds: number | number[]
-  options: browser.tabs._MoveMoveProperties
+  index: browser.tabs._MoveMoveProperties['index']
 }) => {
-  log.debug(logContext, 'moveTab()', { tabIds, options })
+  log.debug(logContext, 'moveTabs()', { sessionId, windowId, tabIds, index })
+  const { key, session } = await findSessionWithKey(sessionId)
 
-  await browser.tabs.move(tabIds, options)
+  if (key && session) {
+    if (key === localStorageKeys.CURRENT_SESSION) {
+      await browser.tabs.move(tabIds, { windowId, index })
+    } else {
+      const windowIndex = session.windows.findIndex((w) => w.id === windowId)
+      if (windowIndex > -1) {
+        const tabs = session.windows[windowIndex].tabs
+        if (tabs) {
+          const tabIdsArr = Array.isArray(tabIds) ? tabIds : [tabIds]
+          const moveTabs = tabs.filter(({ id }) => id && tabIdsArr.includes(id))
+          moveTabs.forEach((tab, i) => {
+            move(tabs, tab.index, index + i)
+          })
+          session.windows[windowIndex].tabs = tabs
+          await patchSessionInCollection(key, session)
+        } else {
+          throw Error('No tabs found')
+        }
+      } else {
+        throwWindowId(windowId)
+      }
+    }
+  } else {
+    throwSessionId(sessionId)
+  }
 }

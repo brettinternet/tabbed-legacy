@@ -46,7 +46,7 @@ export const findDuplicates = (arr: unknown[]) => {
 }
 
 /**
- * @source https://stackoverflow.com/a/2901298/6817437
+ * @source https://stackoverflow.com/a/2901298
  */
 export const numberWithCommas = (x: number) =>
   x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -58,4 +58,12 @@ export const insert = <T>(list: T[], item: T, index: number) => {
     throw Error('insert index exceeds list boundaries')
   }
   return list
+}
+
+/**
+ * @source https://github.com/lodash/lodash/issues/1701
+ * https://stackoverflow.com/a/5306832
+ */
+export const move = <T>(arr: T[], fromIndex: number, toIndex: number) => {
+  arr.splice(toIndex, 0, arr.splice(fromIndex, 1)[0])
 }

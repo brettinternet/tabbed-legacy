@@ -9,15 +9,29 @@ import type {
   RemoveSessionWindowMessage,
   RemoveSessionTabMessage,
   UpdateSessionMessage,
-  // PatchWindowMessage,
-  // PatchTabMessage,
+  PatchWindowMessage,
+  PatchWindowOptions,
+  PatchTabMessage,
+  PatchTabOptions,
   // DiscardTabsMessage,
   // MoveTabsMessage,
   // DownloadSessionsMessage,
   // FindDuplicateSessionTabsMessage,
   // ImportSessionsFromTextMessage,
 } from 'src/utils/messages'
-import { findSession, getCurrentSession, findSessionWithKey } from './query'
+import { isDefined } from 'src/utils/helpers'
+import { resaveSession } from 'src/utils/browser/storage'
+import {
+  focusWindow,
+  focusWindowTab,
+  getActiveTabCurrentWindow,
+} from 'src/utils/browser/query'
+import {
+  findSession,
+  getCurrentSession,
+  findSessionWithKey,
+  findWindow,
+} from './query'
 import {
   saveExistingSession,
   saveWindowAsSession,
@@ -26,10 +40,10 @@ import {
 import { deleteSession, removeWindow, removeTab } from './delete'
 import {
   updateSession,
-  // patchWindow,
-  // patchTab,
+  patchWindow,
+  patchTab,
   // discardTabs,
-  // moveTabs,
+  moveTabs,
   addWindowToSession,
   addTabToSessionWindow,
 } from './put'
@@ -41,13 +55,7 @@ import {
   updateSessions,
 } from './actions'
 import { undoStack } from '../undo/stack'
-import { isDefined } from 'src/utils/helpers'
-import { resaveSession } from 'src/utils/browser/storage'
-import {
-  focusWindow,
-  focusWindowTab,
-  getActiveTabCurrentWindow,
-} from 'src/utils/browser/query'
+import { updateSelectedSessionId } from '../send'
 
 const logContext = 'background/sessions/handlers'
 
@@ -284,6 +292,7 @@ export const undoableDeleteSession = async (
           this.data.sessionInfo.index
         )
         await updateSessions()
+        await updateSelectedSessionId(this.data.sessionInfo.session.id)
       },
       redo: async function () {
         await deleteSession({
@@ -407,6 +416,95 @@ export const undoableRemoveTab = async (
       'undoableRemoveTab()',
       'Unable to push actions to undo stack',
       sessionInfo
+    )
+  }
+}
+
+export const undoablePatchWindow = async (
+  value: PatchWindowMessage['value']
+) => {
+  const session = await findSession(value.sessionId)
+  const win = session ? findWindow(value.windowId, session) : undefined
+  if (win) {
+    const { focused, state, left, top } = win
+    const oldOptions: PatchWindowOptions = {
+      focused,
+      state,
+      left,
+      top,
+      drawAttention: false,
+    }
+    await patchWindow(value)
+    undoStack.push({
+      data: {},
+      undo: async function () {
+        await patchWindow({
+          sessionId: value.sessionId,
+          windowId: value.windowId,
+          options: oldOptions,
+        })
+      },
+      redo: async function () {
+        await patchWindow(value)
+      },
+    })
+  } else {
+    log.error(
+      logContext,
+      'undoablePatchWindow()',
+      'Unable to push actions to undo stack',
+      session
+    )
+  }
+}
+
+export const undoablePatchTab = async (value: PatchTabMessage['value']) => {
+  const session = await findSession(value.sessionId)
+  const win = session ? findWindow(value.windowId, session) : undefined
+  const tab = win?.tabs?.find(({ id }) => id === value.tabId)
+  if (session && win && tab) {
+    const { url, active, highlighted, pinned, mutedInfo, index } = tab
+    const oldOptions: PatchTabOptions = {
+      url,
+      active,
+      highlighted,
+      pinned,
+      muted: mutedInfo ? mutedInfo.muted : undefined,
+    }
+    await patchTab(value)
+    undoStack.push({
+      data: {},
+      undo: async function () {
+        await patchTab({
+          sessionId: value.sessionId,
+          windowId: value.windowId,
+          tabId: value.tabId,
+          options: oldOptions,
+        })
+        // move to index when pinned so tab returns to previous order
+        if (
+          oldOptions.pinned !== value.options.pinned &&
+          isDefined(win.id) &&
+          isDefined(tab.id)
+        ) {
+          await moveTabs({
+            sessionId: session.id,
+            windowId: win.id,
+            tabIds: tab.id,
+            index,
+          })
+        }
+      },
+      redo: async function () {
+        await patchTab(value)
+      },
+    })
+  } else {
+    log.error(
+      logContext,
+      'undoablePatchTab()',
+      'Unable to push actions to undo stack',
+      session
     )
   }
 }
