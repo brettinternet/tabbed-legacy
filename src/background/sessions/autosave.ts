@@ -45,9 +45,7 @@ export const autoSaveSession = async (closedWindowId?: number) => {
       }
       return
     }
-  }
-
-  if (currentSession) {
+  } else if (currentSession) {
     if (!settings.saveIncognito) {
       currentSession.windows = currentSession.windows.filter(
         (w) => !w.incognito
