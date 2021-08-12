@@ -58,7 +58,8 @@ npm test
 #### Bugs
 
 - [ ] Firefox not rendering popup and sidebar
-- [ ] tab states not updating (on pinned)
+- [ ] undoing too fast causes race condition
+- [ ] tab states not updating (on pinned) - move focus listeners to background?
 - [ ] tabbing skips over radio input component
 - [ ] check that all windows are narrowed down by session first
 
