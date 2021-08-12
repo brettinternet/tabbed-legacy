@@ -57,6 +57,7 @@ npm test
 
 #### Bugs
 
+- [ ] recover from duplicated session ids on system startup
 - [ ] Firefox not rendering popup and sidebar
 - [ ] undoing too fast causes race condition
 - [ ] tab states not updating (on pinned) - move focus listeners to background?
