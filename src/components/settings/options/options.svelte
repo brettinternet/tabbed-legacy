@@ -228,7 +228,7 @@
       </Description>
     </div>
 
-    <SectionTitle>Actions</SectionTitle>
+    <SectionTitle>Extension Icon</SectionTitle>
 
     <div class="mb-6">
       <div class="mb-3">
