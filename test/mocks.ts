@@ -3,6 +3,7 @@
 import { browser as partialBrowser } from 'jest-webextension-mock/src/index'
 import type { Logger } from 'src/utils/logger'
 import { levels } from 'loglevel'
+import messages from 'src/_locales/en/messages.json'
 
 /**
  * https://github.com/clarkbw/jest-webextension-mock/blob/master/src/index.js
@@ -106,6 +107,14 @@ jest.mock('focus-trap', () => ({
 jest.mock('body-scroll-lock', () => ({
   disableBodyScroll: jest.fn(),
   enableBodyScroll: jest.fn(),
+}))
+
+jest.mock('src/utils/i18n', () => ({
+  getMessage: jest
+    .fn()
+    .mockImplementation(
+      (message: keyof typeof messages) => messages[message].message
+    ),
 }))
 
 export {}

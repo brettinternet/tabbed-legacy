@@ -1,5 +1,6 @@
-import Header from './header.svelte'
 import { render, fireEvent } from '@testing-library/svelte'
+import Header from './header.svelte'
+import { getMessage } from 'src/utils/i18n'
 
 describe('components/header/header.svelte', () => {
   it('has a settings button', async () => {
@@ -11,7 +12,7 @@ describe('components/header/header.svelte', () => {
       },
     })
 
-    const settingsButton = screen.getByLabelText('Open settings')
+    const settingsButton = screen.getByLabelText(getMessage('open_settings'))
     await fireEvent.click(settingsButton)
     expect(mockHandleSettings).toHaveBeenCalledTimes(1)
   })
@@ -23,7 +24,9 @@ describe('components/header/header.svelte', () => {
       },
     })
 
-    const searchInput = screen.getByPlaceholderText('Search')
+    const searchInput = screen.getByPlaceholderText(
+      getMessage('search__input_placeholder')
+    )
     searchInput.focus()
     expect(searchInput).toHaveFocus()
     await fireEvent.keyDown(searchInput, { key: 'Escape', code: 'Escape' })
