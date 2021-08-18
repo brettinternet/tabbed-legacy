@@ -5,6 +5,7 @@ import { updateLogLevel, log } from 'src/utils/logger'
 
 import { loadExtensionActions } from './configuration'
 import { setupListeners } from './listeners'
+import { startupValidation } from './sessions/validation'
 
 const logContext = 'background/index'
 
@@ -18,6 +19,8 @@ const main = async () => {
   // "load" fns are invoked once on background startup and
   // can be reloaded through messages from client
   await loadExtensionActions(settings.extensionClickAction)
+  // initial session validation
+  await startupValidation()
 
   const bytesUsed =
     browser.storage.local.getBytesInUse &&

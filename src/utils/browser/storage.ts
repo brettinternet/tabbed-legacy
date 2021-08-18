@@ -70,8 +70,8 @@ const getSessionType = (key: LocalStorageKey) => {
   }
 }
 
-const getLocalStorageKey = (key: SessionType) => {
-  switch (key) {
+export const getLocalStorageKey = (type: SessionType) => {
+  switch (type) {
     case sessionTypes.CURRENT:
       return localStorageKeys.CURRENT_SESSION
     case sessionTypes.PREVIOUS:
