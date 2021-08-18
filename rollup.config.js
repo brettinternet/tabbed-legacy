@@ -18,12 +18,14 @@ const production = !process.env.ROLLUP_WATCH
 const environment = production ? 'production' : 'staging'
 
 export default {
-  input: production ? 'src/manifest.json' : 'src/manifest-dev.json',
+  input: 'src/manifest.ts',
   output: {
     // TODO: add banner license
     // banner: '/*  */',
     dir: 'dist',
     format: 'esm',
+    chunkFileNames: 'chunks/[name]-[hash].js',
+    sourcemap: 'inline',
   },
   plugins: [
     // always put chromeExtension() before other plugins
@@ -60,7 +62,7 @@ export default {
     postcss({ minimize: production }),
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
     commonjs(),
-    typescript({ sourceMap: false }),
+    typescript({ sourceMap: !production }),
     // Empties the output dir before a new build
     emptyDir(),
     json(),
