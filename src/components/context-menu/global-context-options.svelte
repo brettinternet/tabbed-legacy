@@ -5,6 +5,7 @@
   import { shortcuts } from 'src/components/settings/hotkeys'
   import Undo from 'src/components/icons/undo.svelte'
   import Redo from 'src/components/icons/redo.svelte'
+  import { getMessage } from 'src/utils/i18n'
   import MenuOption from './option.svelte'
 
   let undoRedoable = {
@@ -30,25 +31,25 @@
   on:click={undo}
   disabled={!undoRedoable.undo}
   Icon={Undo}
-  text="Undo"
+  text={getMessage('undo')}
   shortcut={shortcuts.ctrl_z.display}
 />
 <MenuOption
   on:click={redo}
   disabled={!undoRedoable.redo}
   Icon={Redo}
-  text="Redo"
+  text={getMessage('redo')}
   shortcut={shortcuts.ctrl_y.display}
 />
 <MenuOption
   on:click={handleClickShortcuts}
   Icon={null}
-  text="Shortcuts"
+  text={getMessage('shortcuts')}
   shortcut={shortcuts.question.display}
 />
 <MenuOption
   on:click={handleClickSettings}
   Icon={Cog}
-  text="Settings"
+  text={getMessage('settings')}
   shortcut={shortcuts.backtick.display}
 />

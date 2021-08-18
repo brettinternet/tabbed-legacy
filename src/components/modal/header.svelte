@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getMessage } from 'src/utils/i18n'
   import X from 'src/components/icons/x.svelte'
 
   export let onClickClose: () => void,
@@ -15,8 +16,8 @@
   <button
     on:click={onClickClose}
     class="py-2 px-3 rounded-sm"
-    title={`Close ${title}`}
-    aria-label={`Close ${title}`}
+    title={getMessage('close')}
+    aria-label={getMessage('close')}
   >
     <X />
   </button>

@@ -19,7 +19,7 @@
   close={handleClose}
   ariaLabelledby={headerId}
   classNames="lg:max-w-screen-sm"
-  focusSelector="[aria-label='Import session']"
+  focusSelector="textarea"
 >
   <Header onClickClose={handleClose} title="Import" {headerId} />
   <ImportForm bind:shouldClose />

@@ -43,9 +43,9 @@
       <div class="flex items-center">
         {#if Icon}
           <svelte:component this={Icon} size={12} />
-          <span class="ml-2">{text}</span>
+          <span class="ml-2 capitalize">{text}</span>
         {:else if Icon === null}
-          <span class="ml-icon">{text}</span>
+          <span class="ml-icon capitalize">{text}</span>
         {:else}
           {text}
         {/if}

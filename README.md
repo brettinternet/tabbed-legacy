@@ -46,6 +46,7 @@ npm test
 
 #### Before launch
 
+- [ ] compress saved windows/tabs
 - [ ] add tests for newly implemented features such as undo
 - [ ] push undo/redo actions to undo stack for backend session actions
 - [ ] display session search results with highlights

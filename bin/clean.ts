@@ -5,5 +5,7 @@ const projectRoot = resolve(__dirname, '..')
 const queue = [resolve(projectRoot, 'dist'), resolve(projectRoot, 'coverage')]
 
 queue.forEach((dir) => {
-  rmSync(dir, { recursive: true })
+  try {
+    rmSync(dir, { recursive: true })
+  } catch (_err) {}
 })

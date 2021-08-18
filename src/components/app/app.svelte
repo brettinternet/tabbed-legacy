@@ -8,7 +8,6 @@
   import { settings } from 'src/components/settings/store'
   import { log } from 'src/utils/logger'
   import AppLayout from 'src/components/layout/layout.svelte'
-  import PageLoader from 'src/components/loader/page-loader.svelte'
   import Sessions from 'src/components/sessions/sessions.svelte'
   import SettingsModal from 'src/components/settings/settings.svelte'
   import ShortcutsModal from 'src/components/shortcuts/shortcuts.svelte'
@@ -36,7 +35,7 @@
     }
   }
 
-  $: log.debug(logContext, $settings, 'some', $someModal)
+  $: log.debug(logContext, $settings, `modal: ${$someModal}`)
 </script>
 
 {#if $settings}
@@ -53,6 +52,4 @@
   {/if}
   <ContextMenu />
   <ToastProvider />
-{:else}
-  <PageLoader />
 {/if}

@@ -1,8 +1,9 @@
 <script lang="ts">
   import cn, { Argument as ClassnamesArgument } from 'classnames'
 
-  export let hideLabel = false,
-    size = 32,
+  import { getMessage } from 'src/utils/i18n'
+
+  export let size = 32,
     label: OptionalProp<string> = undefined,
     classNames: OptionalProp<ClassnamesArgument> = undefined
 </script>
@@ -12,7 +13,7 @@
     'flex justify-center items-center space-x-1 text-sm text-gray-700',
     classNames
   )}
-  aria-label={hideLabel ? label : undefined}
+  aria-label={getMessage('loading')}
 >
   <svg
     fill="none"
@@ -30,13 +31,9 @@
       fill-rule="evenodd"
     />
   </svg>
-  {#if !hideLabel}
+  {#if label}
     <p class="m-0">
-      {#if label}
-        {label}
-      {:else}
-        Loading…
-      {/if}
+      {label}
     </p>
   {/if}
 </div>

@@ -9,6 +9,7 @@
   "sidebar_action": {
     "default_panel": "main/index.html"
   },
+  "default_locale": "en",
   "permissions": ["tabs", "contextMenus", "storage"],
   "commands": {
     "_execute_browser_action": {

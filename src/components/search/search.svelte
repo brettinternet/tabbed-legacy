@@ -6,6 +6,7 @@
   import { searchValue } from 'src/components/search/store'
   import { searchSessions } from 'src/components/search/send'
   import X from 'src/components/icons/x.svelte'
+  import { getMessage } from 'src/utils/i18n'
 
   const submitSearch = async (text?: string) => {
     searchValue.set(text)
@@ -45,14 +46,14 @@
 <form
   role="search"
   on:submit={handleSubmit}
-  aria-label="Sessions and tabs"
+  aria-label={getMessage('search__form_label', 'Sessions and tabs')}
   class="relative"
 >
   <Input
     id="search"
     classNames="w-full xxs:pr-8"
     type="text"
-    placeholder="Search"
+    placeholder={getMessage('search__input_placeholder', 'Search')}
     onInput={debouncedChange}
     spellcheck="false"
     bind:ref={input}
@@ -60,6 +61,7 @@
   {#if $searchValue}
     <button
       class="hidden xxs:flex items-center justify-center absolute top-0 right-0 h-full w-8"
+      aria-label={getMessage('search__input_clear', 'Clear')}
       on:click={clear}
     >
       <X />

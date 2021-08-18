@@ -5,6 +5,7 @@
   import { modal } from 'src/components/modal/store'
   import { importSessionsFromText } from 'src/components/import/store'
   import { isPopup } from 'src/components/app/store'
+  import { getMessage } from 'src/utils/i18n'
 
   const getTextArea = (form: HTMLFormElement): HTMLTextAreaElement | null =>
     form.querySelector('textarea')
@@ -14,7 +15,12 @@
     const shouldConfirm = textarea?.value || files
     let yes = true
     if (shouldConfirm) {
-      yes = window.confirm('Discard unsubmitted changes?')
+      yes = window.confirm(
+        getMessage(
+          'import__form__prompt_unsaved',
+          'Discard unsubmitted changes?'
+        )
+      )
     }
     return yes
   }
@@ -46,24 +52,35 @@
       if (form && !isLoading) {
         const input = getTextArea(form)
         const text = input?.value
-        try {
-          isLoading = true
-          if (text) {
-            await importSessionsFromText(text)
-          }
-          if (files) {
-            const contentsFromFiles = await readFiles(files)
-            const requests = contentsFromFiles.map(
-              async (content) => await importSessionsFromText(content)
+        if (text || files) {
+          try {
+            isLoading = true
+            if (text) {
+              await importSessionsFromText(text)
+            }
+            if (files) {
+              const contentsFromFiles = await readFiles(files)
+              const requests = contentsFromFiles.map(
+                async (content) => await importSessionsFromText(content)
+              )
+              await Promise.all(requests)
+              files = undefined
+            }
+            isLoading = false
+            errorMessage = undefined
+          } catch (err) {
+            isLoading = false
+            errorMessage = errorMessage = getMessage(
+              'error',
+              err.message,
+              err.message
             )
-            await Promise.all(requests)
-            files = undefined
           }
-          isLoading = false
-          errorMessage = undefined
-        } catch (err) {
-          isLoading = false
-          errorMessage = err.message
+        } else {
+          errorMessage = getMessage(
+            'import__form__error_no_session_found',
+            'No session found'
+          )
         }
         if (!errorMessage) {
           modal.importer.set(false)
@@ -78,7 +95,10 @@
     if (input.value && input.files) {
       files = input.files
     } else {
-      errorMessage = 'No file found'
+      errorMessage = getMessage(
+        'import__form__error_no_file_found',
+        'No file found'
+      )
     }
   }
 </script>
@@ -91,9 +111,12 @@
   <div class="w-full">
     <Textarea
       classNames="w-full max-h-import-textarea"
-      aria-label="Import session"
+      aria-label={getMessage('import__form__textarea_label', 'Import session')}
       rows="12"
-      placeholder="Paste exported session content"
+      placeholder={getMessage(
+        'import__form__textarea_placeholder',
+        'Paste exported session content'
+      )}
       aria-disabled={isLoading}
       spellcheck="false"
       wrap="off"
@@ -111,14 +134,19 @@
       onChange={handleFileSelect}
       aria-disabled={isLoading}
       multiple
-      secondary>Select file</FileButton
+      secondary
+      >{getMessage('import__form__file_select', 'Select file')}</FileButton
     >
-    <Button type="submit" aria-disabled={isLoading}>Import</Button>
+    <Button type="submit" aria-disabled={isLoading}
+      >{getMessage('import__form__submit', 'Import')}</Button
+    >
   </div>
   {#if isPopup}
     <p class="text-gray-500 text-xs mt-2">
-      Using "Select file" may cause the popup to close. Try opening the
-      extension in a new tab first.
+      {getMessage(
+        'import__form__popup_warning',
+        'Using "Select file" may cause the popup to close. Try opening the extension in a new tab first.'
+      )}
     </p>
   {/if}
   {#if files}

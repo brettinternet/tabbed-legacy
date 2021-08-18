@@ -7,6 +7,7 @@
   import type { Layout } from 'src/utils/settings'
   import Cog from 'src/components/icons/cog.svelte'
   import { layouts } from 'src/utils/settings'
+  import { getMessage } from 'src/utils/i18n'
   import Search from '../search/search.svelte'
 
   export let onClickSettings: OptionalProp<() => void> = undefined,
@@ -42,8 +43,8 @@
         <button
           class="px-4 py-1 h-full rounded-sm"
           on:click={onClickSettings}
-          aria-label="Open settings"
-          title="Open settings"><Cog /></button
+          aria-label={getMessage('open_settings', 'open settings')}
+          title={getMessage('open_settings', 'open settings')}><Cog /></button
         >
       </li>
     {/if}

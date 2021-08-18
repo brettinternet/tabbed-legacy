@@ -68,7 +68,7 @@
     "prettier": "^2.3.2",
     "prettier-plugin-svelte": "^2.3.1",
     "rollup": "^2.53.2",
-    "rollup-plugin-chrome-extension": "^3.5.7",
+    "rollup-plugin-chrome-extension": "^3.6.0-8",
     "rollup-plugin-empty-dir": "^1.0.5",
     "rollup-plugin-postcss": "^4.0.0",
     "rollup-plugin-svelte": "^7.1.0",
