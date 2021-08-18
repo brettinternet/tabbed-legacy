@@ -17,6 +17,7 @@ export const locale = browser.i18n.getUILanguage()
 
 /**
  * Up to 9 substitutions supported in Chrome
+ * @docs https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/i18n/getMessage
  */
 export const getMessage = (
   messageName: string,

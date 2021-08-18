@@ -58,10 +58,8 @@ npm test
 
 #### Bugs
 
-- [ ] recover from duplicated session ids on system startup
 - [ ] Firefox not rendering popup and sidebar
 - [ ] undoing too fast causes race condition
-- [ ] tab states not updating (on pinned) - move focus listeners to background?
 - [ ] tabbing skips over radio input component
 - [ ] check that all windows are narrowed down by session first
 
@@ -72,7 +70,7 @@ npm test
 #### Wishlist
 
 - [ ] Get recently closed sessions and consolidate with previous?
-- [ ] add i18n English
+- [ ] finish i18n English
 - [ ] allow option to open tabs/windows in background (perhaps with middle click?)
 - [ ] allow sort options for saved sessions - manual sorting
 - [ ] Extension landing page with feature descriptions
