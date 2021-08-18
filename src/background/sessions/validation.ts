@@ -13,7 +13,7 @@ const removeDuplicateSessionIds = async (sessions: Session[]) => {
   const hash: Record<string, boolean> = {}
   let index = 0
   let { type } = sessions[0]
-  for (let session of sessions) {
+  for (const session of sessions) {
     if (hash[session.id]) {
       log.warn(
         logContext,

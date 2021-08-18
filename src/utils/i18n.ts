@@ -21,6 +21,7 @@ export const locale = browser.i18n.getUILanguage()
 export const getMessage = (
   messageName: string,
   defaultMessage: string = messageName,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   substitutions?: any
 ) => {
   const message = browser.i18n.getMessage(messageName, substitutions)

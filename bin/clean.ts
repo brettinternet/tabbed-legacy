@@ -7,5 +7,5 @@ const queue = [resolve(projectRoot, 'dist'), resolve(projectRoot, 'coverage')]
 queue.forEach((dir) => {
   try {
     rmSync(dir, { recursive: true })
-  } catch (_err) {}
+  } catch (_err) {} // eslint-disable-line no-empty
 })
