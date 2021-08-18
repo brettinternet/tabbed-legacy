@@ -6,6 +6,7 @@
   import cn from 'classnames'
 
   import type { OpenTabOptions, OpenWindowOptions } from 'src/utils/messages'
+  import { getTabUrl } from 'src/utils/browser/query'
   import WindowTitle from './window-title.svelte'
   import TabItem from './tab-item.svelte'
 
@@ -68,7 +69,7 @@
       />
       {#if win.tabs}
         <ol role="grid" class="overflow-hidden">
-          {#each win.tabs as tab (sessionId + tab.id)}
+          {#each win.tabs as tab (sessionId + tab.id + tab.title + getTabUrl(tab) + tab.pinned + tab.windowId)}
             <TabItem
               {tab}
               {sessionId}
