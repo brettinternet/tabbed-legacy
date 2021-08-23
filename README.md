@@ -69,6 +69,7 @@ npm test
 
 #### Wishlist
 
+- [ ] add new url (& fetch title)
 - [ ] Get recently closed sessions and consolidate with previous?
 - [ ] finish i18n English
 - [ ] allow option to open tabs/windows in background (perhaps with middle click?)
