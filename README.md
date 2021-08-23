@@ -58,6 +58,7 @@ npm test
 
 #### Bugs
 
+- [ ] settings option save incognito must also enable save closed windows option
 - [ ] Firefox not rendering popup and sidebar
 - [ ] undoing too fast causes race condition
 - [ ] tabbing skips over radio input component
