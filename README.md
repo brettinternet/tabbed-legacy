@@ -59,6 +59,9 @@ npm test
 #### Bugs
 
 - [ ] settings option save incognito must also enable save closed windows option
+- [ ] new index flash when item previous session deleted or "more" button expanded
+- [ ] context menu bad position when bottom of menu
+- [ ] right click window focuses window
 - [ ] Firefox not rendering popup and sidebar
 - [ ] undoing too fast causes race condition
 - [ ] tabbing skips over radio input component
