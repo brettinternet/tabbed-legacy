@@ -24,8 +24,8 @@
     modal.settings.set(true)
   }
 
-  const getActiveModal = () => {
-    switch ($whichModal) {
+  const getActiveModal = (modal: string | undefined) => {
+    switch (modal) {
       case 'settings':
         return SettingsModal
       case 'shortcuts':
@@ -46,7 +46,7 @@
   >
     <Sessions currentLayout={$settings.layout} />
   </AppLayout>
-  <svelte:component this={getActiveModal()} />
+  <svelte:component this={getActiveModal($whichModal)} />
   {#if $someModal}
     <Overlay />
   {/if}
