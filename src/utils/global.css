@@ -1,3 +1,10 @@
 html.dark {
   @apply bg-gray-900 text-white;
 }
+
+/* Scrolling is handled within certain divs */
+/* Without this, there's a minor UI bug where scroll bar appears with spacing on the right */
+body {
+  overflow: hidden;
+}
+
