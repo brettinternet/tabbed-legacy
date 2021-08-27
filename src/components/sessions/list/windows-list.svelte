@@ -33,9 +33,11 @@
       const button = ev.currentTarget
       if (button.dataset.windowId) {
         const windowId: number | undefined = parseInt(button.dataset.windowId)
+        // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
         const isMiddleClick = ev.button === 1
+        const isRightClick = ev.button === 2
         const ariaDisabled = button.getAttribute('aria-disabled') === 'true'
-        if (windowId && (isMiddleClick || !ariaDisabled)) {
+        if (!isRightClick && windowId && (isMiddleClick || !ariaDisabled)) {
           await openWindow(sessionId, windowId, { noFocus: isMiddleClick })
         }
       }
