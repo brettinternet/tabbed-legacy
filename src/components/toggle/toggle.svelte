@@ -4,7 +4,15 @@
 
   export let label: string,
     id: string,
-    onChange: svelte.JSX.FormEventHandler<HTMLInputElement>
+    onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLInputElement>> = undefined,
+    ariaDisabled: OptionalProp<boolean> = undefined
+
+    const handleChange: svelte.JSX.FormEventHandler<HTMLInputElement> = (ev) => {
+      ev.preventDefault()
+      if (onChange && !ariaDisabled) {
+        onChange(ev)
+      }
+    }
 </script>
 
 <div
@@ -14,7 +22,8 @@
     type="checkbox"
     {id}
     class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-gray-300 appearance-none cursor-pointer dark:border-gray-500 dark:bg-gray-200"
-    on:change={onChange}
+    on:click={handleChange}
+    aria-disabled={ariaDisabled}
     {...$$restProps}
   />
   <label

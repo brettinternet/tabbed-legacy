@@ -46,7 +46,6 @@ npm test
 
 #### Before launch
 
-- [ ] compress saved windows/tabs
 - [ ] add tests for newly implemented features such as undo
 - [ ] push undo/redo actions to undo stack for backend session actions
 - [ ] display session search results with highlights
@@ -58,7 +57,6 @@ npm test
 
 #### Bugs
 
-- [ ] settings option save incognito must also enable save closed windows option
 - [ ] new index flash when item previous session deleted or "more" button expanded
 - [ ] context menu bad position when bottom of menu
 - [ ] right click window focuses window

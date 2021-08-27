@@ -44,9 +44,14 @@ export const handleChangeSaveClosedWindow: EventHandler<
 
 export const handleChangeSaveIncognito: EventHandler<Event, HTMLInputElement> =
   async (ev) => {
-    await updateSettings({
-      saveIncognito: ev.currentTarget.checked,
-    })
+    const saveIncognito = ev.currentTarget.checked
+    const change: Partial<Settings> = {
+      saveIncognito,
+    }
+    if (saveIncognito) {
+      change.saveClosedWindows = true
+    }
+    await updateSettings(change)
   }
 
 export const handleChangeTabCountBadge: EventHandler<Event, HTMLInputElement> =

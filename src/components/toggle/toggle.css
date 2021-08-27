@@ -1,10 +1,19 @@
-.toggle-checkbox:checked {
+.toggle-checkbox:not([aria-disabled="true"]):checked {
   @apply right-0 border-green-400;
   right: 0;
 }
 
-.toggle-checkbox:checked + .toggle-label {
+.toggle-checkbox[aria-disabled="true"]:checked {
+  @apply right-0 border-green-200;
+  right: 0;
+}
+
+.toggle-checkbox:not([aria-disabled="true"]):checked + .toggle-label {
   @apply bg-green-400;
+}
+
+.toggle-checkbox[aria-disabled="true"]:checked + .toggle-label {
+  @apply bg-green-200;
 }
 
 .dark .toggle-checkbox:checked {

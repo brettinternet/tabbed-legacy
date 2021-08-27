@@ -154,6 +154,7 @@
           label="Save closed windows"
           onChange={handleChangeSaveClosedWindow}
           checked={$settings.saveClosedWindows}
+          ariaDisabled={$settings.saveIncognito}
           aria-describedby="save-closed-window-description"
         />
       </div>
