@@ -34,7 +34,7 @@ export const setupListeners = () => {
 
       selectedSessionId.set(message.value)
       const button: HTMLButtonElement | null = document.querySelector(
-        `button#${message.value}`
+        `button[data-session-id="${message.value}"]`
       )
       if (button) {
         button.focus()
