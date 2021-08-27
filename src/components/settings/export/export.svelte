@@ -10,6 +10,7 @@
   import { isDefined, numberWithCommas, parseNum } from 'src/utils/helpers'
   import type { Valueof } from 'src/utils/helpers'
   import type { Session } from 'src/utils/browser/storage'
+  import H1 from 'src/components/settings/h1.svelte'
 
   export let headerId: string
 
@@ -79,7 +80,9 @@
   }
 </script>
 
-<h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">Export</h1>
+<H1 id={headerId}>
+  Export
+</H1>
 
 <form on:submit={handleSaveToFile} class="space-y-3">
   <div>

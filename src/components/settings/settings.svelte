@@ -5,8 +5,8 @@
   import About from 'src/components/settings/about.svelte'
   import Options from 'src/components/settings/options/options.svelte'
   import Export from 'src/components/settings/export/export.svelte'
+  import Import from 'src/components/settings/import.svelte'
   import Modal from 'src/components/modal/modal.svelte'
-  import Import from 'src/components/import/form.svelte'
   import { modal } from 'src/components/modal/store'
 
   let shouldClose: (() => boolean) | undefined = undefined

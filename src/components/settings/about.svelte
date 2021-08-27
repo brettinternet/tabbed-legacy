@@ -14,6 +14,7 @@
     attributions,
   } from 'src/utils/env'
   import A from 'src/components/anchor/anchor.svelte'
+  import H1 from 'src/components/settings/h1.svelte'
   import Icon from 'src/icons/icon.svg'
 
   export let headerId: string
@@ -23,9 +24,9 @@
     'text-gray-500 font-light text-left min-w-min pr-1 align-top dark:text-gray-300'
 </script>
 
-<h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">
+<H1 id={headerId}>
   About {appName}
-</h1>
+</H1>
 
 <img class="w-10 my-6" src={Icon} alt={appName} />
 

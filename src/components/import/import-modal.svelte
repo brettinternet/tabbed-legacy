@@ -22,5 +22,7 @@
   focusSelector="textarea"
 >
   <Header onClickClose={handleClose} title="Import" {headerId} />
-  <ImportForm bind:shouldClose />
+  <div class="px-5 pb-5">
+    <ImportForm bind:shouldClose />
+  </div>
 </Modal>

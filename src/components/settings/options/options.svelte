@@ -34,6 +34,7 @@
     handleOpenOptions,
     changeExcludedUrls,
   } from 'src/components/settings/options/handlers'
+  import H1 from 'src/components/settings/h1.svelte'
   import Description from './description.svelte'
   import Error from './error.svelte'
   import SectionTitle from './section-title.svelte'
@@ -46,7 +47,7 @@
   }
 </script>
 
-<h1 id={headerId} class="text-lg font-semibold mb-6 capitalize">Options</h1>
+<H1 id={headerId}>Options</H1>
 
 {#if $settings}
   <div class="mb-10">

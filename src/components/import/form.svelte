@@ -106,7 +106,7 @@
 <form
   bind:this={form}
   on:submit|preventDefault={handleSubmit}
-  class="space-y-3 px-5 pb-5"
+  class="space-y-3"
 >
   <div class="w-full">
     <Textarea
