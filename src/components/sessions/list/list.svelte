@@ -4,9 +4,9 @@
    * https://www.w3.org/TR/wai-aria-practices-1.1/examples/accordion/accordion.html
    */
   import cn from 'classnames'
-  import { onMount } from 'svelte'
+  import { onMount, afterUpdate } from 'svelte'
 
-  import type { SessionLists } from 'src/utils/browser/storage'
+  import type { SessionLists, Session } from 'src/utils/browser/storage'
   import { sessionTypes } from 'src/utils/browser/storage'
   import Down from 'src/components/icons/down.svelte'
   import type {
@@ -56,11 +56,33 @@
   let viewAllPrevious = false
   const limitPrevious = 5
 
-  let previousLength: number | undefined, savedLength: number | undefined
+  let previousCollection: Session[] | undefined,
+    savedCollection: Session[] | undefined
+  let mounted = false
   onMount(() => {
-    previousLength = sessionLists.previous.length
-    savedLength = sessionLists.saved.length
+    previousCollection = sessionLists.previous
+    savedCollection = sessionLists.saved
+    mounted = true
   })
+
+  afterUpdate(() => {
+    if (
+      mounted &&
+      (previousCollection?.length !== sessionLists.previous.length ||
+        savedCollection?.length !== sessionLists.saved.length)
+    ) {
+      previousCollection = sessionLists.previous
+      savedCollection = sessionLists.saved
+    }
+  })
+
+  const isNewToCollection = (
+    collection: Session[] | undefined,
+    session: Session
+  ) => {
+    const found = collection?.findIndex(({ id }) => id === session.id)
+    return found === -1
+  }
 
   const toggleViewAll = () => {
     viewAllPrevious = !viewAllPrevious
@@ -95,8 +117,7 @@
           ? 'updated'
           : 'created'}
         flashHighlight={session.id !== sessionLists.current.id &&
-          isDefined(previousLength) &&
-          sessionLists.previous.length !== previousLength}
+          isNewToCollection(previousCollection, session)}
       />
       {#if selectedSessionId === session.id}
         <div
@@ -172,8 +193,7 @@
             : false}
           date={session.userSavedDate || session.lastModifiedDate}
           datePrefix="saved"
-          flashHighlight={isDefined(savedLength) &&
-            sessionLists.saved.length !== savedLength}
+          flashHighlight={isNewToCollection(savedCollection, session)}
         />
         {#if selectedSessionId === session.id}
           <div

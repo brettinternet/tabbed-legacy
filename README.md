@@ -57,7 +57,6 @@ npm test
 
 #### Bugs
 
-- [ ] new index flash when item previous session deleted or "more" button expanded
 - [ ] context menu bad position when bottom of menu
 - [ ] right click window focuses window
 - [ ] Firefox not rendering popup and sidebar

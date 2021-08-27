@@ -4,15 +4,16 @@
 
   export let label: string,
     id: string,
-    onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLInputElement>> = undefined,
+    onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLInputElement>> =
+      undefined,
     ariaDisabled: OptionalProp<boolean> = undefined
 
-    const handleChange: svelte.JSX.FormEventHandler<HTMLInputElement> = (ev) => {
-      ev.preventDefault()
-      if (onChange && !ariaDisabled) {
-        onChange(ev)
-      }
+  const handleChange: svelte.JSX.FormEventHandler<HTMLInputElement> = (ev) => {
+    ev.preventDefault()
+    if (onChange && !ariaDisabled) {
+      onChange(ev)
     }
+  }
 </script>
 
 <div
