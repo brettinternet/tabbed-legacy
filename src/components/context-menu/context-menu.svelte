@@ -23,17 +23,13 @@
 
   const closeMenu = () => {
     showMenu = false
-    window.removeEventListener('scroll', handleScroll)
+    window.removeEventListener('scroll', closeMenu)
+    window.removeEventListener('blur', closeMenu)
+    window.removeEventListener('resize', closeMenu)
     if (target && contextMenuOptions?.onClose) {
       contextMenuOptions.onClose(target)
     }
     target = null
-  }
-
-  const handleScroll = () => {
-    if (showMenu) {
-      closeMenu()
-    }
   }
 
   const handleKeydown = (ev: KeyboardEvent) => {
@@ -74,9 +70,15 @@
         pos = { x: ev.pageX, y: ev.pageY }
         showMenu = true
         window.addEventListener('keydown', handleKeydown)
-        window.addEventListener('scroll', handleScroll, {
+        window.addEventListener('scroll', closeMenu, {
           once: true,
           capture: true,
+        })
+        window.addEventListener('blur', closeMenu, {
+          once: true,
+        })
+        window.addEventListener('resize', closeMenu, {
+          once: true,
         })
       }
     }
