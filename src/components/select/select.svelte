@@ -1,6 +1,9 @@
 <script lang="ts">
   import cn from 'classnames'
 
+  import { focusRing } from 'src/components/focus/focus-ring'
+  import { getRingContext } from 'src/components/focus/context'
+
   export let label: OptionalProp<string> = undefined,
     options: string[],
     selected: OptionalProp<string> = undefined,
@@ -35,6 +38,7 @@
   </label>
 {/if}
 <select
+  use:focusRing={{ instanceId: getRingContext() }}
   {id}
   class={cn(
     'rounded-sm border border-gray-800 px-2 py-1 dark:bg-gray-900 dark:border-gray-500 dark:text-white',

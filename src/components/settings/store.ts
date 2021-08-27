@@ -7,7 +7,11 @@ import { readSettings, writeSetting } from 'src/utils/browser/storage'
 import { isPopup } from 'src/components/app/store'
 import { updateLogLevel, log } from 'src/utils/logger'
 import { sortCurrentSession } from 'src/components/sessions/store'
-import { setupShortcuts } from 'src/components/settings/hotkeys'
+import {
+  setupShortcuts,
+  enableShortcuts,
+  disableShortcuts,
+} from 'src/components/settings/hotkeys'
 import {
   reloadTabListeners,
   reloadExtensionActions,
@@ -54,7 +58,11 @@ const handleSettingsSideEffects = async <K extends keyof Settings>(
     case 'shortcuts': {
       const { shortcuts } = settings
       if (isDefined(shortcuts)) {
-        setupShortcuts(shortcuts) // TODO: fix this fn's types
+        if (shortcuts) {
+          enableShortcuts()
+        } else {
+          disableShortcuts()
+        }
       }
       break
     }
@@ -73,7 +81,7 @@ const handleSettingsSideEffects = async <K extends keyof Settings>(
       break
     }
     case 'popupDimensions': {
-      const width = settings.popupDimensions?.width // TODO: fix typing
+      const width = settings.popupDimensions?.width
       const height = settings.popupDimensions?.height
       if (isPopup && width && height) {
         setBodySize(width, height)
@@ -117,6 +125,8 @@ const getKeys = Object.keys as <T extends Record<string, unknown>>(
 ) => Array<keyof T>
 
 const getInitialSettings = async () => {
+  setupShortcuts()
+
   const settings = await readSettings()
 
   const keys = getKeys(settings)

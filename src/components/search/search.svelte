@@ -7,6 +7,7 @@
   import { searchSessions } from 'src/components/search/send'
   import X from 'src/components/icons/x.svelte'
   import { getMessage } from 'src/utils/i18n'
+  import Button from 'src/components/button/button.svelte'
 
   const submitSearch = async (text?: string) => {
     searchValue.set(text)
@@ -59,12 +60,12 @@
     bind:ref={input}
   />
   {#if $searchValue}
-    <button
+    <Button
       class="hidden xxs:flex items-center justify-center absolute top-0 right-0 h-full w-8"
       aria-label={getMessage('search__input_clear', 'Clear')}
-      on:click={clear}
+      onClick={clear}
     >
       <X />
-    </button>
+    </Button>
   {/if}
 </form>

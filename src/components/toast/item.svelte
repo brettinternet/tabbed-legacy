@@ -6,6 +6,7 @@
   import { tweened } from 'src/utils/motion'
   import { toast, toastLevels } from 'src/components/toast/store'
   import X from 'src/components/icons/x.svelte'
+  import Button from 'src/components/button/button.svelte'
 
   export let item: Toast
   const {
@@ -85,24 +86,24 @@
     {#if actions}
       <div class="flex justify-end">
         {#each actions as { text, onClick } (text)}
-          <button
-            on:click={onClick}
+          <Button
+            {onClick}
             class="px-3 py-2 ml-2 bg-white text-black dark:bg-gray-800 dark:text-gray-300"
           >
             {text}
-          </button>
+          </Button>
         {/each}
       </div>
     {/if}
   </div>
 
   {#if dismissable}
-    <button
+    <Button
       class="w-8 h-7 my-1.5 flex items-center justify-center"
-      on:click={close}
+      onClick={close}
     >
       <X />
-    </button>
+    </Button>
   {/if}
 
   <!-- This native element doesn't look great on Firefox... -->

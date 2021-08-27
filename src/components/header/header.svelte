@@ -8,13 +8,16 @@
   import Cog from 'src/components/icons/cog.svelte'
   import { layouts } from 'src/utils/settings'
   import { getMessage } from 'src/utils/i18n'
+  import Button from 'src/components/button/button.svelte'
   import Search from '../search/search.svelte'
+  import { focusScope } from 'src/components/focus/scope'
 
   export let onClickSettings: OptionalProp<() => void> = undefined,
     currentLayout: OptionalProp<Layout> = undefined
 </script>
 
 <header
+  use:focusScope
   class="h-header flex justify-around items-center sticky top-0 bg-white border-b border-gray-300 z-header lg:static lg:border-none text-gray-800 dark:bg-gray-900 dark:text-white dark:border-gray-500 mx-auto max-w-screen-2xl"
 >
   <ul
@@ -40,11 +43,11 @@
           currentLayout === layouts.LIST && 'lg:col-start-12'
         )}
       >
-        <button
+        <Button
           class="px-4 py-1 h-full rounded-sm"
-          on:click={onClickSettings}
+          onClick={onClickSettings}
           aria-label={getMessage('open_settings', 'open settings')}
-          title={getMessage('open_settings', 'open settings')}><Cog /></button
+          title={getMessage('open_settings', 'open settings')}><Cog /></Button
         >
       </li>
     {/if}

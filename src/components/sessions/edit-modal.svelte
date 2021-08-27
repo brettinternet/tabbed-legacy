@@ -89,7 +89,7 @@
       </p>
     {/if}
     <div class="flex justify-end">
-      <Button type="submit">Save</Button>
+      <Button type="submit" variant="primary">Save</Button>
     </div>
   </form>
 </Modal>

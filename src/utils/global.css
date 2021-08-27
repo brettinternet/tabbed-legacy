@@ -8,3 +8,7 @@ body {
   overflow: hidden;
 }
 
+/* Don't you worry! (http://www.outlinenone.com/) See `components/focus` for replacement solution */
+:focus {
+  outline: none;
+}

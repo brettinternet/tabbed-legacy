@@ -17,10 +17,12 @@
   import { contextIds } from 'src/components/context-menu/store'
   import { modal } from 'src/components/modal/store'
   import Upload from 'src/components/icons/upload.svelte'
+  import Button from 'src/components/button/button.svelte'
   import { isDefined } from 'src/utils/helpers'
   import ViewButton from './view-button.svelte'
   import WindowList from './windows-list.svelte'
   import Meta from './meta.svelte'
+  import Menu from './menu.svelte'
   import ActionBar from '../action-bar.svelte'
 
   export let selectSession: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
@@ -77,10 +79,7 @@
 </script>
 
 <section class="w-full lg:grid lg:grid-cols-12 lg:px-4">
-  <menu
-    id="menu"
-    class="scroll relative p-0 m-0 lg:col-span-4 xl:col-span-3 z-menu-accordion lg:h-main lg:overflow-y-auto"
-  >
+  <Menu>
     {#each unsavedSessions as session, i (session.id)}
       <ViewButton
         {toggleSession}
@@ -133,16 +132,16 @@
     {/each}
     {#if sessionLists.previous.length - 1 > limitPrevious}
       <div class="flex justify-end px-2 xs:px-4 sm:px-8 lg:px-4">
-        <button
+        <Button
           class="p-2 flex items-center text-gray-400 dark:text-gray-500"
-          on:click={toggleViewAll}
+          onClick={toggleViewAll}
           >{viewAllPrevious
             ? 'less'
             : `${sessionLists.previous.length + 1 - limitPrevious} more`}
           <span class={cn('ml-1', viewAllPrevious && 'transform rotate-180')}
             ><Down /></span
           >
-        </button>
+        </Button>
       </div>
     {/if}
 
@@ -150,14 +149,14 @@
       class="flex justify-between items-center pr-1 pt-3 pb-2 xs:pr-3 sm:pr-7 lg:pr-3 pl-4 xs:pl-6 sm:pl-10 lg:pl-6"
     >
       <h2>Saved</h2>
-      <button
-        on:click={handleOpenImporter}
+      <Button
+        onClick={handleOpenImporter}
         class="py-2 px-3"
         aria-label="Upload sessions"
         title="Upload sessions"
       >
         <Upload />
-      </button>
+      </Button>
     </div>
 
     {#if sessionLists.saved.length > 0}
@@ -206,7 +205,7 @@
     {:else}
       <p class="text-gray-500 text-center p-4 xs:px-6 sm:px-10 py-4">None</p>
     {/if}
-  </menu>
+  </Menu>
 
   {#if selectedSession && selectedSession.id === selectedSessionId}
     <article

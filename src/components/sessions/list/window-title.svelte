@@ -6,6 +6,8 @@
   import Focused from 'src/components/icons/eye.svelte'
   import Incognito from 'src/components/icons/eye-closed.svelte'
   import Minimize from 'src/components/icons/minimize.svelte'
+  import { focusRing } from 'src/components/focus/focus-ring'
+  import { getRingContext } from 'src/components/focus/context'
 
   export let onClick: svelte.JSX.MouseEventHandler<HTMLButtonElement>,
     sessionId: string | undefined,
@@ -29,6 +31,7 @@
     <div class="flex justify-center w-5 mr-3"><Window /></div>
     <h2 class="font-semibold flex items-center overflow-hidden whitespace-pre">
       <button
+        use:focusRing={{ instanceId: getRingContext() }}
         data-context-id={contextIds.WINDOW}
         data-session-id={sessionId}
         data-window-id={id}

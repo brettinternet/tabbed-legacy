@@ -9,6 +9,7 @@
 
   import type { DispatchClickContext } from 'src/components/context-menu/store'
   import { key } from 'src/components/context-menu/store'
+  import Button from 'src/components/button/button.svelte'
 
   export let disabled = false,
     // Use `null` for text alignment to add margin where Icon would be
@@ -27,7 +28,7 @@
   }
 </script>
 
-<button
+<Button
   role="menuitem"
   class={cn(
     'py-1 px-3 flex items-center w-full',
@@ -36,7 +37,7 @@
       : 'hover:bg-gray-200 dark:hover:bg-gray-700'
   )}
   aria-disabled={disabled}
-  on:click={handleClick}
+  onClick={handleClick}
 >
   {#if text}
     <div class="flex justify-between items-center w-full">
@@ -59,7 +60,7 @@
   {:else}
     <slot />
   {/if}
-</button>
+</Button>
 
 <style>
   .ml-icon {

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getMessage } from 'src/utils/i18n'
   import X from 'src/components/icons/x.svelte'
+  import Button from 'src/components/button/button.svelte'
 
   export let onClickClose: () => void,
     title: string,
@@ -13,12 +14,12 @@
   style={headerStyle}
 >
   <h1 id={headerId} class="text-lg font-semibold capitalize">{title}</h1>
-  <button
-    on:click={onClickClose}
+  <Button
+    onClick={onClickClose}
     class="py-2 px-3 rounded-sm"
     title={getMessage('close')}
     aria-label={getMessage('close')}
   >
     <X />
-  </button>
+  </Button>
 </header>

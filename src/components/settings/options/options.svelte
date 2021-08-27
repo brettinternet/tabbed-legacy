@@ -137,10 +137,10 @@
       </div>
       <Description id="shortcuts-description">
         Enables extension shortcuts. Use <Kbd>?</Kbd> when enabled to
-        <button
-          on:click={handleOpenShortcuts}
+        <Button
+          onClick={handleOpenShortcuts}
           class="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500"
-          >view shortcuts</button
+          >view shortcuts</Button
         >.
       </Description>
     </div>
@@ -175,10 +175,10 @@
       <Description id="save-incognito-window-description">
         Allows autosave to save incognito windows.
         {#if browserRuntime === browsers.CHROMIUM}
-          {' '}<button
-            on:click={handleOpenOptions}
+          {' '}<Button
+            onClick={handleOpenOptions}
             class="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500"
-            >Enable incognito access</button
+            >Enable incognito access</Button
           > for this option to work.
         {/if}
       </Description>
@@ -219,7 +219,9 @@
           {:else}
             <p class="text-gray-600 dark:text-gray-500">&#x2713; URLs</p>
           {/if}
-          <Button onClick={handleChangeExcludedUrls}>Check</Button>
+          <Button onClick={handleChangeExcludedUrls} variant="primary"
+            >Check</Button
+          >
         </div>
       </div>
       <Description id="excluded-urls-description">
@@ -349,7 +351,9 @@
     </div>
     <div class="mb-6">
       <div class="mb-3">
-        <Button onClick={handleClickReset}>Reset settings</Button>
+        <Button onClick={handleClickReset} variant="primary"
+          >Reset settings</Button
+        >
       </div>
       <Description id="debug-mode-description">
         Restores all settings to default values.
@@ -360,7 +364,9 @@
       <div class="mb-6">
         <h3 class="text-red-600 mb-3">** INTENDED FOR DEV ONLY **</h3>
         <div class="mb-3">
-          <Button onClick={handlePurgeAllStorage}>Purge all storage</Button>
+          <Button onClick={handlePurgeAllStorage} variant="primary"
+            >Purge all storage</Button
+          >
         </div>
         <Description id="debug-mode-description">
           Purges all storage and resets the local storage state.

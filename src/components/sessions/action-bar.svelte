@@ -15,6 +15,7 @@
   import Bin from 'src/components/icons/bin.svelte'
   import Edit from 'src/components/icons/edit.svelte'
   import Download from 'src/components/icons/download.svelte'
+  import Button from 'src/components/button/button.svelte'
 
   export let session: Session,
     deleteSession: OptionalProp<(sessionId: string) => Promise<void>> =
@@ -53,64 +54,64 @@
 >
   <div class="flex items-center">
     {#if openSession}
-      <button
+      <Button
         class={buttonClassName}
         aria-label="Open session"
         title="Open session"
-        on:click={() => {
+        onClick={() => {
           if (openSession) {
             void openSession(session.id)
           }
         }}
       >
         <Open />
-      </button>
+      </Button>
     {/if}
     {#if saveSession}
-      <button
+      <Button
         class={buttonClassName}
         aria-label="Save session"
         title="Save session"
-        on:click={() => {
+        onClick={() => {
           if (saveSession) {
             void saveSession(session.id)
           }
         }}
       >
         <Save />
-      </button>
+      </Button>
     {/if}
     {#if deleteSession}
-      <button
+      <Button
         class={buttonClassName}
         aria-label="Delete session"
         title="Delete session"
-        on:click={() => {
+        onClick={() => {
           if (deleteSession) {
             void deleteSession(session.id)
           }
         }}
       >
         <Bin />
-      </button>
+      </Button>
     {/if}
-    <button
+    <Button
       class={buttonClassName}
       aria-label="Download session"
       title="Download session"
-      on:click={() => {
+      onClick={() => {
         void downloadSessions({ sessionIds: session.id })
       }}
     >
       <Download />
-    </button>
+    </Button>
 
     {#if openSessionEditor}
-      <button
+      <Button
         class={cn('flex flex-row items-center max-w-xs', buttonClassName)}
         aria-label="Edit session"
         title="Edit session"
-        on:click={handleOpenSessionEditor}
+        onClick={handleOpenSessionEditor}
       >
         <span class={cn(session.title && 'lg:mr-2')}><Edit /></span>
         {#if session.title}
@@ -118,7 +119,7 @@
             {session.title}
           </span>
         {/if}
-      </button>
+      </Button>
     {/if}
   </div>
 

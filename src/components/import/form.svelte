@@ -137,7 +137,7 @@
       secondary
       >{getMessage('import__form__file_select', 'Select file')}</FileButton
     >
-    <Button type="submit" aria-disabled={isLoading}
+    <Button type="submit" aria-disabled={isLoading} variant="primary"
       >{getMessage('import__form__submit', 'Import')}</Button
     >
   </div>

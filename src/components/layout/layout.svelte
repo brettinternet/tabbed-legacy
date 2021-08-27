@@ -1,7 +1,7 @@
 <script lang="ts">
+  import type { Layout } from 'src/utils/settings'
   import Header from 'src/components/header/header.svelte'
   import { appName } from 'src/utils/env'
-  import type { Layout } from 'src/utils/settings'
 
   export let pageTitle: OptionalProp<string> = undefined,
     currentLayout: OptionalProp<Layout> = undefined,

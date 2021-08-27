@@ -6,6 +6,8 @@
   import { contextIds } from 'src/components/context-menu/store'
   import Focused from 'src/components/icons/eye.svelte'
   import Pin from 'src/components/icons/pin.svelte'
+  import { focusRing } from 'src/components/focus/focus-ring'
+  import { getRingContext } from 'src/components/focus/context'
 
   export let tab: browser.tabs.Tab,
     sessionId: string | undefined,
@@ -38,6 +40,7 @@
     >
       {#if url}
         <a
+          use:focusRing={{ instanceId: getRingContext() }}
           data-context-id={contextIds.TAB}
           data-session-id={sessionId}
           data-window-id={windowId}

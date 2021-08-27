@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { focusRing } from 'src/components/focus/focus-ring'
+  import { getRingContext } from 'src/components/focus/context'
+
   import './range.css'
 
   export let label: string,
@@ -9,6 +12,7 @@
 
 <div class="flex items-center">
   <input
+    use:focusRing={{ instanceId: getRingContext() }}
     {id}
     class="rounded-lg appearance-none bg-gray-300 h-2 mr-2 dark:bg-gray-500"
     type="range"

@@ -45,9 +45,8 @@ module.exports = {
       margin: {
         outline: '2px', // to allow space for focus ring outline
       },
-      outline: {
-        selected: ['2px solid #000', '-2px'],
-        'selected-white': ['2px solid #fff', '-2px'],
+      boxShadow: {
+        'focus-ring': '0 0 0 4px var(--focus-ring-color, #00b0f4)',
       },
     },
   },

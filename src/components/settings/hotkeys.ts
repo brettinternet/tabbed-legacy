@@ -1,8 +1,8 @@
 import { tick } from 'svelte'
-import { get } from 'svelte/store'
+import { get, writable } from 'svelte/store'
 import hotkeys from 'hotkeys-js'
-import { noop } from 'lodash'
 
+import type { Valueof } from 'src/utils/helpers'
 import { isPopup } from 'src/components/app/store'
 import { modal, someModal } from 'src/components/modal/store'
 import { log } from 'src/utils/logger'
@@ -22,8 +22,31 @@ import { parseNum, isDefined } from 'src/utils/helpers'
 import { sessionTypes } from 'src/utils/browser/storage'
 import { toast } from 'src/components/toast/store'
 import { undo, redo } from 'src/components/app/send'
+import { focusRingEnabled } from 'src/components/focus/context'
 
 const logContext = 'components/settings/hotkeys'
+
+const shortcutScopes = {
+  OPTIONAL: 'optional_hotkeys',
+  REQUIRED: 'required_hotkeys',
+  INPUT_SAFE: 'input_safe_hotkeys',
+}
+
+type ShortcutScope = Valueof<typeof shortcutScopes>
+
+const createActiveScope = () => {
+  const { subscribe, set } = writable<ShortcutScope>()
+
+  return {
+    subscribe,
+    set: (scope: ShortcutScope) => {
+      hotkeys.setScope(scope)
+      set(scope)
+    },
+  }
+}
+
+const activeScope = createActiveScope()
 
 const handleDelete = async (ev: KeyboardEvent) => {
   const target = ev.target
@@ -71,17 +94,12 @@ const handleSelectCurrentSession = () => {
   }
 }
 
-const shortcutScopes = {
-  ENABLED: 'enabled',
-  DISABLED: 'disabled',
-}
-
 type ShortcutEntry = {
   hotkey: string
   display: string
 }
 type Shortcuts = Record<string, ShortcutEntry>
-export const shortcuts: Shortcuts = {
+const optionalShortcuts = {
   question: {
     hotkey: 'shift+/', // `?` mark
     display: '?',
@@ -128,70 +146,116 @@ export const shortcuts: Shortcuts = {
   },
 } as const
 
-/**
- * @docs https://github.com/jaywcjlove/hotkeys
- */
-export const setupShortcuts = (enabled: boolean) => {
-  log.debug(logContext, 'setupShortcuts', enabled)
-  const hotkeyShortcuts = Object.values(shortcuts)
+const requiredShortcuts = {
+  tab: {
+    hotkey: 'tab',
+    display: 'Tab',
+  },
+  shift_tab: {
+    hotkey: 'shift+tab',
+    display: 'Shift+Tab',
+  },
+} as const
+
+export const shortcuts = Object.assign({}, optionalShortcuts, requiredShortcuts)
+
+const listShortcutHotkeys = (shortcuts: Shortcuts) =>
+  Object.values(shortcuts)
     .map(({ hotkey }) => hotkey)
     .join(',')
 
-  if (enabled) {
-    hotkeys(hotkeyShortcuts, shortcutScopes.ENABLED, (event, handler) => {
-      if (enabled) {
-        event.preventDefault()
-        switch (handler.key) {
-          case shortcuts.question.hotkey:
-            modal.shortcuts.toggle()
-            break
-          case shortcuts.escape.hotkey:
-            if (get(someModal)) {
-              modal.off()
-            } else if (isPopup) {
-              window.close()
-            }
-            break
-          case shortcuts.slash.hotkey: {
+/**
+ * @docs https://github.com/jaywcjlove/hotkeys
+ */
+export const setupShortcuts = () => {
+  log.debug(logContext, 'setupShortcuts()')
+
+  const optionalHotkeyShortcuts = listShortcutHotkeys(optionalShortcuts)
+  hotkeys(
+    optionalHotkeyShortcuts,
+    shortcutScopes.OPTIONAL,
+    (event, handler) => {
+      event.preventDefault()
+      switch (handler.key) {
+        case optionalShortcuts.question.hotkey:
+          modal.shortcuts.toggle()
+          break
+        case optionalShortcuts.escape.hotkey:
+          if (get(someModal)) {
             modal.off()
-            const search = document.getElementById('search')
-            void tick().then(() => {
-              search?.focus()
-            })
-            break
+          } else if (isPopup) {
+            window.close()
           }
-          case shortcuts.backtick.hotkey:
-            modal.settings.toggle()
-            break
-          case shortcuts.i.hotkey:
-            modal.importer.set(true)
-            break
-          case shortcuts.r.hotkey:
-            void openSessionEdit()
-            break
-          case shortcuts.backspace.hotkey:
-          case shortcuts.delete.hotkey:
-            void handleDelete(event)
-            break
-          case shortcuts.ctrl_z.hotkey:
-            void undo()
-            break
-          case shortcuts.ctrl_y.hotkey:
-            void redo()
-            break
-          case shortcuts.c.hotkey:
-            handleSelectCurrentSession()
-            break
+          break
+        case optionalShortcuts.slash.hotkey: {
+          modal.off()
+          const search = document.getElementById('search')
+          void tick().then(() => {
+            search?.focus()
+          })
+          break
         }
+        case optionalShortcuts.backtick.hotkey:
+          modal.settings.toggle()
+          break
+        case optionalShortcuts.i.hotkey:
+          modal.importer.set(true)
+          break
+        case optionalShortcuts.r.hotkey:
+          void openSessionEdit()
+          break
+        case optionalShortcuts.backspace.hotkey:
+        case optionalShortcuts.delete.hotkey:
+          void handleDelete(event)
+          break
+        case optionalShortcuts.ctrl_z.hotkey:
+          void undo()
+          break
+        case optionalShortcuts.ctrl_y.hotkey:
+          void redo()
+          break
+        case optionalShortcuts.c.hotkey:
+          handleSelectCurrentSession()
+          break
       }
-    })
-  } else {
-    hotkeys('', shortcutScopes.DISABLED, noop)
+    }
+  )
+
+  // No scope, qualifies as `all` scope
+  const requiredHotkeyShortcuts = listShortcutHotkeys(requiredShortcuts)
+  hotkeys(requiredHotkeyShortcuts, (_event, handler) => {
+    switch (handler.key) {
+      // Do not preventDefault tab key
+      case requiredShortcuts.tab.hotkey:
+      case requiredShortcuts.shift_tab.hotkey:
+        focusRingEnabled.set(true)
+        break
+    }
+  })
+
+  /**
+   * Narrow scope to only 'all' and input safe hotkey scope
+   * TODO: first tab enables focus-ring and ev.preventDefault(), then tab changes focus
+   * Discord does this
+   */
+  hotkeys.filter = (event) => {
+    const target = event.target as HTMLElement | null
+    var tagName = target?.tagName
+    if (tagName) {
+      hotkeys.setScope(
+        /^(INPUT|TEXTAREA|SELECT)$/.test(tagName)
+          ? shortcutScopes.INPUT_SAFE
+          : get(activeScope)
+      )
+    }
+    return true
   }
+}
 
-  // https://github.com/jaywcjlove/hotkeys/issues/90
-  hotkeys.setScope(shortcutScopes[enabled ? 'ENABLED' : 'DISABLED'])
-  hotkeys.deleteScope(shortcutScopes[enabled ? 'DISABLED' : 'ENABLED'])
+export const disableShortcuts = () => {
+  activeScope.set(shortcutScopes.REQUIRED)
+}
 
-  log.debug(logContext, `hotkeys scope: '${hotkeys.getScope()}'`)
+export const enableShortcuts = () => {
+  activeScope.set(shortcutScopes.OPTIONAL)
 }

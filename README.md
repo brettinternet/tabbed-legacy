@@ -44,6 +44,13 @@ npm test
 
 ### Todo
 
+focus ring:
+
+- [ ] finish adding to other inputs/anchor
+- [ ] fix focus ring absolute on scroll - disappear or fix like lib?
+- [ ] additional scopes cause duplicate rings
+- [ ] tab/window focus container around `<Li>`
+
 #### Before launch
 
 - [ ] compress saved windows/tabs

@@ -15,6 +15,8 @@
   import Overlay from 'src/components/modal/overlay.svelte'
   import ContextMenu from 'src/components/context-menu/context-menu.svelte'
   import ToastProvider from 'src/components/toast/toasts.svelte'
+  import FocusRingScope from 'src/components/focus/scope.svelte'
+  import { activeRingContext } from 'src/components/focus/context'
 
   const logContext = 'components/app/app.svelte'
 
@@ -36,20 +38,23 @@
   }
 
   $: log.debug(logContext, $settings, `modal: ${$someModal}`)
+  $: console.log('activeRingContext', $activeRingContext)
 </script>
 
 {#if $settings}
-  <AppLayout
-    onClickSettings={openSettings}
-    currentLayout={$settings.layout}
-    height={isPopup ? $settings.popupDimensions?.height : undefined}
-  >
-    <Sessions currentLayout={$settings.layout} />
-  </AppLayout>
-  <svelte:component this={getActiveModal($whichModal)} />
-  {#if $someModal}
-    <Overlay />
-  {/if}
-  <ContextMenu />
-  <ToastProvider />
+  <FocusRingScope container={document.body}>
+    <AppLayout
+      onClickSettings={openSettings}
+      currentLayout={$settings.layout}
+      height={isPopup ? $settings.popupDimensions?.height : undefined}
+    >
+      <Sessions currentLayout={$settings.layout} />
+    </AppLayout>
+    <svelte:component this={getActiveModal($whichModal)} />
+    {#if $someModal}
+      <Overlay />
+    {/if}
+    <ContextMenu />
+    <ToastProvider />
+  </FocusRingScope>
 {/if}

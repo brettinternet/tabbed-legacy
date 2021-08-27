@@ -131,11 +131,11 @@
       {#if isCopied}
         <p class="text-gray-500 text-right">&#x2713; Copied</p>
       {/if}
-      <Button onClick={handleCopyToClipboard} secondary
+      <Button onClick={handleCopyToClipboard} variant="secondary"
         >Copy to clipboard</Button
       >
     </div>
-    <Button type="submit">Save to file</Button>
+    <Button type="submit" variant="primary">Save to file</Button>
   </div>
   {#if sizeKb > 500}
     <p class="text-gray-500 text-right">

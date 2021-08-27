@@ -4,6 +4,9 @@
    */
   import cn from 'classnames'
 
+  import { focusRing } from 'src/components/focus/focus-ring'
+  import { getRingContext } from 'src/components/focus/context'
+
   export let onChange: svelte.JSX.FormEventHandler<HTMLInputElement>,
     secondary: OptionalProp<boolean> = undefined,
     id: string,
@@ -19,6 +22,7 @@
 </script>
 
 <button
+  use:focusRing={{ instanceId: getRingContext() }}
   on:click|preventDefault={handleClick}
   class={cn(
     'py-1 px-2 rounded-md',
