@@ -6,11 +6,13 @@
     id: string,
     onChange: OptionalProp<svelte.JSX.FormEventHandler<HTMLInputElement>> =
       undefined,
-    ariaDisabled: OptionalProp<boolean> = undefined
+    disabled: OptionalProp<boolean> = undefined,
+    ariaDisabled: OptionalProp<boolean> = disabled
 
   const handleChange: svelte.JSX.FormEventHandler<HTMLInputElement> = (ev) => {
-    ev.preventDefault()
-    if (onChange && !ariaDisabled) {
+    if (ariaDisabled) {
+      ev.preventDefault()
+    } else if (onChange) {
       onChange(ev)
     }
   }

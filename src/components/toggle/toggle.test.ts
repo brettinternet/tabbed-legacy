@@ -20,4 +20,24 @@ describe('components/toggle/toggle.svelte', () => {
     expect(toggle).toBeChecked()
     expect(mockChangeHandler).toHaveBeenCalled()
   })
+
+  it('cannot be toggled when aria disabled', async () => {
+    const mockChangeHandler = jest.fn()
+
+    const screen = render(Toggle, {
+      props: {
+        label: 'switch me',
+        onChange: mockChangeHandler,
+        id: 'switch',
+        checked: false,
+        ariaDisabled: true
+      },
+    })
+
+    const toggle = screen.getByLabelText('switch me')
+    expect(toggle).not.toBeChecked()
+    await fireEvent.click(toggle)
+    expect(toggle).not.toBeChecked()
+    expect(mockChangeHandler).not.toHaveBeenCalled()
+  })
 })
