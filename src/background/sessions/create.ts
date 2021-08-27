@@ -13,6 +13,7 @@ import { readSettings } from 'src/utils/browser/storage'
 import { getSessionTitle, getWindowTitle } from './derived-title'
 import { getCurrentSession, findWindow, findSession } from './query'
 import { updateSessions } from './actions'
+import { compressSession, compressWindow } from './compress'
 import { throwSessionId, throwWindowId } from '../errors'
 
 const logContext = 'background/sessions/create'
@@ -73,7 +74,7 @@ export const saveSession = async ({
   if (generateTitle && !session.title) {
     session.title = getSessionTitle(session.windows)
   }
-  const newSession = await saveNewSession(key, session)
+  const newSession = await saveNewSession(key, compressSession(session))
   return newSession.id
 }
 
@@ -126,7 +127,11 @@ export const saveWindow = async ({
   if (generateTitle && win.tabs) {
     title = getWindowTitle(win.tabs)
   }
-  const session = await createSessionFromWindows(key, [filteredWindow], title)
+  const session = await createSessionFromWindows(
+    key,
+    [compressWindow(filteredWindow)],
+    title
+  )
   return session.id
 }
 
@@ -172,7 +177,7 @@ export const importSessionsFromText = async (content?: string) => {
     }
 
     for (const session of data.sessions.reverse()) {
-      await saveImportedSession(session)
+      await saveImportedSession(compressSession(session))
     }
     await updateSessions()
   } else {
