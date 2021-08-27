@@ -49,7 +49,6 @@ npm test
 - [ ] add tests for newly implemented features such as undo
 - [ ] push undo/redo actions to undo stack for backend session actions
 - [ ] display session search results with highlights
-- [ ] documentation wiki
 - [ ] multi-select sessions, windows, and tabs
   - [ ] select box (left) - also move active indicator, context menu for tab actions
   - [ ] merge multiple sessions & windows
@@ -58,11 +57,8 @@ npm test
 #### Bugs
 
 - [ ] context menu bad position when bottom of menu
-- [ ] right click window focuses window
 - [ ] Firefox not rendering popup and sidebar
 - [ ] undoing too fast causes race condition
-- [ ] tabbing skips over radio input component
-- [ ] check that all windows are narrowed down by session first
 
 #### CI
 
@@ -75,6 +71,7 @@ npm test
 - [ ] finish i18n English
 - [ ] allow option to open tabs/windows in background (perhaps with middle click?)
 - [ ] allow sort options for saved sessions - manual sorting
+- [ ] documentation wiki
 - [ ] Extension landing page with feature descriptions
 - [ ] tab-able elements, tab groups that can change focus with arrows; AKA focus rings/focus layers or groups - [1](https://github.com/discord/focus-rings), [2](https://github.com/davidtheclark/focus-group)
 - [ ] Tooltip to suggest shortcut/middle/right click
