@@ -131,7 +131,7 @@
         <h2 class="p-4 xs:px-6 sm:px-10 pt-8 pb-4 lg:px-6">Previous</h2>
       {/if}
     {/each}
-    {#if sessionLists.previous.length - 1 > limitPrevious}
+    {#if sessionLists.previous.length >= limitPrevious}
       <div class="flex justify-end px-2 xs:px-4 sm:px-8 lg:px-4">
         <button
           class="p-2 flex items-center text-gray-400 dark:text-gray-500"
