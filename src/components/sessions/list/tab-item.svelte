@@ -19,7 +19,7 @@
 
 {#if title || url}
   <li role="row" class="flex flex-row">
-    <div class="flex justify-center items-center h-5 w-5 min-w-5 mb-1 mr-3">
+    <div class="flex justify-center items-center h-5 w-5 min-w-5 mb-1 mr-3 overflow-hidden">
       {#if favIconUrl}
         <img use:replaceImageError src={favIconUrl} alt={title} />
       {/if}
